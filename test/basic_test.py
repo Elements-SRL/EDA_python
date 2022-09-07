@@ -32,10 +32,11 @@ class MyTestCase(unittest.TestCase):
         file_path = input("insert file path: ")
         if file_path.endswith(".abf"):
             print(file_path)
-            self.assertEqual("ciccia","ciccia")
+            self.assertEqual("ciccia", "ciccia")
 
-    def test_import(self):
-        self.assertEqual(fh.open_file(), True)
+    def test_string_in_list(self):
+        test_list = ["a", "b", "c"]
+        self.assertIn("a", test_list)
 
 
 if __name__ == '__main__':

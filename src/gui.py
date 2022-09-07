@@ -1,8 +1,6 @@
 import matplotlib
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QPushButton, QFileDialog, QLabel
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QPushButton, QFileDialog
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 
