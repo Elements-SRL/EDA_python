@@ -62,7 +62,7 @@ class UiMainWindow(object):
     def get_file(self):
         f_name, _ = QFileDialog.getOpenFileName(self.central_widget, 'Open file',
                                                 filter="Abf files (*.abf);; Edh files(*.edh)")
-        self.logics.extract(f_name)
+        self.logics.open_abf(f_name)
         # print last abf read
         print(self.logics.abfs[len(self.logics.abfs)-1])
         print(len(self.logics.abfs))

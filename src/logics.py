@@ -9,7 +9,7 @@ class Logics:
         abf = fh.open_abf(path_to_file)
         self.abfs.append((path_to_file, abf))
 
-    def extract(self, path_to_file):
+    def open_abf(self, path_to_file):
         # list is empty, extract it
         if not self.abfs:
             self.open_file_and_add_to_abfs(path_to_file)
