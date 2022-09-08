@@ -1,8 +1,9 @@
 from os.path import exists
 import pyabf
+from pyabf import ABF
 
 
-def open_abf(path_to_file: str):
+def open_abf(path_to_file: str) -> ABF | None:
     if not exists(path_to_file):
         return None
     if path_to_file.endswith(".abf"):
