@@ -1,12 +1,14 @@
+import os
 import unittest
 import logics
 
 
 class LogicsTest(unittest.TestCase):
-    path_to_abf1 = "../Data/Data_CH001_000.abf"
-    path_to_abf2 = "../Data/Data_CH002_000.abf"
+    path_to_abf1 = os.getcwd() + "/res/Data/Data_CH001_000.abf"
+    path_to_abf2 = os.getcwd() + "/res/Data/Data_CH002_000.abf"
 
     def test_open_first_abf(self):
+        print(self.path_to_abf1)
         logics_test = logics.Logics()
         logics_test.open_abf(self.path_to_abf1)
         self.assertTrue(len(logics_test.abfs) == 1)
@@ -23,12 +25,12 @@ class LogicsTest(unittest.TestCase):
         logics_test.open_abf(self.path_to_abf1)
         self.assertTrue(len(logics_test.abfs) == 1)
 
-    def test_get_abf_from_empty_list(self):
+    def test_get_abfs_from_empty_list(self):
         logics_test = logics.Logics()
         abfs = logics_test.get_abfs()
         self.assertListEqual(abfs, [])
 
-    def test_get_abf(self):
+    def test_get_abfs(self):
         logics_test = logics.Logics()
         logics_test.open_abf(self.path_to_abf1)
         abfs = logics_test.get_abfs()

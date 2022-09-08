@@ -12,7 +12,7 @@ matplotlib.use('Qt5Agg')
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    path_to_file = "../Data/Data_CH001_000.abf"
+    path_to_file = "res/Data/Data_CH001_000.abf"
     # path_to_file = input("Inserisci il path del file: ")
     # abf = fh.open_abf(path_to_file)
     # abf2 = fh.open_abf("../Data/Data_CH002_000.abf")
