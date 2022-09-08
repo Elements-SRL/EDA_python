@@ -1,14 +1,31 @@
 import sys
+import matplotlib
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication
 from PyQt5.QtWidgets import QWidget, QMenuBar, QStatusBar, QMenu, QAction, QFileDialog, QGridLayout, QFrame
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
 import logics
+
+matplotlib.use('Qt5Agg')
+
+
+class MplCanvas(FigureCanvasQTAgg):
+
+    def __init__(self, parent=None, width=5, height=4, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        self.axes = fig.add_subplot()
+        super(MplCanvas, self).__init__(fig)
 
 
 class UiMainWindow(object):
     logics = None
 
     def __init__(self):
+        self.sc = None
+        self.toolbar = None
+        self.canvas = None
+        self.figure = None
         self.menu_export_as = None
         self.frame = None
         self.frame_2 = None
@@ -40,12 +57,18 @@ class UiMainWindow(object):
 
         self.gridLayout.addWidget(self.frame_2, 1, 0, 1, 1)
 
-        self.frame = QFrame(self.central_widget)
-        self.frame.setObjectName(u"frame")
-        self.frame.setFrameShape(QFrame.StyledPanel)
-        self.frame.setFrameShadow(QFrame.Raised)
+        self.sc = MplCanvas(self, width=5, height=4, dpi=100)
+        self.sc.axes.plot([0, 1, 2, 3, 4], [10, 1, 20, 3, 40])
+        # self.gridLayout.addWidget(self.sc, 0, 0, 1, 1)
 
-        self.gridLayout.addWidget(self.frame, 0, 0, 1, 1)
+        plot_layout = QtWidgets.QVBoxLayout()
+        self.gridLayout.addLayout(plot_layout, 0, 0, 1, 1)
+
+        toolbar = NavigationToolbar(self.sc, main_window)
+        plot_layout.addWidget(toolbar)
+        plot_layout.addWidget(self.sc)
+
+        # self.gridLayout.addWidget(self.canvas, 0, 0, 1, 1)
 
         main_window.setCentralWidget(self.central_widget)
         self.menubar = QMenuBar(main_window)
@@ -71,10 +94,11 @@ class UiMainWindow(object):
 
         self.actionOpen.triggered.connect(lambda: self.open())
         self.action_csv.triggered.connect(lambda: self.csv())
+
     # setupUi
 
-    def retranslate_ui(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"EDA", None))
+    def retranslate_ui(self, main_window):
+        main_window.setWindowTitle(QCoreApplication.translate("MainWindow", u"EDA", None))
         self.actionOpen.setText(QCoreApplication.translate("MainWindow", u"Open", None))
         # if QT_CONFIG(statustip)
         self.actionOpen.setStatusTip(QCoreApplication.translate("MainWindow", u"Open an abf file", None))
@@ -85,25 +109,41 @@ class UiMainWindow(object):
         self.action_csv.setText(QCoreApplication.translate("MainWindow", u".csv", None))
         self.menu_file.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menu_export_as.setTitle(QCoreApplication.translate("MainWindow", u"Export as ...", None))
+
     # retranslateUi
 
     def open(self):
         f_name, _ = QFileDialog.getOpenFileName(self.central_widget, 'Open file',
                                                 filter="Abf files (*.abf);; Edh files(*.edh)")
         self.logics.open_abf(f_name)
+        # TODO what if the file is not opened and someone presses cancel?
         # print last abf read
-        print(self.logics.abfs[len(self.logics.abfs)-1])
-        print(len(self.logics.abfs))
+        # print(self.logics.get_abfs()[len(self.logics.get_abfs()) - 1])
+        # print(len(self.logics.get_abfs()))
+        self.update_plot()
+        # print("updated")
 
     def csv(self):
         # TODO
         print("exporting csv... ")
 
+    def update_plot(self):
+        if len(self.logics.abfs) <= 0:
+            return
+        self.sc.axes.cla()
+        i = 0
+        for abf in self.logics.get_abfs():
+            line, = self.sc.axes.plot(abf.sweepX, abf.sweepY)
+            line.set_label("channel " + str(i))
+            i += 1
+        self.sc.axes.legend()
+        self.sc.draw()
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    main_window = QtWidgets.QMainWindow()
+    mw = QtWidgets.QMainWindow()
     ui = UiMainWindow()
-    ui.setup_ui(main_window)
-    main_window.show()
+    ui.setup_ui(mw)
+    mw.show()
     sys.exit(app.exec_())
