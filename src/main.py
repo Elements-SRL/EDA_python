@@ -5,7 +5,6 @@
 import sys
 import matplotlib
 from PyQt5 import QtWidgets
-import file_handler as fh
 import gui
 
 matplotlib.use('Qt5Agg')
@@ -15,10 +14,10 @@ matplotlib.use('Qt5Agg')
 if __name__ == '__main__':
     path_to_file = "../Data/Data_CH001_000.abf"
     # path_to_file = input("Inserisci il path del file: ")
-    abf = fh.open_abf(path_to_file)
-    abf2 = fh.open_abf("../Data/Data_CH002_000.abf")
-    abf3 = fh.open_abf("../Data/Data_CH003_000.abf")
-    abf4 = fh.open_abf("../Data/Data_CH004_000.abf")
+    # abf = fh.open_abf(path_to_file)
+    # abf2 = fh.open_abf("../Data/Data_CH002_000.abf")
+    # abf3 = fh.open_abf("../Data/Data_CH003_000.abf")
+    # abf4 = fh.open_abf("../Data/Data_CH004_000.abf")
 
     if abf is None:
         # TODO show error message
@@ -48,6 +47,6 @@ if __name__ == '__main__':
 
     app = QtWidgets.QApplication(sys.argv)
     w = gui.MainWindow()
-    w.add_data((abf.sweepX, abf.sweepY, "channel 1"), (abf2.sweepX, abf2.sweepY, "channel 2"),
-               (abf3.sweepX, abf3.sweepY, "channel 3"), (abf4.sweepX, abf4.sweepY, "channel 4"))
+    # w.add_data((abf.sweepX, abf.sweepY, "channel 1"), (abf2.sweepX, abf2.sweepY, "channel 2"),
+    #            (abf3.sweepX, abf3.sweepY, "channel 3"), (abf4.sweepX, abf4.sweepY, "channel 4"))
     app.exec()
