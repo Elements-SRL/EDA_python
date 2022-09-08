@@ -19,9 +19,9 @@ if __name__ == '__main__':
     # abf3 = fh.open_abf("../Data/Data_CH003_000.abf")
     # abf4 = fh.open_abf("../Data/Data_CH004_000.abf")
 
-    if abf is None:
-        # TODO show error message
-        exit(0)
+    # if abf is None:
+    #     # TODO show error message
+    #     exit(0)
 
     # print(abf.sweepY)  # displays sweep data (ADC)
     # print(abf.sweepX)  # displays sweep times (seconds)
