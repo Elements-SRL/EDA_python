@@ -34,6 +34,14 @@ class LogicsTest(unittest.TestCase):
         abfs = logics_test.get_abfs()
         self.assertTrue(len(abfs) == 1)
 
+    def test_get_name(self):
+        logics_test = logics.Logics()
+        logics_test.open_abf(self.path_to_abf1)
+        abfs = logics_test.get_abfs()
+        channel_name = logics.get_channel_name(abfs[0])
+        print(channel_name)
+        self.assertEquals("channel 1", channel_name)
+
 
 if __name__ == '__main__':
     unittest.main()

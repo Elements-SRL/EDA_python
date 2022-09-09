@@ -4,6 +4,14 @@ from typing import List
 from os.path import exists
 
 
+def get_channel_name(abf: ABF) -> str:
+    # get channel index
+    index = abf.abfID.casefold()[7:-4]
+    while index.startswith("0"):
+        index = index[1:]
+    return "channel "+ index
+
+
 class Logics:
     def __init__(self):
         self.abfs: list[ABF] = []
@@ -17,7 +25,7 @@ class Logics:
     def open_file_and_add_to_abfs(self, path_to_file):
         # if list is empty or if the path hasn't been already extracted,
         abf = pyabf.ABF(path_to_file)
-        print(abf.headerText)
+        # print(abf.headerText)
         if abf.abfFilePath not in self.get_paths():
             self.abfs.append(abf)
 

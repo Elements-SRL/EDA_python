@@ -125,10 +125,6 @@ class UiMainWindow(object):
             return
         self.sc.ax1.cla()
         self.sc.ax2.cla()
-        # self.sc.ax1.set_ylabel(abfs[0].sweepLabelY)
-        # self.sc.ax1.set_xlabel(abfs[0].sweepLabelX)
-        print(abfs[0].sweepLabelY)
-        print(abfs[0].sweepLabelX)
         i = 0
         for abf in abfs:
             # it's better not to display multiple channels and multiple sweeps in the same plot,
@@ -136,11 +132,11 @@ class UiMainWindow(object):
             if abf.sweepCount > 1:
                 sweep_label = 0
                 for sweep in range(abf.sweepCount):
-                    multi_sweep_label = "channel " + str(i) + " sweep " + str(sweep_label)
+                    multi_sweep_label = logics.get_channel_name(abf) + " sweep " + str(sweep_label)
                     self.sc.ax1.plot(abf.sweepX, abf.sweepY, label=multi_sweep_label)
                     sweep_label += 1
             else:
-                label = "channel " + str(i)
+                label = logics.get_channel_name(abf)
                 self.sc.ax1.plot(abf.sweepX, abf.sweepY, label=label)
                 self.sc.ax2.plot(abf.sweepX, abf.sweepC, label=label)
             i += 1
