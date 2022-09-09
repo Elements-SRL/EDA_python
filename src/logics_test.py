@@ -44,17 +44,15 @@ class LogicsTest(unittest.TestCase):
 
     def test_get_edh(self):
         # logics to compare opening of edh file vs abf
-        control_logics = logics.Logics()
-        control_logics.open("res/Data/Data_CH002_000.abf")
-        control_logics.open("res/Data/Data_CH002_000.abf")
-        control_logics.open("res/Data/Data_CH003_000.abf")
-        control_logics.open("res/Data/Data_CH004_000.abf")
+        # control_logics = logics.Logics()
+        # control_logics.open("res/Data/Data_CH002_000.abf")
+        # control_logics.open("res/Data/Data_CH002_000.abf")
+        # control_logics.open("res/Data/Data_CH003_000.abf")
+        # control_logics.open("res/Data/Data_CH004_000.abf")
 
         logics_test = logics.Logics()
         logics_test.open("res/Data/Data.edh")
-        x = str(print(logics_test.get_abfs()))
-        y = str(print(control_logics.get_abfs()))
-        self.assertEquals(x, y)
+        self.assertTrue(len(logics_test.get_abfs()) == 4)
 
 
 if __name__ == '__main__':
