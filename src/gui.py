@@ -111,8 +111,8 @@ class UiMainWindow(object):
 
     def open(self):
         f_name, _ = QFileDialog.getOpenFileName(self.central_widget, 'Open file',
-                                                filter="Abf files (*.abf);; Edh files(*.edh)")
-        self.logics.open_abf(f_name)
+                                                filter="Edh files(*.edh);;Abf files (*.abf)")
+        self.logics.open(f_name)
         self.update_plot()
 
     def csv(self):
