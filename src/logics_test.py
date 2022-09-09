@@ -61,6 +61,7 @@ class LogicsTest(unittest.TestCase):
     def test_generate_header(self):
         logics_test = logics.Logics()
         logics_test.open(self.path_to_abf1)
+        logics_test.open(self.path_to_abf2)
         header = logics_test.generate_header()
         print(header)
 

@@ -6,20 +6,20 @@ from typing import List
 from os.path import exists
 
 
-def get_abf_index(abf: ABF) -> int:
+def get_abf_index(abf: ABF) -> str:
     index = abf.abfID.casefold()[7:-4]
     while index.startswith("0"):
         index = index[1:]
+    return index
 
 
 def get_channel_name(abf: ABF) -> str:
     # TODO channel should be a constant
-    return "channel " + str(get_abf_index(abf))
+    return "channel " + get_abf_index(abf)
 
 
 def get_channel_name_abbreviation(abf: ABF) -> str:
-    ch_name = get_channel_name(abf)
-    return ch_name[:2]+ch_name[8:]
+    return "ch" + get_channel_name(abf)[8:]
 
 
 class Logics:
@@ -62,8 +62,8 @@ class Logics:
             return
         header = ["t[" + self.abfs[0].sweepUnitsX + "]"]
         for abf in self.get_abfs():
-            header.append("[" + abf.sweepUnitsY + "]")
-            header.append()
+            header.append(get_channel_name_abbreviation(abf) + "[" + abf.sweepUnitsY + "]")
+            header.append("vC[" + abf.sweepUnitsC + "]")
         print(header)
         return
 
