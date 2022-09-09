@@ -113,12 +113,7 @@ class UiMainWindow(object):
         f_name, _ = QFileDialog.getOpenFileName(self.central_widget, 'Open file',
                                                 filter="Abf files (*.abf);; Edh files(*.edh)")
         self.logics.open_abf(f_name)
-        # TODO what if the file is not opened and someone presses cancel?
-        # print last abf read
-        # print(self.logics.get_abfs()[len(self.logics.get_abfs()) - 1])
-        # print(len(self.logics.get_abfs()))
         self.update_plot()
-        # print("updated")
 
     def csv(self):
         # TODO
@@ -136,11 +131,9 @@ class UiMainWindow(object):
         print(abfs[0].sweepLabelX)
         i = 0
         for abf in abfs:
-            # TODO fare in modo che vada per ogni sweep?
-            line, = self.sc.ax1.plot(abf.sweepX, abf.sweepY)
-            line.set_label("channel " + str(i))
-            line_c, = self.sc.ax2.plot(abf.sweepX, abf.sweepC)
-            line_c.set_label("channel " + str(i))
+            label = "channel " + str(i)
+            self.sc.ax1.plot(abf.sweepX, abf.sweepY, label=label)
+            self.sc.ax2.plot(abf.sweepX, abf.sweepC, label=label)
             i += 1
         self.sc.ax1.legend()
         self.sc.ax2.legend()
