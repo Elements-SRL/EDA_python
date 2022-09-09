@@ -144,6 +144,11 @@ class UiMainWindow(object):
                 self.sc.ax1.plot(abf.sweepX, abf.sweepY, label=label)
                 self.sc.ax2.plot(abf.sweepX, abf.sweepC, label=label)
             i += 1
+        # set label with the last abf read
+        self.sc.ax1.set_ylabel(abf.sweepLabelY)
+        self.sc.ax2.set_xlabel(abf.sweepLabelX)
+        self.sc.ax2.set_ylabel(abf.sweepLabelC)
+
         self.sc.ax1.legend()
         self.sc.ax2.legend()
         self.sc.draw()
