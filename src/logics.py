@@ -1,5 +1,5 @@
 import os
-
+import csv
 import pyabf
 from pyabf import ABF
 from typing import List
@@ -12,6 +12,11 @@ def get_channel_name(abf: ABF) -> str:
     while index.startswith("0"):
         index = index[1:]
     return "channel " + index
+
+
+def get_channel_name_abbreviation(abf: ABF) -> str:
+    ch_name = get_channel_name(abf)
+    return ch_name[:2]+ch_name[8:]
 
 
 class Logics:
@@ -48,3 +53,22 @@ class Logics:
                 if file_name.endswith(".abf"):
                     abs_path = dir_path + os.sep + file_name
                     self.open_abf_and_add_to_abfs(abs_path)
+
+    def generate_header(self) -> List[str] | None:
+        if len(self.get_abfs()) == 0:
+            return
+        header = ["t[" + self.abfs[0].sweepUnitsX + "]"]
+        for abf in self.get_abfs():
+            header.append("[" + abf.sweepUnitsY + "]")
+            header.append()
+        print(header)
+        return
+
+    # def export(self, path_to_file):
+    #     with open('path/to/csv_file', 'w') as f:
+    #
+    #         # create the csv writer
+    #         writer = csv.writer(f)
+    #
+    #         # write a row to the csv file
+    #         writer.writerow(row)
