@@ -1,10 +1,9 @@
-import sys
 import matplotlib
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication
 from PyQt5.QtWidgets import QWidget, QMenuBar, QStatusBar, QMenu, QAction, QFileDialog, QGridLayout, QFrame
+from matplotlib import pyplot as plt, axes
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
-from matplotlib.figure import Figure
 import logics
 
 matplotlib.use('Qt5Agg')
@@ -13,9 +12,11 @@ matplotlib.use('Qt5Agg')
 class MplCanvas(FigureCanvasQTAgg):
 
     def __init__(self, parent=None, width=5, height=4, dpi=100):
-        fig = Figure(figsize=(width, height), dpi=dpi)
-        self.axes = fig.add_subplot()
-        super(MplCanvas, self).__init__(fig)
+        self.ax1 = None
+        self.axs = None
+        self.fig = None
+        self.fig, (self.ax1, self.ax2) = plt.subplots(2, sharex=True)
+        super(MplCanvas, self).__init__(self.fig)
 
 
 class UiMainWindow(object):
@@ -58,17 +59,13 @@ class UiMainWindow(object):
         self.gridLayout.addWidget(self.frame_2, 1, 0, 1, 1)
 
         self.sc = MplCanvas(self, width=5, height=4, dpi=100)
-        self.sc.axes.plot([0, 1, 2, 3, 4], [10, 1, 20, 3, 40])
-        # self.gridLayout.addWidget(self.sc, 0, 0, 1, 1)
 
         plot_layout = QtWidgets.QVBoxLayout()
-        self.gridLayout.addLayout(plot_layout, 0, 0, 1, 1)
+        self.gridLayout.addLayout(plot_layout, 0, 0, 0, 0)
 
         toolbar = NavigationToolbar(self.sc, main_window)
         plot_layout.addWidget(toolbar)
         plot_layout.addWidget(self.sc)
-
-        # self.gridLayout.addWidget(self.canvas, 0, 0, 1, 1)
 
         main_window.setCentralWidget(self.central_widget)
         self.menubar = QMenuBar(main_window)
@@ -128,22 +125,23 @@ class UiMainWindow(object):
         print("exporting csv... ")
 
     def update_plot(self):
-        if len(self.logics.abfs) <= 0:
+        abfs = self.logics.get_abfs()
+        if len(abfs) <= 0:
             return
-        self.sc.axes.cla()
+        self.sc.ax1.cla()
+        self.sc.ax2.cla()
+        # self.sc.ax1.set_ylabel(abfs[0].sweepLabelY)
+        # self.sc.ax1.set_xlabel(abfs[0].sweepLabelX)
+        print(abfs[0].sweepLabelY)
+        print(abfs[0].sweepLabelX)
         i = 0
-        for abf in self.logics.get_abfs():
-            line, = self.sc.axes.plot(abf.sweepX, abf.sweepY)
+        for abf in abfs:
+            # TODO fare in modo che vada per ogni sweep?
+            line, = self.sc.ax1.plot(abf.sweepX, abf.sweepY)
             line.set_label("channel " + str(i))
+            line_c, = self.sc.ax2.plot(abf.sweepX, abf.sweepC)
+            line_c.set_label("channel " + str(i))
             i += 1
-        self.sc.axes.legend()
+        self.sc.ax1.legend()
+        self.sc.ax2.legend()
         self.sc.draw()
-
-
-if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    mw = QtWidgets.QMainWindow()
-    ui = UiMainWindow()
-    ui.setup_ui(mw)
-    mw.show()
-    sys.exit(app.exec_())

@@ -17,6 +17,7 @@ class Logics:
     def open_file_and_add_to_abfs(self, path_to_file):
         # if list is empty or if the path hasn't been already extracted,
         abf = pyabf.ABF(path_to_file)
+        print(abf.headerText)
         if abf.abfFilePath not in self.get_paths():
             self.abfs.append(abf)
 
