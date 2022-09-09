@@ -6,12 +6,15 @@ from typing import List
 from os.path import exists
 
 
-def get_channel_name(abf: ABF) -> str:
-    # get channel index
+def get_abf_index(abf: ABF) -> int:
     index = abf.abfID.casefold()[7:-4]
     while index.startswith("0"):
         index = index[1:]
-    return "channel " + index
+
+
+def get_channel_name(abf: ABF) -> str:
+    # TODO channel should be a constant
+    return "channel " + str(get_abf_index(abf))
 
 
 def get_channel_name_abbreviation(abf: ABF) -> str:
