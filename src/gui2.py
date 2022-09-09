@@ -2,7 +2,7 @@ import matplotlib
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication
 from PyQt5.QtWidgets import QWidget, QMenuBar, QStatusBar, QMenu, QAction, QFileDialog, QGridLayout, QFrame
-from matplotlib import pyplot as plt, axes
+from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 import logics
 
@@ -131,9 +131,18 @@ class UiMainWindow(object):
         print(abfs[0].sweepLabelX)
         i = 0
         for abf in abfs:
-            label = "channel " + str(i)
-            self.sc.ax1.plot(abf.sweepX, abf.sweepY, label=label)
-            self.sc.ax2.plot(abf.sweepX, abf.sweepC, label=label)
+            # it's better not to display multiple channels and multiple sweeps in the same plot,
+            # implementation could change in future
+            if abf.sweepCount > 1:
+                sweep_label = 0
+                for sweep in range(abf.sweepCount):
+                    multi_sweep_label = "channel " + str(i) + " sweep " + str(sweep_label)
+                    self.sc.ax1.plot(abf.sweepX, abf.sweepY, label=multi_sweep_label)
+                    sweep_label += 1
+            else:
+                label = "channel " + str(i)
+                self.sc.ax1.plot(abf.sweepX, abf.sweepY, label=label)
+                self.sc.ax2.plot(abf.sweepX, abf.sweepC, label=label)
             i += 1
         self.sc.ax1.legend()
         self.sc.ax2.legend()
