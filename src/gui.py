@@ -110,13 +110,12 @@ class UiMainWindow(object):
     # retranslateUi
 
     def open(self):
-        f_name, _ = QFileDialog.getOpenFileName(self.central_widget, 'Open file',
-                                                filter="Edh files(*.edh);;Abf files (*.abf)")
+        f_name, _ = QFileDialog.getOpenFileName(None, 'Open file', filter="Edh files(*.edh);;Abf files (*.abf)")
         self.logics.open(f_name)
         self.update_plot()
 
     def csv(self):
-        # TODO
+        f_name, _ = QFileDialog.getSaveFileName(None, 'Save as', filter="Csv files(*.csv)")
         print("exporting csv... ")
 
     def update_plot(self):
