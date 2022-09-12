@@ -73,7 +73,10 @@ class Logics:
         return header
 
     # TODO does it work with multiple sweeps?
-    def generate_data(self) -> List[int]:
+    # TODO when exporting files the header is
+    # t, ch1,vc1, ch3, vc3 ...
+    # check that each row is correctly placed under the right channel
+    def generate_data(self) -> List[List[int]]:
         # take the time from the first abf
         time = self.get_abfs()[0].sweepX
         data = [time]

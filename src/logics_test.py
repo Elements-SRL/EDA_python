@@ -41,14 +41,14 @@ class LogicsTest(unittest.TestCase):
         logics_test.open(self.path_to_abf1)
         abfs = logics_test.get_abfs()
         channel_name = logics.get_channel_name(abfs[0])
-        self.assertEquals("channel 1", channel_name)
+        self.assertEqual("channel 1", channel_name)
 
     def test_get_name_abbreviation(self):
         logics_test = logics.Logics()
         logics_test.open(self.path_to_abf1)
         abfs = logics_test.get_abfs()
         channel_name = logics.get_channel_name_abbreviation(abfs[0])
-        self.assertEquals("ch1", channel_name)
+        self.assertEqual("ch1", channel_name)
 
     def test_get_edh(self):
         logics_test = logics.Logics()
@@ -68,7 +68,7 @@ class LogicsTest(unittest.TestCase):
         self.assertListEqual(["t[sec]", 'ch1[pA]', 'vC1[mV]', 'ch2[pA]', 'vC2[mV]'], header)
 
     def test_export_empty_csv(self):
-        test_empty_csv = "res/Data/test_export.csv"
+        test_empty_csv = "res/Data/test_empty.csv"
         logics_test = logics.Logics()
         logics_test.export(test_empty_csv)
         self.assertFalse(os.path.exists(test_empty_csv))
