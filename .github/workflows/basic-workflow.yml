@@ -105,3 +105,4 @@ jobs:
           title: "Development Build"
           files: |
             dist/eda_linux
+            dist/eda_macos
