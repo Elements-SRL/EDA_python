@@ -63,15 +63,14 @@ class Logics:
         header = ["t[" + self.abfs[0].sweepUnitsX + "]"]
         for abf in self.get_abfs():
             header.append(get_channel_name_abbreviation(abf) + "[" + abf.sweepUnitsY + "]")
-            header.append("vC[" + abf.sweepUnitsC + "]")
-        print(header)
-        return
+            header.append("vC" + get_abf_index(abf) + "[" + abf.sweepUnitsC + "]")
+        return header
 
     # def export(self, path_to_file):
-    #     with open('path/to/csv_file', 'w') as f:
+    #     with open(path_to_file, 'w') as f:
     #
     #         # create the csv writer
     #         writer = csv.writer(f)
     #
     #         # write a row to the csv file
-    #         writer.writerow(row)
+    #         writer.writerow(self.generate_header())

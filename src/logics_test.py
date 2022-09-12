@@ -63,7 +63,7 @@ class LogicsTest(unittest.TestCase):
         logics_test.open(self.path_to_abf1)
         logics_test.open(self.path_to_abf2)
         header = logics_test.generate_header()
-        print(header)
+        self.assertListEqual(["t[sec]", 'ch1[pA]', 'vC1[mV]', 'ch2[pA]', 'vC2[mV]'], header)
 
 
 if __name__ == '__main__':
