@@ -1,3 +1,5 @@
+import os
+import time
 import unittest
 import logics
 
@@ -64,6 +66,21 @@ class LogicsTest(unittest.TestCase):
         logics_test.open(self.path_to_abf2)
         header = logics_test.generate_header()
         self.assertListEqual(["t[sec]", 'ch1[pA]', 'vC1[mV]', 'ch2[pA]', 'vC2[mV]'], header)
+
+    def test_export_empty_csv(self):
+        test_empty_csv = "res/Data/test_export.csv"
+        logics_test = logics.Logics()
+        logics_test.export(test_empty_csv)
+        self.assertFalse(os.path.exists(test_empty_csv))
+
+    def test_export_csv(self):
+        path_to_csv = "res/Data/test_export.csv"
+        logics_test = logics.Logics()
+        logics_test.open(self.path_to_abf1)
+        logics_test.open(self.path_to_abf2)
+        logics_test.export(path_to_csv)
+        time.sleep(1)
+        self.assertTrue(os.path.exists(path_to_csv))
 
 
 if __name__ == '__main__':
