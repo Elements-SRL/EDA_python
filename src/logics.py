@@ -111,10 +111,10 @@ class Logics:
         return formatted_data
 
     def export(self, path_to_file):
-        if len(self.get_abfs()) == 0:
+        if not self.get_abfs():
             # TODO tell something to the user?
             return
-
+        #  TODO check if there is another file with the same name and change the name accordingly
         # exporting csv files
         with open(path_to_file, 'w') as f:
             # create the csv writer

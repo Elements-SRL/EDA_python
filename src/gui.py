@@ -1,7 +1,8 @@
 import matplotlib
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication
-from PyQt5.QtWidgets import QWidget, QMenuBar, QStatusBar, QMenu, QAction, QFileDialog, QGridLayout, QFrame
+from PyQt5.QtWidgets import QWidget, QMenuBar, QStatusBar, QMenu, QAction, QFileDialog, QGridLayout, QFrame, QDialog, \
+    QMessageBox
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 import logics
@@ -119,6 +120,12 @@ class UiMainWindow(object):
         if not self.logics.get_abfs():
             print("empty")
             # TODO show dialog to tell that file would be empty
+            message_box = QMessageBox()
+            message_box.setText("Nothing to export.")
+            message_box.setIcon(QMessageBox.Information)
+            message_box.setWindowTitle("Export csv")
+            message_box.setInformativeText("Open a file and try again.")
+            message_box.exec()
             return
         # TODO hint or choose a default name?
         path_to_file, _ = QFileDialog.getSaveFileName(None, 'Save as', filter="Csv files(*.csv)")
