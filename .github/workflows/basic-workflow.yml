@@ -36,11 +36,6 @@ jobs:
           echo '${{secrets.DATA3}}' | base64 -d > res/Data/Data_CH003_000.abf
           echo '${{secrets.DATA4}}' | base64 -d > res/Data/Data_CH004_000.abf
           echo '${{secrets.EDH}}' | base64 -d > res/Data/Data.edh
-        
-      - name: testing positions
-        run: |
-          cd res/Data
-          ls
           
       - name: Test with pytest
         run: |
