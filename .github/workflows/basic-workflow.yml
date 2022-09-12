@@ -59,4 +59,34 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: create bundle
         run: |
-          pyinstaller --onefile --windowed src/main.py  
+          pyinstaller --onefile --windowed src/main.py
+
+      - name: rename bundle
+        run: |
+          mv dist/main dist/eda_linux
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: bundles
+          path: dist/
+
+
+  pre-release:
+    name: "Pre Release"
+    needs:   linux_bundle
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: bundles
+          path: dist/
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            dist/eda_linux
