@@ -55,10 +55,10 @@ class LogicsTest(unittest.TestCase):
         logics_test.open("res/Data/Data.edh")
         self.assertTrue(len(logics_test.get_abfs()) == 4)
 
-    def test_generate_header_from_empty_list(self):
-        logics_test = logics.Logics()
-        header = logics_test.generate_header()
-        self.assertIsNone(header)
+    # def test_generate_header_from_empty_list(self):
+    #     logics_test = logics.Logics()
+    #     header = logics_test.generate_header()
+    #     self.assertIsNone(header)
 
     def test_generate_header(self):
         logics_test = logics.Logics()

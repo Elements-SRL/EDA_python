@@ -62,10 +62,7 @@ class Logics:
 
     # TODO does it work with multiple sweeps?
 
-    def generate_header(self) -> List[str] | None:
-        if len(self.get_abfs()) == 0:
-            # TODO tell something to the user?
-            return
+    def generate_header(self) -> List[str]:
         header = ["t[" + self.abfs[0].sweepUnitsX + "]"]
         for abf in self.get_abfs():
             header.append(get_channel_name_abbreviation(abf) + "[" + abf.sweepUnitsY + "]")
