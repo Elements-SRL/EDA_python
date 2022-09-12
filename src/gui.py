@@ -115,8 +115,19 @@ class UiMainWindow(object):
         self.update_plot()
 
     def csv(self):
-        f_name, _ = QFileDialog.getSaveFileName(None, 'Save as', filter="Csv files(*.csv)")
-        print("exporting csv... ")
+        # if list is empty
+        if not self.logics.get_abfs():
+            print("empty")
+            # TODO show dialog to tell that file would be empty
+            return
+        # TODO hint or choose a default name?
+        path_to_file, _ = QFileDialog.getSaveFileName(None, 'Save as', filter="Csv files(*.csv)")
+        if not str(path_to_file).endswith(".csv"):
+            path_to_file = path_to_file+".csv"
+
+        print("exporting ...")
+        # TODO show progress_bar (?)
+        self.logics.export(path_to_file)
 
     def update_plot(self):
         abfs = self.logics.get_abfs()
