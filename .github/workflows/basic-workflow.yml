@@ -111,3 +111,13 @@ jobs:
             dist/eda_linux
             dist/eda_macos
             dist/eda_win.exe
+
+  clean-up:
+    name: "Clean up"
+    needs: pre-release
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: geekyeggo/delete-artifact@v1
+        with:
+          name: bundles
