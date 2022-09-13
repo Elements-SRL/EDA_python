@@ -99,7 +99,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install flake8 pytest pyinstaller
-          if exist requirements.txt pip install -r requirements.txt
+          if test -e requirements.txt; then pip install -r requirements.txt fi
       - name: create bundle
         run: |
           pyinstaller --onefile --windowed src/main.py -n eda_win.exe
