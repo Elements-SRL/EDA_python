@@ -24,6 +24,7 @@ class UiMainWindow(object):
     logics = None
 
     def __init__(self):
+        self.action_clear = None
         self.sc = None
         self.toolbar = None
         self.canvas = None
@@ -48,6 +49,8 @@ class UiMainWindow(object):
         self.actionOpen.setObjectName(u"actionOpen")
         self.action_csv = QAction(main_window)
         self.action_csv.setObjectName(u"action_csv")
+        self.action_clear = QAction(main_window)
+        self.action_clear.setObjectName(u"action_clear")
         self.central_widget = QWidget(main_window)
         self.central_widget.setObjectName(u"centralwidget")
         self.gridLayout = QGridLayout(self.central_widget)
@@ -84,6 +87,7 @@ class UiMainWindow(object):
         self.menubar.addAction(self.menu_file.menuAction())
         self.menu_file.addAction(self.actionOpen)
         self.menu_file.addAction(self.menu_export_as.menuAction())
+        self.menu_file.addAction(self.action_clear)
         self.menu_export_as.addAction(self.action_csv)
 
         self.retranslate_ui(main_window)
@@ -92,7 +96,7 @@ class UiMainWindow(object):
 
         self.actionOpen.triggered.connect(lambda: self.open())
         self.action_csv.triggered.connect(lambda: self.csv())
-
+        self.action_clear.triggered.connect(lambda: self.clear())
     # setupUi
 
     def retranslate_ui(self, main_window):
@@ -106,6 +110,7 @@ class UiMainWindow(object):
         # endif // QT_CONFIG(shortcut)
         self.action_csv.setText(QCoreApplication.translate("MainWindow", u".csv", None))
         self.menu_file.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
+        self.action_clear.setText(QCoreApplication.translate("MainWindow", u"Clear current plots", None))
         self.menu_export_as.setTitle(QCoreApplication.translate("MainWindow", u"Export as ...", None))
 
     # retranslateUi
@@ -118,7 +123,6 @@ class UiMainWindow(object):
     def csv(self):
         # if list is empty
         if not self.logics.get_abfs():
-            print("empty")
             # TODO show dialog to tell that file would be empty
             message_box = QMessageBox()
             message_box.setText("Nothing to export.")
@@ -164,4 +168,10 @@ class UiMainWindow(object):
 
         self.sc.ax1.legend()
         self.sc.ax2.legend()
+        self.sc.draw()
+
+    def clear(self):
+        self.logics.clear()
+        self.sc.ax1.cla()
+        self.sc.ax2.cla()
         self.sc.draw()

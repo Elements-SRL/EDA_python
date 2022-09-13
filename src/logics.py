@@ -35,6 +35,9 @@ class Logics:
     def get_paths(self) -> List[str]:
         return [abf.abfFilePath for abf in self.abfs]
 
+    def clear(self):
+        self.abfs.clear()
+
     def open_abf_and_add_to_abfs(self, path_to_file):
         # if list is empty or if the path hasn't been already extracted,
         abf = pyabf.ABF(path_to_file)
@@ -63,7 +66,6 @@ class Logics:
                     self.open_abf_and_add_to_abfs(abs_path)
 
     # TODO does it work with multiple sweeps?
-
     def generate_header(self) -> List[str]:
         header = ["t[" + self.abfs[0].sweepUnitsX + "]"]
         for abf in self.get_abfs():
