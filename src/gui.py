@@ -145,7 +145,6 @@ class UiMainWindow(object):
             return
         self.sc.ax1.cla()
         self.sc.ax2.cla()
-        i = 0
         for abf in abfs:
             # it's better not to display multiple channels and multiple sweeps in the same plot,
             # implementation could change in future
@@ -159,7 +158,6 @@ class UiMainWindow(object):
                 label = logics.get_channel_name(abf)
                 self.sc.ax1.plot(abf.sweepX, abf.sweepY, label=label)
                 self.sc.ax2.plot(abf.sweepX, abf.sweepC, label=label)
-            i += 1
         # set label with the last abf read
         self.sc.ax1.set_ylabel(abf.sweepLabelY)
         self.sc.ax2.set_xlabel(abf.sweepLabelX)

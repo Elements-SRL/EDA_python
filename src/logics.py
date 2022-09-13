@@ -56,6 +56,7 @@ class Logics:
             self.open_edh(path_to_file)
         # else do nothing
 
+    # TODO read contiguous abfs
     def open_edh(self, path_to_file):
         dir_path = os.path.dirname(os.path.realpath(path_to_file))
         for root, dirs, files in os.walk(dir_path):
