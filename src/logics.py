@@ -4,7 +4,7 @@ import csv
 import numpy as np
 import pyabf
 from pyabf import ABF
-from typing import List
+from typing import List, Dict
 from os.path import exists
 
 
@@ -25,12 +25,20 @@ def get_channel_name_abbreviation(abf: ABF) -> str:
     return "ch" + get_channel_name(abf)[8:]
 
 
+# TODO maybe get_abfs should be get_visible_abfs and get_visible_abfs would be deleted
 class Logics:
     def __init__(self):
-        self.abfs: list[ABF] = []
+        self.abfs: List[ABF] = []
+        # receiver could be a list of ABF, so this could change in future
+        self.names_to_abfs: Dict[str, ABF] = {}
+        self.hidden_channels: List[str] = []
 
     def get_abfs(self) -> List[ABF]:
         return self.abfs
+
+    def get_visible_abfs(self):
+        dict_of_visible_abfs = {k: v for (k, v) in self.names_to_abfs.items() if k not in self.hidden_channels}
+        return list(dict_of_visible_abfs.values())
 
     def get_paths(self) -> List[str]:
         return [abf.abfFilePath for abf in self.abfs]
@@ -38,12 +46,16 @@ class Logics:
     def clear(self):
         self.abfs.clear()
 
+    def add_to_hidden_channels(self, channel_to_hide: str):
+        self.hidden_channels.append(channel_to_hide)
+
     def open_abf_and_add_to_abfs(self, path_to_file):
         # if list is empty or if the path hasn't been already extracted,
         abf = pyabf.ABF(path_to_file)
         # print(abf.headerText)
         if abf.abfFilePath not in self.get_paths():
             self.abfs.append(abf)
+            self.names_to_abfs[get_channel_name(abf)] = abf
 
     def open(self, path_to_file):
         # if path to file is not empty extract it
@@ -113,6 +125,7 @@ class Logics:
         return formatted_data
 
     def export(self, path_to_file):
+        # TODO export only visible_abfs?
         if not self.get_abfs():
             # TODO tell something to the user?
             return

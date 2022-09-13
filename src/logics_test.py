@@ -82,6 +82,24 @@ class LogicsTest(unittest.TestCase):
         time.sleep(1)
         self.assertTrue(os.path.exists(path_to_csv))
 
+    def test_hidden_abfs(self):
+        logics_test = logics.Logics()
+        logics_test.open(self.path_to_abf1)
+        logics_test.open(self.path_to_abf2)
+        self.assertFalse(logics_test.hidden_channels)
+        ch1 = "channel 1"
+        logics_test.add_to_hidden_channels(ch1)
+        self.assertTrue(logics_test.hidden_channels[0] == ch1)
+
+    def test_get_visible_abfs(self):
+        logics_test = logics.Logics()
+        logics_test.open(self.path_to_abf1)
+        logics_test.open(self.path_to_abf2)
+        logics_test.get_visible_abfs()
+        self.assertListEqual(logics_test.get_abfs(), logics_test.get_visible_abfs())
+        logics_test.add_to_hidden_channels("channel 1")
+        self.assertTrue(len(logics_test.get_visible_abfs()) == 1)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -140,7 +140,7 @@ class UiMainWindow(object):
         self.logics.export(path_to_file)
 
     def update_plot(self):
-        abfs = self.logics.get_abfs()
+        abfs = self.logics.get_visible_abfs()
         if len(abfs) <= 0:
             return
         self.sc.ax1.cla()
