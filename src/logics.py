@@ -21,6 +21,7 @@ def get_channel_name(abf: ABF) -> str:
 
 
 def get_channel_name_abbreviation(abf: ABF) -> str:
+    # TODO ch should be a constant
     return "ch" + get_channel_name(abf)[8:]
 
 
@@ -55,6 +56,7 @@ class Logics:
     def open_edh(self, path_to_file):
         dir_path = os.path.dirname(os.path.realpath(path_to_file))
         for root, dirs, files in os.walk(dir_path):
+            files.sort()
             for file_name in files:
                 if file_name.endswith(".abf"):
                     abs_path = dir_path + os.sep + file_name
@@ -70,9 +72,6 @@ class Logics:
         return header
 
     # TODO does it work with multiple sweeps?
-    # TODO when exporting files the header is
-    # t, ch1,vc1, ch3, vc3 ...
-    # check that each row is correctly placed under the right channel
     def generate_data(self) -> List[List[int]]:
         # take the time from the first abf
         time = self.get_abfs()[0].sweepX
@@ -115,6 +114,8 @@ class Logics:
             # TODO tell something to the user?
             return
         #  TODO check if there is another file with the same name and change the name accordingly
+        if os.path.exists(path_to_file):
+            path_to_file = path_to_file
         # exporting csv files
         with open(path_to_file, 'w') as f:
             # create the csv writer
