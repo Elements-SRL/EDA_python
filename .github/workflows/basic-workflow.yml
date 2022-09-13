@@ -129,3 +129,4 @@ jobs:
           files: |
             dist/eda_linux
             dist/eda_macos
+            dist/eda_win.exe
