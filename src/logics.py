@@ -4,7 +4,7 @@ import csv
 import numpy as np
 import pyabf
 from pyabf import ABF
-from typing import List, Dict
+from typing import List, Dict, Set
 from os.path import exists
 
 
@@ -31,7 +31,7 @@ class Logics:
         self.abfs: List[ABF] = []
         # receiver could be a list of ABF, so this could change in future
         self.names_to_abfs: Dict[str, ABF] = {}
-        self.hidden_channels: List[str] = []
+        self.hidden_channels: Set[str] = set()
 
     def get_abfs(self) -> List[ABF]:
         return self.abfs
@@ -47,7 +47,7 @@ class Logics:
         self.abfs.clear()
 
     def add_to_hidden_channels(self, channel_to_hide: str):
-        self.hidden_channels.append(channel_to_hide)
+        self.hidden_channels.add(channel_to_hide)
 
     def open_abf_and_add_to_abfs(self, path_to_file):
         # if list is empty or if the path hasn't been already extracted,
@@ -140,3 +140,15 @@ class Logics:
             writer.writerow(self.generate_header())
             data = self.generate_data()
             writer.writerows(data)
+
+    def get_hidden_channels(self):
+        return list(self.hidden_channels).sort()
+
+    def toggle_visibility(self, channel_name: str):
+        # if self.hidden_channels is None:
+        #     self.hidden_channels = set(channel_name)
+        #     return
+        if channel_name not in self.hidden_channels:
+            self.hidden_channels.add(channel_name)
+        else:
+            self.hidden_channels.remove(channel_name)

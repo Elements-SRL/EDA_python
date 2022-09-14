@@ -91,14 +91,24 @@ class LogicsTest(unittest.TestCase):
         logics_test.add_to_hidden_channels(ch1)
         self.assertTrue(logics_test.hidden_channels[0] == ch1)
 
+    def test_toggle_visibility(self):
+        logics_test = logics.Logics()
+        ch1 = "ch1"
+        ch2 = "ch2"
+        logics_test.toggle_visibility(ch1)
+        logics_test.toggle_visibility(ch2)
+        self.assertTrue(ch1 in logics_test.hidden_channels)
+        logics_test.toggle_visibility(ch1)
+        self.assertTrue(ch1 not in logics_test.hidden_channels)
+
     def test_get_visible_abfs(self):
         logics_test = logics.Logics()
         logics_test.open(self.path_to_abf1)
         logics_test.open(self.path_to_abf2)
-        logics_test.get_visible_abfs()
-        self.assertListEqual(logics_test.get_abfs(), logics_test.get_visible_abfs())
-        logics_test.add_to_hidden_channels("channel 1")
-        self.assertTrue(len(logics_test.get_visible_abfs()) == 1)
+        self.assertTrue(len(logics_test.get_visible_abfs()) == 2)
+        for ch in logics_test.names_to_abfs:
+            logics_test.toggle_visibility(ch)
+        self.assertTrue(len(logics_test.get_visible_abfs()) == 0)
 
 
 if __name__ == '__main__':
