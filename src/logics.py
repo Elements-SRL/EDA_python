@@ -73,6 +73,7 @@ class Logics:
         dir_path = os.path.dirname(os.path.realpath(path_to_file))
         for root, dirs, files in os.walk(dir_path):
             files.sort()
+            # TODO manage file composed of multiple files!!
             for file_name in files:
                 if file_name.endswith(".abf"):
                     abs_path = dir_path + os.sep + file_name
@@ -152,3 +153,9 @@ class Logics:
             self.hidden_channels.add(channel_name)
         else:
             self.hidden_channels.remove(channel_name)
+
+    def set_hidden_channel(self, channel: str, visible: bool):
+        if visible and channel in self.hidden_channels:
+            self.hidden_channels.remove(channel)
+        if not visible and channel not in self.hidden_channels:
+            self.hidden_channels.add(channel)

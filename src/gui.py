@@ -1,7 +1,10 @@
+from typing import Set
+
 import matplotlib
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication
-from PyQt5.QtWidgets import QWidget, QMenuBar, QStatusBar, QMenu, QAction, QFileDialog, QGridLayout, QFrame, QMessageBox
+from PyQt5.QtWidgets import QWidget, QMenuBar, QStatusBar, QMenu, QAction, QFileDialog, QGridLayout, QFrame, \
+    QMessageBox, QPushButton, QVBoxLayout, QLabel, QCheckBox
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 import logics
@@ -19,10 +22,35 @@ class MplCanvas(FigureCanvasQTAgg):
         super(MplCanvas, self).__init__(self.fig)
 
 
+class AnotherWindow(QWidget):
+    """
+    This "window" is a QWidget. If it has no parent, it
+    will appear as a free-floating window as we want.
+    """
+
+    def __init__(self):
+        super().__init__()
+        layout = QVBoxLayout()
+        self.label = QLabel("Another Window")
+        layout.addWidget(self.label)
+        self.setLayout(layout)
+
+
+def show_empty_abfs_dialog(title, text, informative_text):
+    # TODO show dialog to tell that file would be empty
+    message_box = QMessageBox()
+    message_box.setText(text)
+    message_box.setIcon(QMessageBox.Information)
+    message_box.setWindowTitle(title)
+    message_box.setInformativeText(informative_text)
+    message_box.exec()
+
+
 class UiMainWindow(object):
     logics = None
 
     def __init__(self):
+        self.w = None
         self.action_clear = None
         self.sc = None
         self.toolbar = None
@@ -65,7 +93,9 @@ class UiMainWindow(object):
 
         plot_layout = QtWidgets.QVBoxLayout()
         self.gridLayout.addLayout(plot_layout, 0, 0, 0, 0)
-
+        filters_button = QPushButton()
+        filters_button.setText("Open filters")
+        plot_layout.addWidget(filters_button)
         toolbar = NavigationToolbar(self.sc, main_window)
         plot_layout.addWidget(toolbar)
         plot_layout.addWidget(self.sc)
@@ -96,6 +126,8 @@ class UiMainWindow(object):
         self.actionOpen.triggered.connect(lambda: self.open())
         self.action_csv.triggered.connect(lambda: self.csv())
         self.action_clear.triggered.connect(lambda: self.clear())
+        filters_button.clicked.connect(self.open_filters_window)
+
     # setupUi
 
     def retranslate_ui(self, main_window):
@@ -122,29 +154,24 @@ class UiMainWindow(object):
     def csv(self):
         # if list is empty
         if not self.logics.get_abfs():
-            # TODO show dialog to tell that file would be empty
-            message_box = QMessageBox()
-            message_box.setText("Nothing to export.")
-            message_box.setIcon(QMessageBox.Information)
-            message_box.setWindowTitle("Export csv")
-            message_box.setInformativeText("Open a file and try again.")
-            message_box.exec()
+            show_empty_abfs_dialog("Nothing to export.", "Export csv", "Open a file and try again.")
             return
         # TODO hint or choose a default name?
         path_to_file, _ = QFileDialog.getSaveFileName(None, 'Save as', filter="Csv files(*.csv)")
         if not str(path_to_file).endswith(".csv"):
-            path_to_file = path_to_file+".csv"
+            path_to_file = path_to_file + ".csv"
 
         print("exporting ...")
         # TODO show progress_bar (?)
         self.logics.export(path_to_file)
 
     def update_plot(self):
-        abfs = self.logics.get_visible_abfs()
-        if len(abfs) <= 0:
-            return
         self.sc.ax1.cla()
         self.sc.ax2.cla()
+        abfs = self.logics.get_visible_abfs()
+        if len(abfs) <= 0:
+            self.sc.draw()
+            return
         for abf in abfs:
             # it's better not to display multiple channels and multiple sweeps in the same plot,
             # implementation could change in future
@@ -172,3 +199,31 @@ class UiMainWindow(object):
         self.sc.ax1.cla()
         self.sc.ax2.cla()
         self.sc.draw()
+
+    def open_filters_window(self):
+        if not self.logics.get_abfs():
+            show_empty_abfs_dialog("Empty window", "Nothing to filter", "No abf has been opened.")
+            return
+        filters_layout = QVBoxLayout()
+        if self.w is None:
+            self.w = QWidget()
+            self.w.setWindowTitle("Views")
+            self.w.setMinimumSize(200, 300)
+            self.w.setLayout(filters_layout)
+        buttons = set()
+        filters_layout.deleteLater()
+        for ch in self.logics.names_to_abfs.keys():
+            b = QCheckBox(ch)
+            filters_layout.addWidget(b)
+            if ch not in self.logics.hidden_channels:
+                b.setChecked(True)
+            buttons.add(b)
+        apply_button = QPushButton("Show selected channels")
+        apply_button.clicked.connect(lambda: self.apply_filters(buttons))
+        filters_layout.addWidget(apply_button)
+        self.w.show()
+
+    def apply_filters(self, buttons: Set[QPushButton]):
+        for b in buttons:
+            self.logics.set_hidden_channel(b.text(), b.isChecked())
+        self.update_plot()
