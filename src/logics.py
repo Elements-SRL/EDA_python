@@ -97,10 +97,11 @@ class Logics:
     # TODO read contiguous abfs
     def open_edh(self, path_to_file):
         dir_path = os.path.dirname(os.path.realpath(path_to_file))
-        file_paths = [file_path for file_path in os.listdir(dir_path) if file_path.endswith(".abf")]
-        file_paths.sort()
-        cleaned_file_paths = clean_abf_ids(file_paths)
-        for f in file_paths:
+        file_names = [file_path for file_path in os.listdir(dir_path) if file_path.endswith(".abf")]
+        file_names.sort()
+        cleaned_file_paths = clean_abf_ids(file_names)
+
+        for f in file_names:
             # TODO manage file composed of multiple files!!
             abs_path = dir_path + os.sep + f
             self.open_abf_and_add_to_abfs(abs_path)
