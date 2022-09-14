@@ -8,6 +8,9 @@ class LogicsTest(unittest.TestCase):
     path_to_abf1 = "res/Data/Data_CH001_000.abf"
     path_to_abf2 = "res/Data/Data_CH002_000.abf"
 
+    path_to_contiguous_abf1 = "res/Data/temp_CH001_000.abf"
+    path_to_contiguous_abf2 = "res/Data/temp_CH001_001.abf"
+    path_to_contiguous_abf3 = "res/Data/temp_CH001_002.abf"
     def test_open_first_abf(self):
         logics_test = logics.Logics()
         logics_test.open(self.path_to_abf1)
@@ -110,6 +113,24 @@ class LogicsTest(unittest.TestCase):
             logics_test.toggle_visibility(ch)
         self.assertTrue(len(logics_test.get_visible_abfs()) == 0)
 
+    def test_open_contiguous_abf(self):
+        logics_test = logics.Logics()
+        logics_test.open(self.path_to_contiguous_abf1)
+        logics_test.open(self.path_to_contiguous_abf2)
+        logics_test.open(self.path_to_contiguous_abf3)
+        total_sweepX = 0
+        total_sweepY = 0
+        total_sweepC = 0
+        for abf in logics_test.get_abfs():
+            total_sweepX += len(abf.sweepX)
+            total_sweepY += len(abf.sweepY)
+            total_sweepC += len(abf.sweepC)
+        logics_test.clear()
+
+        logics_test.open_contiguous_abf([self.path_to_contiguous_abf1, self.path_to_contiguous_abf2, self.path_to_contiguous_abf3])
+        self.assertTrue(total_sweepX == len(logics_test.abfs[0].sweepX))
+        self.assertTrue(total_sweepY == len(logics_test.abfs[0].sweepY))
+        self.assertTrue(total_sweepC == len(logics_test.abfs[0].sweepC))
 
 if __name__ == '__main__':
     unittest.main()

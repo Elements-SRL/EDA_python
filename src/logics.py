@@ -9,9 +9,8 @@ from os.path import exists
 
 
 def get_abf_index(abf: ABF) -> str:
-    print(abf.abfID)
+    # print(abf.abfID)
     channel_name_index = abf.abfID.find("_CH")+1
-    # index = abf.abfID.casefold()[7:-4]
     # 2 = CH
     index = abf.abfID.casefold()[channel_name_index+2:-4]
     while index.startswith("0"):
@@ -53,13 +52,26 @@ class Logics:
     def add_to_hidden_channels(self, channel_to_hide: str):
         self.hidden_channels.add(channel_to_hide)
 
-    def open_abf_and_add_to_abfs(self, path_to_file):
-        # if list is empty or if the path hasn't been already extracted,
-        abf = pyabf.ABF(path_to_file)
-        # print(abf.headerText)
+    def add_to_abs(self, abf):
         if abf.abfFilePath not in self.get_paths():
             self.abfs.append(abf)
             self.names_to_abfs[get_channel_name(abf)] = abf
+
+    def open_abf_and_add_to_abfs(self, path_to_file):
+        abf = pyabf.ABF(path_to_file)
+        self.add_to_abs(abf)
+        # print(abf.headerText)
+
+    def open_contiguous_abf(self, path_to_files_of_same_channels: List[str]):
+        path_to_files_of_same_channels.sort()
+        abf = pyabf.ABF(path_to_files_of_same_channels.pop())
+        # merge useful information
+        for p in path_to_files_of_same_channels:
+            other_abf = pyabf.ABF(p)
+            abf.sweepY = np.concatenate((abf.sweepY, other_abf.sweepY), axis=None)
+            abf.sweepX = np.concatenate((abf.sweepX, other_abf.sweepX), axis=None)
+            abf.sweepC = np.concatenate((abf.sweepC, other_abf.sweepC), axis=None)
+        self.add_to_abs(abf)
 
     def open(self, path_to_file):
         # if path to file is not empty extract it
