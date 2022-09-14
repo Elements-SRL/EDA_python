@@ -132,5 +132,17 @@ class LogicsTest(unittest.TestCase):
         self.assertTrue(total_sweepY == len(logics_test.abfs[0].sweepY))
         self.assertTrue(total_sweepC == len(logics_test.abfs[0].sweepC))
 
+    def test_clean_file_paths(self):
+        logics_test = logics.Logics()
+        logics_test.open(self.path_to_contiguous_abf1)
+        logics_test.open(self.path_to_contiguous_abf2)
+        logics_test.open(self.path_to_contiguous_abf3)
+        file_names = [abf.abfID for abf in logics_test.get_abfs()]
+        cleaned_file_paths = logics.clean_abf_ids(file_names)
+        self.assertTrue(cleaned_file_paths.pop() == "CH001_002")
+        self.assertTrue(cleaned_file_paths.pop() == "CH001_001")
+        self.assertTrue(cleaned_file_paths.pop() == "CH001_000")
+
+
 if __name__ == '__main__':
     unittest.main()

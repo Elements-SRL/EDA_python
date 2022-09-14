@@ -9,7 +9,6 @@ from os.path import exists
 
 
 def get_abf_index(abf: ABF) -> str:
-    # print(abf.abfID)
     channel_name_index = abf.abfID.find("_CH")+1
     # 2 = CH
     index = abf.abfID.casefold()[channel_name_index+2:-4]
@@ -26,6 +25,16 @@ def get_channel_name(abf: ABF) -> str:
 def get_channel_name_abbreviation(abf: ABF) -> str:
     # TODO ch should be a constant
     return "ch" + get_channel_name(abf)[8:]
+
+
+# TODO Is it right to make something or return the same list?
+
+def clean_abf_ids(abf_ids: List[str]) -> List[str]:
+    if abf_ids:
+        chars_to_be_removed = abf_ids[0].find("_CH")+1
+        return list(map(lambda fp: fp[chars_to_be_removed:], abf_ids))
+    else:
+        return abf_ids
 
 
 # TODO maybe get_abfs should be get_visible_abfs and get_visible_abfs would be deleted
@@ -62,6 +71,7 @@ class Logics:
         self.add_to_abs(abf)
         # print(abf.headerText)
 
+    # TODO maybe change other stuff like range of time ecc
     def open_contiguous_abf(self, path_to_files_of_same_channels: List[str]):
         path_to_files_of_same_channels.sort()
         abf = pyabf.ABF(path_to_files_of_same_channels.pop())
@@ -89,6 +99,7 @@ class Logics:
         dir_path = os.path.dirname(os.path.realpath(path_to_file))
         file_paths = [file_path for file_path in os.listdir(dir_path) if file_path.endswith(".abf")]
         file_paths.sort()
+        cleaned_file_paths = clean_abf_ids(file_paths)
         for f in file_paths:
             # TODO manage file composed of multiple files!!
             abs_path = dir_path + os.sep + f
@@ -161,9 +172,6 @@ class Logics:
         return list(self.hidden_channels).sort()
 
     def toggle_visibility(self, channel_name: str):
-        # if self.hidden_channels is None:
-        #     self.hidden_channels = set(channel_name)
-        #     return
         if channel_name not in self.hidden_channels:
             self.hidden_channels.add(channel_name)
         else:
