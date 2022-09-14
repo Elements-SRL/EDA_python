@@ -9,7 +9,11 @@ from os.path import exists
 
 
 def get_abf_index(abf: ABF) -> str:
-    index = abf.abfID.casefold()[7:-4]
+    print(abf.abfID)
+    channel_name_index = abf.abfID.find("_CH")+1
+    # index = abf.abfID.casefold()[7:-4]
+    # 2 = CH
+    index = abf.abfID.casefold()[channel_name_index+2:-4]
     while index.startswith("0"):
         index = index[1:]
     return index

@@ -89,7 +89,7 @@ class LogicsTest(unittest.TestCase):
         self.assertFalse(logics_test.hidden_channels)
         ch1 = "channel 1"
         logics_test.add_to_hidden_channels(ch1)
-        self.assertTrue(logics_test.hidden_channels[0] == ch1)
+        self.assertTrue(ch1 in logics_test.hidden_channels)
 
     def test_toggle_visibility(self):
         logics_test = logics.Logics()
