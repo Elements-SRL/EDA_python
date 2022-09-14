@@ -75,13 +75,12 @@ class Logics:
     # TODO read contiguous abfs
     def open_edh(self, path_to_file):
         dir_path = os.path.dirname(os.path.realpath(path_to_file))
-        for root, dirs, files in os.walk(dir_path):
-            files.sort()
+        file_paths = [file_path for file_path in os.listdir(dir_path) if file_path.endswith(".abf")]
+        file_paths.sort()
+        for f in file_paths:
             # TODO manage file composed of multiple files!!
-            for file_name in files:
-                if file_name.endswith(".abf"):
-                    abs_path = dir_path + os.sep + file_name
-                    self.open_abf_and_add_to_abfs(abs_path)
+            abs_path = dir_path + os.sep + f
+            self.open_abf_and_add_to_abfs(abs_path)
 
     # TODO does it work with multiple sweeps?
     def generate_header(self) -> List[str]:
