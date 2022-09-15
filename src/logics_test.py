@@ -2,8 +2,6 @@ import os
 import time
 import unittest
 
-import numpy as np
-
 import logics
 
 
@@ -144,16 +142,15 @@ class LogicsTest(unittest.TestCase):
     def test_open_contiguous_abfs(self):
         logics_test = logics.Logics()
         logics_test.open(self.path_to_contiguous_edh)
-        print(len(logics_test.get_abfs()))
         self.assertTrue(len(logics_test.get_abfs()) == 4)
 
-    def test_concat_data(self):
+    def test_export_contiguous_abfs(self):
         logics_test = logics.Logics()
-        logics_test.open(self.path_to_abf1)
-        abf = logics_test.get_abfs()[0]
-        other_abf = logics_test.get_abfs()[0]
-        other_data = [np.concatenate((d, od), axis=None) for d, od in (abf.data, other_abf.data)]
-        self.assertTrue(len(other_data[0]) == len(abf.data[0])*2)
+        logics_test.open(self.path_to_contiguous_edh)
+        path_to_csv_of_contiguous_abfs = "res/ContiguousData/test_export.csv"
+        logics_test.export(path_to_csv_of_contiguous_abfs)
+        time.sleep(1)
+        self.assertTrue(os.path.exists(path_to_csv_of_contiguous_abfs))
 
 
 if __name__ == '__main__':
