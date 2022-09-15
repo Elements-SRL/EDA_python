@@ -18,11 +18,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Find every subdirectory
         run: |
-          cd src
-          for D in *; do
-              if [ -d "${D}" ]; then
-                  echo "${D}"   # your processing here
-              fi
+          cd src/res/Data
+          for f in *; do
+            echo "${f}"   # your processing here
           done
 
       - name: Install dependencies
