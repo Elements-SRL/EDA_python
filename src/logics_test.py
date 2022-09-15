@@ -1,6 +1,7 @@
 import os
 import time
 import unittest
+from builtins import print
 
 import logics
 
@@ -14,6 +15,8 @@ class LogicsTest(unittest.TestCase):
     path_to_contiguous_abf3 = "res/ContiguousData/temp_CH001_002.abf"
 
     path_to_contiguous_edh = "res/ContiguousData/temp.edh"
+
+    path_to_episodic_edh = "res/EpisodicData/episodic several sweeps.abf"
 
     def test_open_first_abf(self):
         logics_test = logics.Logics()
@@ -151,6 +154,28 @@ class LogicsTest(unittest.TestCase):
         logics_test.export(path_to_csv_of_contiguous_abfs)
         time.sleep(1)
         self.assertTrue(os.path.exists(path_to_csv_of_contiguous_abfs))
+
+    def test_episodic_data(self):
+        logics_test = logics.Logics()
+        logics_test.open(self.path_to_episodic_edh)
+        abf = logics_test.get_abfs().pop()
+        # print(abf.headerText)
+        # print(abf.sweepX)
+        # print(abf.sweepY)
+        # print(abf.sweepCount)
+        # print(abf.data)
+        print(abf.sampleRate)
+        print(abf.sweepIntervalSec)
+        print(abf.sampleRate*abf.sweepIntervalSec)
+        total_fields = abf.sampleRate*abf.sweepIntervalSec
+        for ch in range(abf.channelCount):
+            for i in range(abf.sweepCount):
+                print(ch, i)
+                abf.setSweep(sweepNumber=i, channel=ch)
+                print(len(abf.sweepY))
+        # print(abf.sampleRate)
+        # print(abf.sweepIntervalSec)
+        # print(abf.sampleRate*abf.sweepIntervalSec)
 
 
 if __name__ == '__main__':
