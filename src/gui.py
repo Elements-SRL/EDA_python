@@ -170,6 +170,7 @@ class UiMainWindow(object):
         self.sc.ax2.cla()
         abfs = self.logics.get_visible_abfs()
         if len(abfs) <= 0:
+            # clear plot
             self.sc.draw()
             return
         for abf in abfs:
@@ -184,7 +185,9 @@ class UiMainWindow(object):
             else:
                 label = logics.get_channel_name(abf)
                 self.sc.ax1.plot(abf.sweepX, abf.sweepY, label=label)
-                self.sc.ax2.plot(abf.sweepX, abf.sweepC, label=label)
+                print(len(abf.sweepY))
+                self.sc.ax2.plot(abf.sweepX, abf.data[1], label=label)
+                print(len(abf.data[1]))
         # set label with the last abf read
         self.sc.ax1.set_ylabel(abf.sweepLabelY)
         self.sc.ax2.set_xlabel(abf.sweepLabelX)

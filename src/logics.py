@@ -8,10 +8,16 @@ from typing import List, Dict, Set
 from os.path import exists
 
 
+def contiguous_strategy(file_names: List[str]):
+    prefix_length = file_names[0].find("_CH") + 7
+    prefixes = {f[:prefix_length] for f in file_names}
+    return prefixes
+
+
 def get_abf_index(abf: ABF) -> str:
-    channel_name_index = abf.abfID.find("_CH")+1
+    channel_name_index = abf.abfID.find("_CH") + 1
     # 2 = CH
-    index = abf.abfID.casefold()[channel_name_index+2:-4]
+    index = abf.abfID.casefold()[channel_name_index + 2:-4]
     while index.startswith("0"):
         index = index[1:]
     return index
@@ -31,13 +37,22 @@ def get_channel_name_abbreviation(abf: ABF) -> str:
 
 def clean_abf_ids(abf_ids: List[str]) -> List[str]:
     if abf_ids:
-        chars_to_be_removed = abf_ids[0].find("_CH")+1
+        chars_to_be_removed = abf_ids[0].find("_CH") + 1
         return list(map(lambda fp: fp[chars_to_be_removed:], abf_ids))
     else:
         return abf_ids
 
 
+# if there are file contiguous some file must end with
+def are_files_contiguous(file_names: List[str]) -> bool:
+    for f in file_names:
+        if not f.endswith("000.abf"):
+            return True
+    return False
+
+
 # TODO maybe get_abfs should be get_visible_abfs and get_visible_abfs would be deleted
+
 class Logics:
     def __init__(self):
         self.abfs: List[ABF] = []
@@ -48,7 +63,7 @@ class Logics:
     def get_abfs(self) -> List[ABF]:
         return self.abfs
 
-    def get_visible_abfs(self):
+    def get_visible_abfs(self) -> List[ABF]:
         dict_of_visible_abfs = {k: v for (k, v) in self.names_to_abfs.items() if k not in self.hidden_channels}
         return list(dict_of_visible_abfs.values())
 
@@ -57,6 +72,8 @@ class Logics:
 
     def clear(self):
         self.abfs.clear()
+        self.names_to_abfs.clear()
+        self.hidden_channels.clear()
 
     def add_to_hidden_channels(self, channel_to_hide: str):
         self.hidden_channels.add(channel_to_hide)
@@ -74,13 +91,16 @@ class Logics:
     # TODO maybe change other stuff like range of time ecc
     def open_contiguous_abf(self, path_to_files_of_same_channels: List[str]):
         path_to_files_of_same_channels.sort()
-        abf = pyabf.ABF(path_to_files_of_same_channels.pop())
+        first_file = path_to_files_of_same_channels.pop(0)
+        abf = pyabf.ABF(first_file)
         # merge useful information
         for p in path_to_files_of_same_channels:
             other_abf = pyabf.ABF(p)
             abf.sweepY = np.concatenate((abf.sweepY, other_abf.sweepY), axis=None)
-            abf.sweepX = np.concatenate((abf.sweepX, other_abf.sweepX), axis=None)
+            # time starts every time from zero
+            abf.sweepX = np.concatenate((abf.sweepX, other_abf.sweepX+abf.sweepX[-1:]), axis=None)
             abf.sweepC = np.concatenate((abf.sweepC, other_abf.sweepC), axis=None)
+            abf.data = [np.concatenate((d, od), axis=None) for d, od in zip(abf.data, other_abf.data)]
         self.add_to_abs(abf)
 
     def open(self, path_to_file):
@@ -98,13 +118,21 @@ class Logics:
     def open_edh(self, path_to_file):
         dir_path = os.path.dirname(os.path.realpath(path_to_file))
         file_names = [file_path for file_path in os.listdir(dir_path) if file_path.endswith(".abf")]
-        file_names.sort()
-        cleaned_file_paths = clean_abf_ids(file_names)
-
-        for f in file_names:
-            # TODO manage file composed of multiple files!!
-            abs_path = dir_path + os.sep + f
-            self.open_abf_and_add_to_abfs(abs_path)
+        if are_files_contiguous(file_names):
+            # strategy for contiguous files
+            # prefix length = prefix + _CHXXX_ = prefix+7
+            prefix_length = file_names[0].find("_CH") + 7
+            prefixes = {f[:prefix_length] for f in file_names}
+            for p in prefixes:
+                batch_of_files = list(filter(lambda f_name: p in f_name, file_names))
+                complete_batch_of_files = list(map(lambda f: dir_path+os.sep+f, batch_of_files))
+                self.open_contiguous_abf(complete_batch_of_files)
+        else:
+            file_names.sort()
+            cleaned_file_paths = clean_abf_ids(file_names)
+            for f in file_names:
+                abs_path = dir_path + os.sep + f
+                self.open_abf_and_add_to_abfs(abs_path)
 
     # TODO does it work with multiple sweeps?
     def generate_header(self) -> List[str]:
@@ -115,6 +143,7 @@ class Logics:
         return header
 
     # TODO does it work with multiple sweeps?
+    # TODO transform data in exponential form
     def generate_data(self) -> List[List[int]]:
         # take the time from the first abf
         time = self.get_abfs()[0].sweepX
@@ -124,7 +153,7 @@ class Logics:
             # ch_i
             data.append(abf.sweepY)
             # vC_i
-            data.append(abf.sweepC)
+            data.append(abf.data[1])
 
         # create matrix with all data
         arrays = np.array(data)

@@ -1,6 +1,9 @@
 import os
 import time
 import unittest
+
+import numpy as np
+
 import logics
 
 
@@ -11,6 +14,9 @@ class LogicsTest(unittest.TestCase):
     path_to_contiguous_abf1 = "res/Data/temp_CH001_000.abf"
     path_to_contiguous_abf2 = "res/Data/temp_CH001_001.abf"
     path_to_contiguous_abf3 = "res/Data/temp_CH001_002.abf"
+
+    path_to_contiguous_edh = "res/ContiguousData/temp.edh"
+
     def test_open_first_abf(self):
         logics_test = logics.Logics()
         logics_test.open(self.path_to_abf1)
@@ -142,6 +148,23 @@ class LogicsTest(unittest.TestCase):
         self.assertTrue(cleaned_file_paths.pop() == "CH001_002")
         self.assertTrue(cleaned_file_paths.pop() == "CH001_001")
         self.assertTrue(cleaned_file_paths.pop() == "CH001_000")
+
+    def test_are_abfs_contiguous(self):
+        self.assertTrue(logics.are_files_contiguous([self.path_to_contiguous_abf1, self.path_to_contiguous_abf2, self.path_to_contiguous_abf3]))
+
+    def test_open_contiguous_abfs(self):
+        logics_test = logics.Logics()
+        logics_test.open(self.path_to_contiguous_edh)
+        print(len(logics_test.get_abfs()))
+        self.assertTrue(len(logics_test.get_abfs()) == 4)
+
+    def test_concat_data(self):
+        logics_test = logics.Logics()
+        logics_test.open(self.path_to_abf1)
+        abf = logics_test.get_abfs()[0]
+        other_abf = logics_test.get_abfs()[0]
+        other_data = [np.concatenate((d, od), axis=None) for d, od in (abf.data, other_abf.data)]
+        self.assertTrue(len(other_data[0]) == len(abf.data[0])*2)
 
 
 if __name__ == '__main__':
