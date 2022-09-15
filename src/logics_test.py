@@ -11,9 +11,9 @@ class LogicsTest(unittest.TestCase):
     path_to_abf1 = "res/Data/Data_CH001_000.abf"
     path_to_abf2 = "res/Data/Data_CH002_000.abf"
 
-    path_to_contiguous_abf1 = "res/Data/temp_CH001_000.abf"
-    path_to_contiguous_abf2 = "res/Data/temp_CH001_001.abf"
-    path_to_contiguous_abf3 = "res/Data/temp_CH001_002.abf"
+    path_to_contiguous_abf1 = "res/ContiguousData/temp_CH001_000.abf"
+    path_to_contiguous_abf2 = "res/ContiguousData/temp_CH001_001.abf"
+    path_to_contiguous_abf3 = "res/ContiguousData/temp_CH001_002.abf"
 
     path_to_contiguous_edh = "res/ContiguousData/temp.edh"
 
@@ -137,17 +137,6 @@ class LogicsTest(unittest.TestCase):
         self.assertTrue(total_sweepX == len(logics_test.abfs[0].sweepX))
         self.assertTrue(total_sweepY == len(logics_test.abfs[0].sweepY))
         self.assertTrue(total_sweepC == len(logics_test.abfs[0].sweepC))
-
-    def test_clean_file_paths(self):
-        logics_test = logics.Logics()
-        logics_test.open(self.path_to_contiguous_abf1)
-        logics_test.open(self.path_to_contiguous_abf2)
-        logics_test.open(self.path_to_contiguous_abf3)
-        file_names = [abf.abfID for abf in logics_test.get_abfs()]
-        cleaned_file_paths = logics.clean_abf_ids(file_names)
-        self.assertTrue(cleaned_file_paths.pop() == "CH001_002")
-        self.assertTrue(cleaned_file_paths.pop() == "CH001_001")
-        self.assertTrue(cleaned_file_paths.pop() == "CH001_000")
 
     def test_are_abfs_contiguous(self):
         self.assertTrue(logics.are_files_contiguous([self.path_to_contiguous_abf1, self.path_to_contiguous_abf2, self.path_to_contiguous_abf3]))

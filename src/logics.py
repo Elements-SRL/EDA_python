@@ -32,17 +32,6 @@ def get_channel_name_abbreviation(abf: ABF) -> str:
     # TODO ch should be a constant
     return "ch" + get_channel_name(abf)[8:]
 
-
-# TODO Is it right to make something or return the same list?
-
-def clean_abf_ids(abf_ids: List[str]) -> List[str]:
-    if abf_ids:
-        chars_to_be_removed = abf_ids[0].find("_CH") + 1
-        return list(map(lambda fp: fp[chars_to_be_removed:], abf_ids))
-    else:
-        return abf_ids
-
-
 # if there are file contiguous some file must end with
 def are_files_contiguous(file_names: List[str]) -> bool:
     for f in file_names:
@@ -129,7 +118,6 @@ class Logics:
                 self.open_contiguous_abf(complete_batch_of_files)
         else:
             file_names.sort()
-            cleaned_file_paths = clean_abf_ids(file_names)
             for f in file_names:
                 abs_path = dir_path + os.sep + f
                 self.open_abf_and_add_to_abfs(abs_path)
