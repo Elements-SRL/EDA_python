@@ -161,7 +161,6 @@ class UiMainWindow(object):
         if not str(path_to_file).endswith(".csv"):
             path_to_file = path_to_file + ".csv"
 
-        print("exporting ...")
         # TODO show progress_bar (?)
         self.logics.export(path_to_file)
 
@@ -187,7 +186,7 @@ class UiMainWindow(object):
                     self.sc.ax2.plot(sweepX_ch1.pop(0), sweepY_ch1.pop(1), label=multi_sweep_label)
                     sweep_label += 1
             else:
-                label = logics.get_channel_name(abf)
+                label = logics.channel_name(abf)
                 self.sc.ax1.plot(abf.sweepX, abf.sweepY, label=label)
                 self.sc.ax2.plot(abf.sweepX, abf.data[1], label=label)
         # set label with the last abf read
@@ -228,7 +227,7 @@ class UiMainWindow(object):
         filters_layout.addWidget(apply_button)
         self.w.show()
 
-    def apply_filters(self, buttons: Set[QPushButton]):
+    def apply_filters(self, buttons: Set[QCheckBox]):
         for b in buttons:
-            self.logics.set_hidden_channel(b.text(), b.isChecked())
+            self.logics.set_channel_visibility(b.text(), b.isChecked())
         self.update_plot()

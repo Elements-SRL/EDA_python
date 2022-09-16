@@ -9,12 +9,6 @@ from typing import List, Dict, Set
 from os.path import exists
 
 
-def contiguous_strategy(file_names: List[str]):
-    prefix_length = file_names[0].find("_CH") + 7
-    prefixes = {f[:prefix_length] for f in file_names}
-    return prefixes
-
-
 def get_abf_index(abf: ABF) -> str:
     channel_name_index = abf.abfID.find("_CH") + 1
     # 2 = CH
@@ -24,14 +18,14 @@ def get_abf_index(abf: ABF) -> str:
     return index
 
 
-def get_channel_name(abf: ABF) -> str:
+def channel_name(abf: ABF) -> str:
     # TODO channel should be a constant
     return "channel " + get_abf_index(abf)
 
 
-def get_channel_name_abbreviation(abf: ABF) -> str:
+def channel_name_abbreviation(abf: ABF) -> str:
     # TODO ch should be a constant
-    return "ch" + get_channel_name(abf)[8:]
+    return "ch" + channel_name(abf)[8:]
 
 
 # if there are file contiguous some file must end with
@@ -43,7 +37,7 @@ def are_files_contiguous(file_names: List[str]) -> bool:
 
 
 def get_clean_sweeps(abf: ABF) -> {int: (List[ndarray], List[ndarray])}:
-    expected_length = round(abf.sampleRate*abf.sweepIntervalSec)
+    expected_length = round(abf.sampleRate * abf.sweepIntervalSec)
     dict_to_return = {}
     for ch in range(abf.channelCount):
         sweepX = []
@@ -59,7 +53,7 @@ def get_clean_sweeps(abf: ABF) -> {int: (List[ndarray], List[ndarray])}:
 
             if len(abf.sweepY) > expected_length:
                 sweepY.append(abf.sweepY[:expected_length])
-                sweepY.append(abf.sweepY[expected_length+1:(expected_length*2)+1])
+                sweepY.append(abf.sweepY[expected_length + 1:(expected_length * 2) + 1])
             elif len(abf.sweepY) == expected_length:
                 sweepY.append(abf.sweepY)
         dict_to_return[ch] = (sweepX, sweepY)
@@ -70,7 +64,6 @@ def get_clean_sweeps(abf: ABF) -> {int: (List[ndarray], List[ndarray])}:
 class Logics:
     def __init__(self):
         self.abfs: List[ABF] = []
-        # receiver could be a list of ABF, so this could change in future
         self.names_to_abfs: Dict[str, ABF] = {}
         self.hidden_channels: Set[str] = set()
 
@@ -88,19 +81,6 @@ class Logics:
         self.abfs.clear()
         self.names_to_abfs.clear()
         self.hidden_channels.clear()
-
-    def add_to_hidden_channels(self, channel_to_hide: str):
-        self.hidden_channels.add(channel_to_hide)
-
-    def add_to_abs(self, abf):
-        if abf.abfFilePath not in self.get_paths():
-            self.abfs.append(abf)
-            self.names_to_abfs[get_channel_name(abf)] = abf
-
-    def open_abf_and_add_to_abfs(self, path_to_file):
-        abf = pyabf.ABF(path_to_file)
-        self.add_to_abs(abf)
-        # print(abf.headerText)
 
     # TODO maybe change other stuff like range of time ecc
     def open_contiguous_abf(self, path_to_files_of_same_channels: List[str]):
@@ -128,7 +108,16 @@ class Logics:
             self.open_edh(path_to_file)
         # else do nothing
 
-    # TODO read contiguous abfs
+    def open_abf_and_add_to_abfs(self, path_to_file):
+        abf = pyabf.ABF(path_to_file)
+        self.add_to_abs(abf)
+        # print(abf.headerText)
+
+    def add_to_abs(self, abf):
+        if abf.abfFilePath not in self.get_paths():
+            self.abfs.append(abf)
+            self.names_to_abfs[channel_name(abf)] = abf
+
     def open_edh(self, path_to_file):
         dir_path = os.path.dirname(os.path.realpath(path_to_file))
         file_names = [file_path for file_path in os.listdir(dir_path) if file_path.endswith(".abf")]
@@ -147,11 +136,28 @@ class Logics:
                 abs_path = dir_path + os.sep + f
                 self.open_abf_and_add_to_abfs(abs_path)
 
+    def export(self, path_to_file):
+        # TODO export only visible_abfs?
+        if not self.get_abfs():
+            # TODO tell something to the user?
+            return
+        #  TODO check if there is another file with the same name and change the name accordingly
+        if os.path.exists(path_to_file):
+            path_to_file = path_to_file
+        # exporting csv files
+        with open(path_to_file, 'w') as f:
+            # create the csv writer
+            writer = csv.writer(f)
+            # write a row to the csv file
+            writer.writerow(self.generate_header())
+            data = self.generate_data()
+            writer.writerows(data)
+
     # TODO does it work with multiple sweeps?
     def generate_header(self) -> List[str]:
         header = ["t[" + self.abfs[0].sweepUnitsX + "]"]
         for abf in self.get_abfs():
-            header.append(get_channel_name_abbreviation(abf) + "[" + abf.sweepUnitsY + "]")
+            header.append(channel_name_abbreviation(abf) + "[" + abf.sweepUnitsY + "]")
             header.append("vC" + get_abf_index(abf) + "[" + abf.sweepUnitsC + "]")
         return header
 
@@ -194,34 +200,8 @@ class Logics:
         #   [tn, ch1_n, vC1_n, .. chn_n, vCN_n]]
         return formatted_data
 
-    def export(self, path_to_file):
-        # TODO export only visible_abfs?
-        if not self.get_abfs():
-            # TODO tell something to the user?
-            return
-        #  TODO check if there is another file with the same name and change the name accordingly
-        if os.path.exists(path_to_file):
-            path_to_file = path_to_file
-        # exporting csv files
-        with open(path_to_file, 'w') as f:
-            # create the csv writer
-            writer = csv.writer(f)
-            # write a row to the csv file
-            writer.writerow(self.generate_header())
-            data = self.generate_data()
-            writer.writerows(data)
-
-    def get_hidden_channels(self):
-        return list(self.hidden_channels).sort()
-
-    def toggle_visibility(self, channel_name: str):
-        if channel_name not in self.hidden_channels:
-            self.hidden_channels.add(channel_name)
-        else:
-            self.hidden_channels.remove(channel_name)
-
-    def set_hidden_channel(self, channel: str, visible: bool):
+    def set_channel_visibility(self, channel: str, visible: bool):
         if visible and channel in self.hidden_channels:
             self.hidden_channels.remove(channel)
-        if not visible and channel not in self.hidden_channels:
+        if not visible:
             self.hidden_channels.add(channel)
