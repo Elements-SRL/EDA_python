@@ -45,7 +45,6 @@ def are_files_contiguous(file_names: List[str]) -> bool:
 def get_clean_sweeps(abf: ABF) -> {int: (List[ndarray], List[ndarray])}:
     expected_length = round(abf.sampleRate*abf.sweepIntervalSec)
     dict_to_return = {}
-    # print(expected_length)
     for ch in range(abf.channelCount):
         sweepX = []
         sweepY = []
@@ -56,47 +55,13 @@ def get_clean_sweeps(abf: ABF) -> {int: (List[ndarray], List[ndarray])}:
                 sweepX.append(abf.sweepX[:expected_length])
                 sweepX.append(abf.sweepX[:expected_length])
             elif len(abf.sweepX) == expected_length:
-                # print("right X")
                 sweepX.append(abf.sweepX)
 
             if len(abf.sweepY) > expected_length:
-                # print("right Y")
-                # print(len(abf.sweepY))
                 sweepY.append(abf.sweepY[:expected_length])
                 sweepY.append(abf.sweepY[expected_length+1:(expected_length*2)+1])
             elif len(abf.sweepY) == expected_length:
                 sweepY.append(abf.sweepY)
-    # for sweep in range(abf.sweepCount):
-    #     for ch in range(abf.channelCount):
-    #         abf.setSweep(sweep, ch)
-    #         if len(abf.sweepX) > expected_length:
-    #             # take 2 times the first values expected_length values
-    #             total_sweepX.append(abf.sweepX[:expected_length])
-    #             total_sweepX.append(abf.sweepX[:expected_length])
-    #         elif len(abf.sweepX) == expected_length:
-    #             # print("right X")
-    #             total_sweepX.append(abf.sweepX)
-    #
-    #         if len(abf.sweepY) > expected_length:
-    #             # print("right Y")
-    #             # print(len(abf.sweepY))
-    #             total_sweepY.append(abf.sweepY[:expected_length])
-    #             total_sweepY.append(abf.sweepY[expected_length:expected_length*2])
-    #         elif len(abf.sweepY) == expected_length:
-    #             total_sweepY.append(abf.sweepY)
-
-    # for sweep in range(abf.sweepCount):
-    #     for ch in range(abf.channelCount):
-    #         abf.setSweep(sweep, ch)
-    #         abf.sweepX = total_sweepX.pop(0)
-    #         # print(len(abf.sweepX))
-    #         abf.sweepY = total_sweepY.pop(0)
-    #
-    # for sweep in range(abf.sweepCount):
-    #     for ch in range(abf.channelCount):
-    #         abf.setSweep(sweep, ch)
-    #         print(len(abf.sweepX))
-    #         print(len(abf.sweepY))
         dict_to_return[ch] = (sweepX, sweepY)
     return dict_to_return
 
@@ -134,9 +99,6 @@ class Logics:
 
     def open_abf_and_add_to_abfs(self, path_to_file):
         abf = pyabf.ABF(path_to_file)
-        # if abf.sweepCount > 1:
-        #     self.add_to_abs(clean_multi_sweep_abf(abf))
-        # else:
         self.add_to_abs(abf)
         # print(abf.headerText)
 
