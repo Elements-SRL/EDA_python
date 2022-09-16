@@ -3,6 +3,7 @@ import csv
 
 import numpy as np
 import pyabf
+from numpy import ndarray
 from pyabf import ABF
 from typing import List, Dict, Set
 from os.path import exists
@@ -32,6 +33,7 @@ def get_channel_name_abbreviation(abf: ABF) -> str:
     # TODO ch should be a constant
     return "ch" + get_channel_name(abf)[8:]
 
+
 # if there are file contiguous some file must end with
 def are_files_contiguous(file_names: List[str]) -> bool:
     for f in file_names:
@@ -40,8 +42,66 @@ def are_files_contiguous(file_names: List[str]) -> bool:
     return False
 
 
-# TODO maybe get_abfs should be get_visible_abfs and get_visible_abfs would be deleted
+def get_clean_sweeps(abf: ABF) -> {int: (List[ndarray], List[ndarray])}:
+    expected_length = round(abf.sampleRate*abf.sweepIntervalSec)
+    dict_to_return = {}
+    # print(expected_length)
+    for ch in range(abf.channelCount):
+        sweepX = []
+        sweepY = []
+        for sweep in range(abf.sweepCount):
+            abf.setSweep(sweep, ch)
+            if len(abf.sweepX) > expected_length:
+                # take 2 times the first values expected_length values
+                sweepX.append(abf.sweepX[:expected_length])
+                sweepX.append(abf.sweepX[:expected_length])
+            elif len(abf.sweepX) == expected_length:
+                # print("right X")
+                sweepX.append(abf.sweepX)
 
+            if len(abf.sweepY) > expected_length:
+                # print("right Y")
+                # print(len(abf.sweepY))
+                sweepY.append(abf.sweepY[:expected_length])
+                sweepY.append(abf.sweepY[expected_length+1:(expected_length*2)+1])
+            elif len(abf.sweepY) == expected_length:
+                sweepY.append(abf.sweepY)
+    # for sweep in range(abf.sweepCount):
+    #     for ch in range(abf.channelCount):
+    #         abf.setSweep(sweep, ch)
+    #         if len(abf.sweepX) > expected_length:
+    #             # take 2 times the first values expected_length values
+    #             total_sweepX.append(abf.sweepX[:expected_length])
+    #             total_sweepX.append(abf.sweepX[:expected_length])
+    #         elif len(abf.sweepX) == expected_length:
+    #             # print("right X")
+    #             total_sweepX.append(abf.sweepX)
+    #
+    #         if len(abf.sweepY) > expected_length:
+    #             # print("right Y")
+    #             # print(len(abf.sweepY))
+    #             total_sweepY.append(abf.sweepY[:expected_length])
+    #             total_sweepY.append(abf.sweepY[expected_length:expected_length*2])
+    #         elif len(abf.sweepY) == expected_length:
+    #             total_sweepY.append(abf.sweepY)
+
+    # for sweep in range(abf.sweepCount):
+    #     for ch in range(abf.channelCount):
+    #         abf.setSweep(sweep, ch)
+    #         abf.sweepX = total_sweepX.pop(0)
+    #         # print(len(abf.sweepX))
+    #         abf.sweepY = total_sweepY.pop(0)
+    #
+    # for sweep in range(abf.sweepCount):
+    #     for ch in range(abf.channelCount):
+    #         abf.setSweep(sweep, ch)
+    #         print(len(abf.sweepX))
+    #         print(len(abf.sweepY))
+        dict_to_return[ch] = (sweepX, sweepY)
+    return dict_to_return
+
+
+# TODO maybe get_abfs should be get_visible_abfs and get_visible_abfs would be deleted
 class Logics:
     def __init__(self):
         self.abfs: List[ABF] = []
@@ -74,6 +134,9 @@ class Logics:
 
     def open_abf_and_add_to_abfs(self, path_to_file):
         abf = pyabf.ABF(path_to_file)
+        # if abf.sweepCount > 1:
+        #     self.add_to_abs(clean_multi_sweep_abf(abf))
+        # else:
         self.add_to_abs(abf)
         # print(abf.headerText)
 
@@ -87,7 +150,7 @@ class Logics:
             other_abf = pyabf.ABF(p)
             abf.sweepY = np.concatenate((abf.sweepY, other_abf.sweepY), axis=None)
             # time starts every time from zero
-            abf.sweepX = np.concatenate((abf.sweepX, other_abf.sweepX+abf.sweepX[-1:]), axis=None)
+            abf.sweepX = np.concatenate((abf.sweepX, other_abf.sweepX + abf.sweepX[-1:]), axis=None)
             abf.sweepC = np.concatenate((abf.sweepC, other_abf.sweepC), axis=None)
             abf.data = [np.concatenate((d, od), axis=None) for d, od in zip(abf.data, other_abf.data)]
         self.add_to_abs(abf)
@@ -114,7 +177,7 @@ class Logics:
             prefixes = {f[:prefix_length] for f in file_names}
             for p in prefixes:
                 batch_of_files = list(filter(lambda f_name: p in f_name, file_names))
-                complete_batch_of_files = list(map(lambda f: dir_path+os.sep+f, batch_of_files))
+                complete_batch_of_files = list(map(lambda f: dir_path + os.sep + f, batch_of_files))
                 self.open_contiguous_abf(complete_batch_of_files)
         else:
             file_names.sort()

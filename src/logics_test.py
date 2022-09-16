@@ -158,24 +158,12 @@ class LogicsTest(unittest.TestCase):
     def test_episodic_data(self):
         logics_test = logics.Logics()
         logics_test.open(self.path_to_episodic_edh)
-        abf = logics_test.get_abfs().pop()
-        # print(abf.headerText)
-        # print(abf.sweepX)
-        # print(abf.sweepY)
-        # print(abf.sweepCount)
-        # print(abf.data)
-        print(abf.sampleRate)
-        print(abf.sweepIntervalSec)
-        print(abf.sampleRate*abf.sweepIntervalSec)
-        total_fields = abf.sampleRate*abf.sweepIntervalSec
-        for ch in range(abf.channelCount):
-            for i in range(abf.sweepCount):
-                print(ch, i)
-                abf.setSweep(sweepNumber=i, channel=ch)
-                print(len(abf.sweepY))
-        # print(abf.sampleRate)
-        # print(abf.sweepIntervalSec)
-        # print(abf.sampleRate*abf.sweepIntervalSec)
+        abf = logics_test.get_abfs().pop(0)
+        print(len(logics_test.get_abfs()))
+        print(abf.sweepCount)
+        for sweep in range(abf.sweepCount):
+            abf.setSweep(sweep)
+            print(len(abf.sweepX))
 
 
 if __name__ == '__main__':

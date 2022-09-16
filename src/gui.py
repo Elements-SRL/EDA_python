@@ -178,14 +178,13 @@ class UiMainWindow(object):
             # implementation could change in future
             if abf.sweepCount > 1:
                 sweep_label = 0
+                dict_of_sweeps = logics.get_clean_sweeps(abf)
+                sweepX_ch0, sweepY_ch0 = dict_of_sweeps[0]
+                sweepX_ch1, sweepY_ch1 = dict_of_sweeps[1]
                 for sweep in range(abf.sweepCount):
                     multi_sweep_label = "sweep " + str(sweep_label)
-                    abf.setSweep(sweepNumber=sweep, channel=0)
-                    if abf.sweepY.any():
-                        self.sc.ax1.plot(abf.sweepX, abf.sweepY, label=multi_sweep_label)
-                    abf.setSweep(sweep, 1)
-                    if abf.sweepY.any():
-                        self.sc.ax2.plot(abf.sweepX, abf.sweepY, label=multi_sweep_label)
+                    self.sc.ax1.plot(sweepX_ch0.pop(0), sweepY_ch0.pop(0), label=multi_sweep_label)
+                    self.sc.ax2.plot(sweepX_ch1.pop(0), sweepY_ch1.pop(1), label=multi_sweep_label)
                     sweep_label += 1
             else:
                 label = logics.get_channel_name(abf)
