@@ -13,9 +13,12 @@ def get_abf_index(abf: ABF) -> str:
     channel_name_index = abf.abfID.find("_CH") + 1
     # 2 = CH
     index = abf.abfID.casefold()[channel_name_index + 2:-4]
-    while index.startswith("0"):
-        index = index[1:]
-    return index
+    if index.startswith("0"):
+        while index.startswith("0"):
+            index = index[1:]
+        return index
+    else:
+        return "-Nan"
 
 
 def channel_name(abf: ABF) -> str:
@@ -25,7 +28,7 @@ def channel_name(abf: ABF) -> str:
 
 def channel_name_abbreviation(abf: ABF) -> str:
     # TODO ch should be a constant
-    return "ch" + channel_name(abf)[8:]
+    return "ch" + get_abf_index(abf)
 
 
 # if there are file contiguous some file must end with
@@ -141,9 +144,6 @@ class Logics:
         if not self.get_abfs():
             # TODO tell something to the user?
             return
-        #  TODO check if there is another file with the same name and change the name accordingly
-        if os.path.exists(path_to_file):
-            path_to_file = path_to_file
         # exporting csv files
         with open(path_to_file, 'w') as f:
             # create the csv writer
