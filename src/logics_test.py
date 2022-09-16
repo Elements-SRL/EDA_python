@@ -3,6 +3,8 @@ import time
 import unittest
 from builtins import print
 
+import numpy
+
 import logics
 
 
@@ -152,6 +154,12 @@ class LogicsTest(unittest.TestCase):
         for sweep in range(abf.sweepCount):
             abf.setSweep(sweep)
             print(len(abf.sweepX))
+
+    def test_generate_multi_sweep_data(self):
+        logics_test = logics.Logics()
+        logics_test.open(self.path_to_episodic_abf)
+        abf = logics_test.get_abfs().pop(0)
+        logics_test.generate_multi_sweep_data(abf)
 
     def tearDown(self):
         if os.path.exists(self.path_to_csv):

@@ -39,6 +39,7 @@ def are_files_contiguous(file_names: List[str]) -> bool:
     return False
 
 
+# returns a dictionary with the channel as a key and a tuple of list(array) as value (one for the x and one for the y)
 def get_clean_sweeps(abf: ABF) -> {int: (List[ndarray], List[ndarray])}:
     expected_length = round(abf.sampleRate * abf.sweepIntervalSec)
     dict_to_return = {}
@@ -164,6 +165,9 @@ class Logics:
     # TODO does it work with multiple sweeps?
     # TODO transform data in exponential form
     def generate_data(self) -> List[List[int]]:
+        first_abf = self.get_abfs()[0]
+        if first_abf.sweepCount > 1:
+            return self.generate_multi_sweep_data(first_abf)
         # take the time from the first abf
         time = self.get_abfs()[0].sweepX
         data = [time]
@@ -198,6 +202,24 @@ class Logics:
         #   .
         #   .
         #   [tn, ch1_n, vC1_n, .. chn_n, vCN_n]]
+        return formatted_data
+
+    # TODO make this static when tested well
+    # TODO make the test work even when static
+    # TODO find a way to merge with the function over here, generate data
+    # TODO add last fields as in the notes
+    def generate_multi_sweep_data(self, abf):
+        dict_of_sweeps = get_clean_sweeps(abf)
+        sweepX_ch0, sweepY_ch0 = dict_of_sweeps[0]
+        sweepX_ch1, sweepY_ch1 = dict_of_sweeps[1]
+        time = np.tile(sweepX_ch0.pop(0), abf.sweepCount + 2)
+        data = [time, np.hstack(sweepY_ch0), np.hstack(sweepY_ch1)]
+        arrays = np.array(data)
+        formatted_data = []
+        # for each value of time the get the corresponding data
+        for i in range(len(time)):
+            row = arrays[:, i]
+            formatted_data.append(row)
         return formatted_data
 
     def set_channel_visibility(self, channel: str, visible: bool):
