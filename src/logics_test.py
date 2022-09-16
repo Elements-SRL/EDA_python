@@ -14,12 +14,11 @@ class LogicsTest(unittest.TestCase):
     path_to_contiguous_abf2 = "res/ContiguousData/temp_CH001_001.abf"
     path_to_contiguous_abf3 = "res/ContiguousData/temp_CH001_002.abf"
 
+    path_to_basic_edh = "res/Data/Data.edh"
     path_to_contiguous_edh = "res/ContiguousData/temp.edh"
 
-    path_to_episodic_edh = "res/EpisodicData/episodic several sweeps.abf"
-
+    path_to_episodic_abf = "res/EpisodicData/episodic several sweeps.abf"
     path_to_csv = "res/Data/test_export.csv"
-
     path_to_csv_of_contiguous_abfs = "res/ContiguousData/test_export.csv"
 
     def test_open_first_abf(self):
@@ -66,7 +65,7 @@ class LogicsTest(unittest.TestCase):
 
     def test_get_edh(self):
         logics_test = logics.Logics()
-        logics_test.open("res/Data/Data.edh")
+        logics_test.open(self.path_to_basic_edh)
         self.assertTrue(len(logics_test.get_abfs()) == 4)
 
     def test_generate_header(self):
@@ -146,7 +145,7 @@ class LogicsTest(unittest.TestCase):
 
     def test_episodic_data(self):
         logics_test = logics.Logics()
-        logics_test.open(self.path_to_episodic_edh)
+        logics_test.open(self.path_to_episodic_abf)
         abf = logics_test.get_abfs().pop(0)
         print(len(logics_test.get_abfs()))
         print(abf.sweepCount)
