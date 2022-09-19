@@ -1,4 +1,4 @@
-from typing import Set
+from typing import Set, List
 
 import matplotlib
 from PyQt5 import QtWidgets
@@ -150,7 +150,7 @@ class UiMainWindow(object):
         self.action_csv.setText(QCoreApplication.translate("MainWindow", u".csv", None))
         self.menu_file.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menu_view.setTitle(QCoreApplication.translate("MainWindow", u"View", None))
-        self.action_open_visible_channels.setText(QCoreApplication.translate("MainWindow", u"Visible channels", None))
+        self.action_open_visible_channels.setText(QCoreApplication.translate("MainWindow", u"Visible channels/sweeps", None))
         self.action_clear.setText(QCoreApplication.translate("MainWindow", u"Clear current plots", None))
         self.menu_export_as.setTitle(QCoreApplication.translate("MainWindow", u"Export as ...", None))
 
@@ -177,6 +177,7 @@ class UiMainWindow(object):
     def update_plot(self):
         self.sc.ax1.cla()
         self.sc.ax2.cla()
+        # TODO manage multi sweep case
         abfs = self.logics.get_visible_abfs()
         if len(abfs) <= 0:
             # clear plot
@@ -187,13 +188,13 @@ class UiMainWindow(object):
             # implementation could change in future
             if abf.sweepCount > 1:
                 sweep_label = 0
-                dict_of_sweeps = logics.get_clean_sweeps(abf)
+                dict_of_sweeps = self.logics.get_visible_sweeps()
                 sweepX_ch0, sweepY_ch0 = dict_of_sweeps[0]
                 sweepX_ch1, sweepY_ch1 = dict_of_sweeps[1]
-                for sweep in range(abf.sweepCount):
+                for sweep in range(len(sweepX_ch0)):
                     multi_sweep_label = "sweep " + str(sweep_label)
                     self.sc.ax1.plot(sweepX_ch0.pop(0), sweepY_ch0.pop(0), label=multi_sweep_label)
-                    self.sc.ax2.plot(sweepX_ch1.pop(0), sweepY_ch1.pop(1), label=multi_sweep_label)
+                    self.sc.ax2.plot(sweepX_ch1.pop(0), sweepY_ch1.pop(0), label=multi_sweep_label)
                     sweep_label += 1
             else:
                 label = logics.channel_name(abf)
@@ -224,20 +225,31 @@ class UiMainWindow(object):
             self.w.setWindowTitle("Views")
             self.w.setMinimumSize(200, 300)
             self.w.setLayout(filters_layout)
-        buttons = set()
+        buttons = []
         filters_layout.deleteLater()
-        for ch in self.logics.names_to_abfs.keys():
-            b = QCheckBox(ch)
-            filters_layout.addWidget(b)
-            if ch not in self.logics.hidden_channels:
-                b.setChecked(True)
-            buttons.add(b)
+        if self.logics.get_abfs()[0].sweepCount <= 1:
+            for ch in self.logics.names_to_abfs.keys():
+                b = QCheckBox(ch)
+                filters_layout.addWidget(b)
+                if ch not in self.logics.hidden_channels:
+                    b.setChecked(True)
+                buttons.append(b)
+        else:
+            for s in range(self.logics.get_abfs()[0].sweepCount):
+                b = QCheckBox("sweep " + str(s))
+                filters_layout.addWidget(b)
+                if s not in self.logics.hidden_sweeps:
+                    b.setChecked(True)
+                buttons.append(b)
         apply_button = QPushButton("Show selected channels")
         apply_button.clicked.connect(lambda: self.apply_filters(buttons))
         filters_layout.addWidget(apply_button)
         self.w.show()
 
-    def apply_filters(self, buttons: Set[QCheckBox]):
+    def apply_filters(self, buttons: List[QCheckBox]):
         for b in buttons:
-            self.logics.set_channel_visibility(b.text(), b.isChecked())
+            if b.text().startswith("sweep"):
+                self.logics.set_sweep_visibility(buttons.index(b), b.isChecked())
+            else:
+                self.logics.set_channel_visibility(b.text(), b.isChecked())
         self.update_plot()

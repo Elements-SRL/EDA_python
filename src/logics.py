@@ -39,6 +39,7 @@ def are_files_contiguous(file_names: List[str]) -> bool:
     return False
 
 
+# TODO maybe refactor this?
 # returns a dictionary with the channel as a key and a tuple of list(array) as value (one for the x and one for the y)
 def get_clean_sweeps(abf: ABF) -> {int: (List[ndarray], List[ndarray])}:
     expected_length = round(abf.sampleRate * abf.sweepIntervalSec)
@@ -60,7 +61,8 @@ def get_clean_sweeps(abf: ABF) -> {int: (List[ndarray], List[ndarray])}:
                 sweepY.append(abf.sweepY[expected_length + 1:(expected_length * 2) + 1])
             elif len(abf.sweepY) == expected_length:
                 sweepY.append(abf.sweepY)
-        dict_to_return[ch] = (sweepX, sweepY)
+        # TODO investigate why this slice is necessary
+        dict_to_return[ch] = (sweepX[2:], sweepY[2:])
     return dict_to_return
 
 
@@ -69,6 +71,7 @@ class Logics:
         self.abfs: List[ABF] = []
         self.names_to_abfs: Dict[str, ABF] = {}
         self.hidden_channels: Set[str] = set()
+        self.hidden_sweeps: Set[int] = set()
 
     def get_abfs(self) -> List[ABF]:
         return self.abfs
@@ -77,6 +80,31 @@ class Logics:
         dict_of_visible_abfs = {k: v for (k, v) in self.names_to_abfs.items() if k not in self.hidden_channels}
         return list(dict_of_visible_abfs.values())
 
+    # TODO make some controls
+    # TODO add return type
+    def get_visible_sweeps(self) -> {int: (List[ndarray], List[ndarray])}:
+        print("chiamata")
+        dict_of_sweeps = get_clean_sweeps(self.abfs[0])
+        sweepX_ch0, sweepY_ch0 = dict_of_sweeps[0]
+        sweepX_ch1, sweepY_ch1 = dict_of_sweeps[1]
+        print(len(sweepX_ch0), len(sweepY_ch0), len(sweepX_ch1), len(sweepY_ch1))
+        indexes = list(self.hidden_sweeps)
+        indexes.sort(reverse=True)
+        print(indexes)
+        if len(indexes) > 0:
+            print("in")
+            for i in indexes:
+                sweepX_ch0.pop(i)
+                sweepY_ch0.pop(i)
+                sweepX_ch1.pop(i)
+                sweepY_ch1.pop(i)
+            dict_to_return = {0: (sweepX_ch0, sweepY_ch0), 1: (sweepX_ch1, sweepY_ch1)}
+            print(len(sweepX_ch0), len(sweepY_ch0), len(sweepX_ch1), len(sweepY_ch1))
+            print(dict_to_return.keys())
+            return dict_to_return
+        else:
+            return dict_of_sweeps
+
     def get_paths(self) -> List[str]:
         return [abf.abfFilePath for abf in self.abfs]
 
@@ -84,6 +112,7 @@ class Logics:
         self.abfs.clear()
         self.names_to_abfs.clear()
         self.hidden_channels.clear()
+        self.hidden_sweeps.clear()
 
     # TODO maybe change other stuff like range of time ecc
     def open_contiguous_abf(self, path_to_files_of_same_channels: List[str]):
@@ -218,3 +247,9 @@ class Logics:
             self.hidden_channels.remove(channel)
         if not visible:
             self.hidden_channels.add(channel)
+
+    def set_sweep_visibility(self, sweep: int, visible: bool):
+        if visible and sweep in self.hidden_sweeps:
+            self.hidden_sweeps.remove(sweep)
+        if not visible:
+            self.hidden_sweeps.add(sweep)
