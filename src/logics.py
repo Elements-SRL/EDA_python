@@ -83,24 +83,19 @@ class Logics:
     # TODO make some controls
     # TODO add return type
     def get_visible_sweeps(self) -> {int: (List[ndarray], List[ndarray])}:
-        print("chiamata")
         dict_of_sweeps = get_clean_sweeps(self.abfs[0])
         sweepX_ch0, sweepY_ch0 = dict_of_sweeps[0]
         sweepX_ch1, sweepY_ch1 = dict_of_sweeps[1]
-        print(len(sweepX_ch0), len(sweepY_ch0), len(sweepX_ch1), len(sweepY_ch1))
         indexes = list(self.hidden_sweeps)
         indexes.sort(reverse=True)
         print(indexes)
         if len(indexes) > 0:
-            print("in")
             for i in indexes:
                 sweepX_ch0.pop(i)
                 sweepY_ch0.pop(i)
                 sweepX_ch1.pop(i)
                 sweepY_ch1.pop(i)
             dict_to_return = {0: (sweepX_ch0, sweepY_ch0), 1: (sweepX_ch1, sweepY_ch1)}
-            print(len(sweepX_ch0), len(sweepY_ch0), len(sweepX_ch1), len(sweepY_ch1))
-            print(dict_to_return.keys())
             return dict_to_return
         else:
             return dict_of_sweeps
