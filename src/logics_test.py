@@ -3,8 +3,6 @@ import time
 import unittest
 from builtins import print
 
-import numpy
-
 import logics
 
 
@@ -22,6 +20,7 @@ class LogicsTest(unittest.TestCase):
     path_to_episodic_abf = "res/EpisodicData/episodic several sweeps.abf"
     path_to_csv = "res/Data/test_export.csv"
     path_to_csv_of_contiguous_abfs = "res/ContiguousData/test_export.csv"
+    path_to_csv_of_episodic_data = "res/EpisodicData/test_export.csv"
 
     def test_open_first_abf(self):
         logics_test = logics.Logics()
@@ -145,27 +144,19 @@ class LogicsTest(unittest.TestCase):
         time.sleep(1)
         self.assertTrue(os.path.exists(self.path_to_csv_of_contiguous_abfs))
 
-    def test_episodic_data(self):
-        logics_test = logics.Logics()
-        logics_test.open(self.path_to_episodic_abf)
-        abf = logics_test.get_abfs().pop(0)
-        print(len(logics_test.get_abfs()))
-        print(abf.sweepCount)
-        for sweep in range(abf.sweepCount):
-            abf.setSweep(sweep)
-            print(len(abf.sweepX))
-
     def test_generate_multi_sweep_data(self):
         logics_test = logics.Logics()
         logics_test.open(self.path_to_episodic_abf)
-        abf = logics_test.get_abfs().pop(0)
-        logics_test.generate_multi_sweep_data(abf)
+        logics_test.export(self.path_to_csv_of_episodic_data)
+        self.assertGreater(os.path.getsize(self.path_to_csv_of_episodic_data), 2_000_000)
 
     def tearDown(self):
         if os.path.exists(self.path_to_csv):
             os.remove(self.path_to_csv)
         if os.path.exists(self.path_to_csv_of_contiguous_abfs):
             os.remove(self.path_to_csv_of_contiguous_abfs)
+        if os.path.exists(self.path_to_csv_of_episodic_data):
+            os.remove(self.path_to_csv_of_episodic_data)
 
 
 if __name__ == '__main__':

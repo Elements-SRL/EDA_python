@@ -64,7 +64,6 @@ def get_clean_sweeps(abf: ABF) -> {int: (List[ndarray], List[ndarray])}:
     return dict_to_return
 
 
-# TODO maybe get_abfs should be get_visible_abfs and get_visible_abfs would be deleted
 class Logics:
     def __init__(self):
         self.abfs: List[ABF] = []
@@ -162,12 +161,10 @@ class Logics:
             header.append("vC" + get_abf_index(abf) + "[" + abf.sweepUnitsC + "]")
         return header
 
-    # TODO does it work with multiple sweeps?
-    # TODO transform data in exponential form
-    def generate_data(self) -> List[List[int]]:
+    def generate_data(self) -> List[List[float]]:
         first_abf = self.get_abfs()[0]
         if first_abf.sweepCount > 1:
-            return self.generate_multi_sweep_data(first_abf)
+            return self.format_to_csv(self.generate_multi_sweep_data(first_abf))
         # take the time from the first abf
         time = self.get_abfs()[0].sweepX
         data = [time]
@@ -177,7 +174,19 @@ class Logics:
             data.append(abf.sweepY)
             # vC_i
             data.append(abf.data[1])
+        return self.format_to_csv(data)
 
+    # TODO add last fields as in the notes
+    @staticmethod
+    def generate_multi_sweep_data(abf) -> List[ndarray]:
+        dict_of_sweeps = get_clean_sweeps(abf)
+        sweepX_ch0, sweepY_ch0 = dict_of_sweeps[0]
+        sweepX_ch1, sweepY_ch1 = dict_of_sweeps[1]
+        time = np.tile(sweepX_ch0.pop(0), abf.sweepCount + 2)
+        return [time, np.hstack(sweepY_ch0), np.hstack(sweepY_ch1)]
+
+    @staticmethod
+    def format_to_csv(data: List[List[float]] | List[ndarray]):
         # create matrix with all data
         arrays = np.array(data)
 
@@ -192,7 +201,7 @@ class Logics:
 
         formatted_data = []
         # for each value of time the get the corresponding data
-        for i in range(len(time)):
+        for i in range(len(data[0])):
             row = arrays[:, i]
             formatted_data.append(row)
 
@@ -202,24 +211,6 @@ class Logics:
         #   .
         #   .
         #   [tn, ch1_n, vC1_n, .. chn_n, vCN_n]]
-        return formatted_data
-
-    # TODO make this static when tested well
-    # TODO make the test work even when static
-    # TODO find a way to merge with the function over here, generate data
-    # TODO add last fields as in the notes
-    def generate_multi_sweep_data(self, abf):
-        dict_of_sweeps = get_clean_sweeps(abf)
-        sweepX_ch0, sweepY_ch0 = dict_of_sweeps[0]
-        sweepX_ch1, sweepY_ch1 = dict_of_sweeps[1]
-        time = np.tile(sweepX_ch0.pop(0), abf.sweepCount + 2)
-        data = [time, np.hstack(sweepY_ch0), np.hstack(sweepY_ch1)]
-        arrays = np.array(data)
-        formatted_data = []
-        # for each value of time the get the corresponding data
-        for i in range(len(time)):
-            row = arrays[:, i]
-            formatted_data.append(row)
         return formatted_data
 
     def set_channel_visibility(self, channel: str, visible: bool):
