@@ -62,7 +62,7 @@ def get_clean_sweeps(abf: ABF) -> {int: (List[ndarray], List[ndarray])}:
             elif len(abf.sweepY) == expected_length:
                 sweepY.append(abf.sweepY)
         # TODO investigate why this slice is necessary
-        dict_to_return[ch] = (sweepX[2:], sweepY[2:])
+        dict_to_return[ch] = (sweepX, sweepY)
     return dict_to_return
 
 
@@ -85,6 +85,10 @@ class Logics:
     def get_visible_sweeps(self) -> {int: (List[ndarray], List[ndarray])}:
         dict_of_sweeps = get_clean_sweeps(self.abfs[0])
         sweepX_ch0, sweepY_ch0 = dict_of_sweeps[0]
+        # come gestirla?
+        # contare il numero di canali, guardare le unità di misura e disporli?
+        # in caso faccio sparire un grafico
+        # o apparire dinamicamente in base all'unità di misura(?)
         sweepX_ch1, sweepY_ch1 = dict_of_sweeps[1]
         indexes = list(self.hidden_sweeps)
         indexes.sort(reverse=True)
@@ -200,17 +204,8 @@ class Logics:
             data.append(abf.data[1])
         return self.format_to_csv(data)
 
-    # TODO add last fields as in the notes
     @staticmethod
-    def generate_multi_sweep_data(abf) -> List[ndarray]:
-        dict_of_sweeps = get_clean_sweeps(abf)
-        sweepX_ch0, sweepY_ch0 = dict_of_sweeps[0]
-        sweepX_ch1, sweepY_ch1 = dict_of_sweeps[1]
-        time = np.tile(sweepX_ch0.pop(0), abf.sweepCount + 2)
-        return [time, np.hstack(sweepY_ch0), np.hstack(sweepY_ch1)]
-
-    @staticmethod
-    def format_to_csv(data: List[List[float]] | List[ndarray]):
+    def format_to_csv(data: List[ndarray]):
         # create matrix with all data
         arrays = np.array(data)
 
@@ -236,6 +231,15 @@ class Logics:
         #   .
         #   [tn, ch1_n, vC1_n, .. chn_n, vCN_n]]
         return formatted_data
+
+    # TODO add last fields as in the notes
+    @staticmethod
+    def generate_multi_sweep_data(abf) -> List[ndarray]:
+        dict_of_sweeps = get_clean_sweeps(abf)
+        sweepX_ch0, sweepY_ch0 = dict_of_sweeps[0]
+        sweepX_ch1, sweepY_ch1 = dict_of_sweeps[1]
+        time = np.tile(sweepX_ch0.pop(0), abf.sweepCount + 2)
+        return [time, np.hstack(sweepY_ch0), np.hstack(sweepY_ch1)]
 
     def set_channel_visibility(self, channel: str, visible: bool):
         if visible and channel in self.hidden_channels:
