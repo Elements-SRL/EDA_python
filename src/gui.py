@@ -211,8 +211,8 @@ class UiMainWindow(object):
         self.sc.ax2.set_xlabel(abf.sweepLabelX)
         # self.sc.ax2.set_ylabel(abf.sweepLabelC)
 
-        self.sc.ax1.legend()
-        self.sc.ax2.legend()
+        self.sc.ax1.legend(loc='upper right')
+        self.sc.ax2.legend(loc='upper right')
         self.sc.draw()
 
     def clear(self):
