@@ -177,7 +177,6 @@ class UiMainWindow(object):
     def update_plot(self):
         self.sc.ax1.cla()
         self.sc.ax2.cla()
-        # TODO manage multi sweep case
         abfs = self.logics.get_visible_abfs()
         if len(abfs) <= 0:
             # clear plot
@@ -187,23 +186,30 @@ class UiMainWindow(object):
             # it's better not to display multiple channels and multiple sweeps in the same plot,
             # implementation could change in future
             if abf.sweepCount > 1:
-                sweep_label = 0
                 dict_of_sweeps = self.logics.get_visible_sweeps()
-                sweepX_ch0, sweepY_ch0 = dict_of_sweeps[0]
-                sweepX_ch1, sweepY_ch1 = dict_of_sweeps[1]
-                for sweep in range(len(sweepX_ch0)):
-                    multi_sweep_label = "sweep " + str(sweep_label)
-                    self.sc.ax1.plot(sweepX_ch0.pop(0), sweepY_ch0.pop(0), label=multi_sweep_label)
-                    self.sc.ax2.plot(sweepX_ch1.pop(0), sweepY_ch1.pop(0), label=multi_sweep_label)
-                    sweep_label += 1
+                for ch in dict_of_sweeps.keys():
+                    sweepX, sweepY = dict_of_sweeps[ch]
+                    for sweep in range(len(sweepX)):
+                        multi_sweep_label = "ch " + str(ch) + " sw " + str(sweep)
+                        # only used to check the units
+                        abf.setSweep(sweepNumber=0, channel=ch)
+                        match ch:
+                            case 0:
+                                self.sc.ax1.plot(sweepX.pop(0), sweepY.pop(0), label=multi_sweep_label)
+                                self.sc.ax1.set_ylabel(abf.sweepLabelY)
+                            case 1:
+                                self.sc.ax2.plot(sweepX.pop(0), sweepY.pop(0), label=multi_sweep_label)
+                                self.sc.ax2.set_ylabel(abf.sweepUnitsY)
             else:
                 label = logics.channel_name(abf)
                 self.sc.ax1.plot(abf.sweepX, abf.sweepY, label=label)
                 self.sc.ax2.plot(abf.sweepX, abf.data[1], label=label)
+                self.sc.ax1.set_ylabel(abf.sweepLabelY)
+                self.sc.ax2.set_ylabel(abf.sweepLabelC)
         # set label with the last abf read
-        self.sc.ax1.set_ylabel(abf.sweepLabelY)
+        # self.sc.ax1.set_ylabel(abf.sweepLabelY)
         self.sc.ax2.set_xlabel(abf.sweepLabelX)
-        self.sc.ax2.set_ylabel(abf.sweepLabelC)
+        # self.sc.ax2.set_ylabel(abf.sweepLabelC)
 
         self.sc.ax1.legend()
         self.sc.ax2.legend()

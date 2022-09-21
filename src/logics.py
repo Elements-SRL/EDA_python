@@ -81,25 +81,19 @@ class Logics:
         return list(dict_of_visible_abfs.values())
 
     # TODO make some controls
-    # TODO add return type
     def get_visible_sweeps(self) -> {int: (List[ndarray], List[ndarray])}:
         dict_of_sweeps = get_clean_sweeps(self.abfs[0])
-        sweepX_ch0, sweepY_ch0 = dict_of_sweeps[0]
-        # come gestirla?
-        # contare il numero di canali, guardare le unità di misura e disporli?
-        # in caso faccio sparire un grafico
-        # o apparire dinamicamente in base all'unità di misura(?)
-        sweepX_ch1, sweepY_ch1 = dict_of_sweeps[1]
-        indexes = list(self.hidden_sweeps)
-        indexes.sort(reverse=True)
-        print(indexes)
-        if len(indexes) > 0:
-            for i in indexes:
-                sweepX_ch0.pop(i)
-                sweepY_ch0.pop(i)
-                sweepX_ch1.pop(i)
-                sweepY_ch1.pop(i)
-            dict_to_return = {0: (sweepX_ch0, sweepY_ch0), 1: (sweepX_ch1, sweepY_ch1)}
+        dict_to_return = {}
+        for ch in dict_of_sweeps.keys():
+            sweepX, sweepY = dict_of_sweeps[ch]
+            indexes = list(self.hidden_sweeps)
+            indexes.sort(reverse=True)
+            if len(indexes) > 0:
+                for i in indexes:
+                    sweepX.pop(i)
+                    sweepY.pop(i)
+                dict_to_return[ch] = (sweepX, sweepY)
+        if bool(dict_to_return):
             return dict_to_return
         else:
             return dict_of_sweeps
