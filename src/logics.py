@@ -175,7 +175,7 @@ class Logics:
             data = self.generate_data()
             writer.writerows(data)
 
-    # TODO does it work with multiple sweeps?
+    # TODO does it work with multiple sweeps? No
     def generate_header(self) -> List[str]:
         header = ["t[" + self.abfs[0].sweepUnitsX + "]"]
         for abf in self.get_abfs():
@@ -230,10 +230,17 @@ class Logics:
     @staticmethod
     def generate_multi_sweep_data(abf) -> List[ndarray]:
         dict_of_sweeps = get_clean_sweeps(abf)
-        sweepX_ch0, sweepY_ch0 = dict_of_sweeps[0]
-        sweepX_ch1, sweepY_ch1 = dict_of_sweeps[1]
-        time = np.tile(sweepX_ch0.pop(0), abf.sweepCount + 2)
-        return [time, np.hstack(sweepY_ch0), np.hstack(sweepY_ch1)]
+        time = np.array([])
+        sweeps = np.array([])
+        for ch in dict_of_sweeps.keys():
+            sweepX, sweepY = dict_of_sweeps[ch]
+            match ch:
+                case 0:
+                    time = np.hstack(sweepX)
+                    sweeps = np.hstack(sweepY)
+                case _:
+                    sweeps = np.vstack((sweeps, np.hstack(sweepY)))
+        return list(np.vstack((time, sweeps)))
 
     def set_channel_visibility(self, channel: str, visible: bool):
         if visible and channel in self.hidden_channels:
