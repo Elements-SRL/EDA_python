@@ -49,18 +49,22 @@ def get_clean_sweeps(abf: ABF) -> {int: (List[ndarray], List[ndarray])}:
         sweepY = []
         for sweep in range(abf.sweepCount):
             abf.setSweep(sweep, ch)
-            if len(abf.sweepX) > expected_length:
+            if len(abf.sweepX) > 2 * expected_length:
                 # take 2 times the first values expected_length values
                 sweepX.append(abf.sweepX[:expected_length])
                 sweepX.append(abf.sweepX[:expected_length])
             elif len(abf.sweepX) == expected_length:
                 sweepX.append(abf.sweepX)
+            elif len(abf.sweepX) > expected_length:
+                sweepX.append(abf.sweepX[:expected_length])
 
-            if len(abf.sweepY) > expected_length:
+            if len(abf.sweepY) > 2 * expected_length:
                 sweepY.append(abf.sweepY[:expected_length])
                 sweepY.append(abf.sweepY[expected_length + 1:(expected_length * 2) + 1])
             elif len(abf.sweepY) == expected_length:
                 sweepY.append(abf.sweepY)
+            elif len(abf.sweepY) > expected_length:
+                sweepY.append(abf.sweepY[:expected_length])
         # TODO investigate why this slice is necessary
         dict_to_return[ch] = (sweepX, sweepY)
     return dict_to_return
@@ -177,10 +181,10 @@ class Logics:
 
     # TODO does it work with multiple sweeps? No
     def generate_header(self) -> List[str]:
-        header = ["t[" + self.abfs[0].sweepUnitsX + "]"]
+        header = ["t[" + self.get_abfs()[0].sweepUnitsX + "]"]
         for abf in self.get_abfs():
-            header.append(channel_name_abbreviation(abf) + "[" + abf.sweepUnitsY + "]")
-            header.append("vC" + get_abf_index(abf) + "[" + abf.sweepUnitsC + "]")
+            header.append("[" + abf.sweepUnitsY + "]")
+            header.append("[" + abf.sweepUnitsC + "]")
         return header
 
     def generate_data(self) -> List[List[float]]:

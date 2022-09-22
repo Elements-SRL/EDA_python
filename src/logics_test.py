@@ -1,7 +1,6 @@
 import os
 import time
 import unittest
-from builtins import print
 
 import logics
 
@@ -144,6 +143,7 @@ class LogicsTest(unittest.TestCase):
         time.sleep(1)
         self.assertTrue(os.path.exists(self.path_to_csv_of_contiguous_abfs))
 
+    # TODO could be tested a little bit more accurately
     def test_generate_multi_sweep_data(self):
         logics_test = logics.Logics()
         logics_test.open(self.path_to_episodic_abf)
