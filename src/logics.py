@@ -65,7 +65,6 @@ def get_clean_sweeps(abf: ABF) -> {int: (List[ndarray], List[ndarray])}:
                 sweepY.append(abf.sweepY)
             elif len(abf.sweepY) > expected_length:
                 sweepY.append(abf.sweepY[:expected_length])
-        # TODO investigate why this slice is necessary
         dict_to_return[ch] = (sweepX, sweepY)
     return dict_to_return
 
