@@ -203,7 +203,8 @@ class UiMainWindow(object):
             else:
                 label = logics.channel_name(abf)
                 self.sc.ax1.plot(abf.sweepX, abf.sweepY, label=label)
-                self.sc.ax2.plot(abf.sweepX, abf.data[1], label=label)
+                if abf.channelCount > 1:
+                    self.sc.ax2.plot(abf.sweepX, abf.data[1], label=label)
                 self.sc.ax1.set_ylabel(abf.sweepLabelY)
                 self.sc.ax2.set_ylabel(abf.sweepLabelC)
         # set label with the last abf read
