@@ -17,3 +17,11 @@ class MetaDataTest(unittest.TestCase):
         bd = BasicData(1, np.array([1, 2, 3]))
         metadata.add_data(bd)
         self.assertTrue(len(metadata.data) == 1)
+
+    def test_array_content(self):
+        metadata = MetaData()
+        arr = np.array([1, 2, 3])
+        bd = BasicData(1, arr)
+        metadata.add_data(bd)
+        arr2 = metadata.data.pop().y
+        self.assertListEqual(list(arr), list(arr2))

@@ -14,3 +14,13 @@ class Logics2:
             return
         abf_handler.extract_meta_data_from_abf(path_to_file, self.metadata)
         # else do nothing
+
+    def is_all_data_hidden(self):
+        return True not in {v.visible for v in self.metadata.data}
+
+    def get_x(self):
+        self.metadata.get_x()
+
+    def clear(self):
+        self.metadata.data.clear()
+        self.metadata.common_data = None

@@ -13,10 +13,8 @@ def extract_meta_data_from_abf(path_to_file: str, metadata: MetaData):
     """mono sweep abf"""
     cd = CommonData(abf.sweepX, abf.sampleRate, abf.channelCount)
     metadata.add_common_data(cd)
-    print("fok")
     metadata.add_data(BasicData(0, abf.sweepY))
     if abf.data.size > 1:
-        print("qui")
         metadata.add_data(BasicData(1, abf.data[1]))
 
 
