@@ -1,0 +1,6 @@
+_Session lab book file: C:/Users/FCona/EDR/Labbook/labs_14-09-2022_11-46-18.txt
+_Started recording: Wed Sep 14 11:46:40 2022
+_Lab book notes:
+_Range: 200 pA
+_Sampling frequency (SR): 1.25 kHz
+_Final Bandwidth: SR/2 (no filter)
