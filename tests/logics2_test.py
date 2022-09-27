@@ -68,6 +68,17 @@ class LogicsTest(unittest.TestCase):
             for y in y_sweeps:
                 self.assertTrue(len(x) == len(y))
 
+    def test_open_multi_sweep(self):
+        logics_test = Logics2()
+        logics_test.open(self.path_to_episodic_abf)
+        ch_to_y_sweeps = logics_test.get_y()
+        x = logics_test.get_x()
+        for tup in ch_to_y_sweeps:
+            _, y_values = tup
+            self.assertTrue(len(y_values) == 15)
+            for y in y_values:
+                self.assertTrue(len(y) == len(x))
+
     def test_open_different_abf(self):
         logics_test = logics.Logics()
         logics_test.open(self.path_to_abf1)
