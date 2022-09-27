@@ -1,4 +1,7 @@
 from os.path import exists
+
+from numpy.core.records import ndarray
+
 from src.data_classes.meta_data import MetaData
 import handlers.abf_handler as abf_handler
 
@@ -18,8 +21,8 @@ class Logics2:
     def is_all_data_hidden(self):
         return True not in {v.visible for v in self.metadata.data}
 
-    def get_x(self):
-        self.metadata.get_x()
+    def get_x(self) -> ndarray:
+        return self.metadata.get_x()
 
     def clear(self):
         self.metadata.data.clear()

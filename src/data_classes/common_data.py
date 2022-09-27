@@ -6,7 +6,7 @@ from numpy import ndarray
 @dataclass
 class CommonData:
     """data that are common to all loaded data"""
-    x: ndarray = ndarray([])
-    sampling_rate: float = 0
-    channel_count: int = 0
+    x: ndarray
+    sampling_rate: float
+    channel_count: int
     # measuring units

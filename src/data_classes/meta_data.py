@@ -9,7 +9,7 @@ from src.data_classes.common_data import CommonData
 class MetaData:
 
     def __init__(self):
-        self.common_data: CommonData = CommonData()
+        self.common_data: CommonData | None = None
         self.data: Set[BasicData] = set()
 
     def get_x(self) -> ndarray:

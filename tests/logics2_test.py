@@ -24,8 +24,23 @@ class LogicsTest(unittest.TestCase):
     def test_open_first_abf(self):
         logics_test = Logics2()
         logics_test.open(self.path_to_abf1)
-        print(logics_test.metadata.data)
         self.assertTrue(len(logics_test.metadata.data) == 2)
+
+    def test_common_data_from_abf(self):
+        logics_test = Logics2()
+        logics_test.open(self.path_to_abf1)
+        x = logics_test.get_x()
+        self.assertTrue(len(x) > 1)
+
+    def test_get_y_values(self):
+        logics_test = Logics2()
+        logics_test.open(self.path_to_abf1)
+        ch_to_y_values = logics_test.metadata.get_all_y()
+        x = logics_test.get_x()
+        print(x)
+        for ch in ch_to_y_values.keys():
+            for y in ch_to_y_values[ch]:
+                self.assertTrue(len(x) == len(y))
 
     def test_open_different_abf(self):
         logics_test = logics.Logics()
