@@ -28,3 +28,14 @@ class MetaData:
     def add_common_data(self, cd: CommonData):
         # if cd != self.common_data:
         self.common_data = cd
+
+    def get_visible_data(self):
+        return [d for d in self.data if d.visible]
+
+    def is_empty(self):
+        return len(self.data) == 0 or self.common_data is None
+
+    def set_visibility(self, name: str, visibility: bool):
+        for d in self.data:
+            if d.name == name:
+                d.visible = visibility

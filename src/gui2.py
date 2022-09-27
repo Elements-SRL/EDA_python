@@ -134,7 +134,7 @@ class UiMainWindow(object):
 
         self.actionOpen.triggered.connect(lambda: self.open())
         self.action_csv.triggered.connect(lambda: self.csv())
-        self.action_open_visible_channels.triggered.connect(lambda: self.open_filters_window())
+        self.action_open_visible_channels.triggered.connect(lambda: self.open_views_window())
         self.action_clear.triggered.connect(lambda: self.clear())
 
     # setupUi
@@ -166,7 +166,7 @@ class UiMainWindow(object):
 
     def csv(self):
         # if list is empty
-        if not self.logics.get_abfs():
+        if self.logics.metadata.is_empty():
             show_empty_abfs_dialog("Nothing to export.", "Export csv", "Open a file and try again.")
             return
         # TODO hint or choose a default name?
@@ -185,7 +185,7 @@ class UiMainWindow(object):
             self.sc.draw()
             return
         x = self.logics.metadata.get_x()
-        data = self.logics.metadata.data
+        data = self.logics.metadata.get_visible_data()
         for d in data:
             match d.ch:
                 case 0:
@@ -204,41 +204,29 @@ class UiMainWindow(object):
         self.sc.ax2.cla()
         self.sc.draw()
 
-    def open_filters_window(self):
-        if not self.logics.get_abfs():
-            show_empty_abfs_dialog("Empty window", "Nothing to filter", "No abf has been opened.")
+    def open_views_window(self):
+        if self.logics.is_all_data_hidden():
+            show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
             return
-        filters_layout = QVBoxLayout()
+        views_layout = QVBoxLayout()
         if self.w is None:
             self.w = QWidget()
             self.w.setWindowTitle("Views")
             self.w.setMinimumSize(200, 300)
-            self.w.setLayout(filters_layout)
+            self.w.setLayout(views_layout)
         buttons = []
-        filters_layout.deleteLater()
-        if self.logics.get_abfs()[0].sweepCount <= 1:
-            for ch in self.logics.names_to_abfs.keys():
-                b = QCheckBox(ch)
-                filters_layout.addWidget(b)
-                if ch not in self.logics.hidden_channels:
-                    b.setChecked(True)
-                buttons.append(b)
-        else:
-            for s in range(self.logics.get_abfs()[0].sweepCount):
-                b = QCheckBox("sweep " + str(s))
-                filters_layout.addWidget(b)
-                if s not in self.logics.hidden_sweeps:
-                    b.setChecked(True)
-                buttons.append(b)
+        views_layout.deleteLater()
+        for d in self.logics.metadata.data:
+            b = QCheckBox(d.name)
+            views_layout.addWidget(b)
+            b.setChecked(d.visible)
+            buttons.append(b)
         apply_button = QPushButton("Show selected channels")
         apply_button.clicked.connect(lambda: self.apply_filters(buttons))
-        filters_layout.addWidget(apply_button)
+        views_layout.addWidget(apply_button)
         self.w.show()
 
     def apply_filters(self, buttons: List[QCheckBox]):
         for b in buttons:
-            if b.text().startswith("sweep"):
-                self.logics.set_sweep_visibility(buttons.index(b), b.isChecked())
-            else:
-                self.logics.set_channel_visibility(b.text(), b.isChecked())
+            self.logics.metadata.set_visibility(b.text(), b.isChecked())
         self.update_plot()
