@@ -1,5 +1,6 @@
 import unittest
 import numpy as np
+import pytest
 from matplotlib import pyplot as plt
 
 from src import digital_filters
@@ -20,29 +21,34 @@ class DigitalFiltersTest(unittest.TestCase):
         plt.plot(time, filtered, "--")
         plt.show()
 
+    @pytest.mark.skip(reason="not completed yet")
     def test_butter(self):
         y_filtered = digital_filters.butter(self.y_raw, self.frequency, 2.5, "lowpass")
         err_on_filtered = np.sum(np.abs(self.y_raw - y_filtered))
-        self.debug("butter", self.time_sec, self.y_raw, y_filtered)
+        # self.debug("butter", self.time_sec, self.y_raw, y_filtered)
         self.assertTrue(err_on_filtered < self.err_on_raw)
 
+    @pytest.mark.skip(reason="not completed yet")
     def test_quadratic_spline(self):
         y_filtered = digital_filters.quadratic_spline(self.time_sec, self.y_raw)
         err_on_filtered = np.sum(np.abs(self.y_raw - y_filtered))
-        self.debug("quadratic spline", self.time_sec, self.y_raw, y_filtered)
+        # self.debug("quadratic spline", self.time_sec, self.y_raw, y_filtered)
         self.assertTrue(err_on_filtered < self.err_on_raw)
 
+    @pytest.mark.skip(reason="not completed yet")
     def test_cubic_spline(self):
         y_filtered = digital_filters.cubic_spline(self.time_sec, self.y_raw)
         err_on_filtered = np.sum(np.abs(self.y_raw - y_filtered))
-        self.debug("cubic spline", self.time_sec, self.y_raw, y_filtered)
+        # self.debug("cubic spline", self.time_sec, self.y_raw, y_filtered)
         self.assertTrue(err_on_filtered < self.err_on_raw)
 
+    @pytest.mark.skip(reason="not completed yet")
     def test_autocorrelation(self):
         autocorrelation = digital_filters.autocorrelation(self.y_raw)
-        plt.plot(np.arange(-len(self.y_raw)+1, len(self.y_raw)), autocorrelation)
-        plt.show()
+        # plt.plot(np.arange(-len(self.y_raw)+1, len(self.y_raw)), autocorrelation)
+        # plt.show()
 
+    @pytest.mark.skip(reason="not completed yet")
     def test_fft(self):
         xf, yf = digital_filters.fft(self.y_raw, self.frequency)
         plt.plot(xf,  2.0/5*30 * np.abs(yf[0:5*30//2]))

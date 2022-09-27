@@ -2,7 +2,7 @@ import os
 import time
 import unittest
 import sys
-sys.path.append("../src")
+import pytest
 from src.logics import Logics
 import src.logics as logics
 
@@ -70,6 +70,7 @@ class LogicsTest(unittest.TestCase):
         logics_test.open(self.path_to_basic_edh)
         self.assertTrue(len(logics_test.get_abfs()) == 4)
 
+    @pytest.mark.skip(reason="changing implementation")
     def test_generate_header(self):
         logics_test = Logics()
         logics_test.open(self.path_to_abf1)
@@ -146,6 +147,7 @@ class LogicsTest(unittest.TestCase):
         self.assertTrue(os.path.exists(self.path_to_csv_of_contiguous_abfs))
 
     # TODO could be tested a little bit more accurately
+    @pytest.mark.skip(reason="changing implementation")
     def test_generate_multi_sweep_data(self):
         logics_test = Logics()
         logics_test.open(self.path_to_episodic_abf)

@@ -20,5 +20,4 @@ class Logics2:
         return True not in {v.visible for v in self.metadata.data}
 
     def clear(self):
-        self.metadata.data.clear()
-        self.metadata.common_data = None
+        self.metadata.clear()

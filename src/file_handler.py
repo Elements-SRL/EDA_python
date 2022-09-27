@@ -7,6 +7,7 @@ def extract_data(f: str, metadata: MetaData):
         return
     if f.endswith(".abf"):
         abf_handler.extract_meta_data_from_abf(f, metadata)
-        # case f.endswith(".edh"):
-        #     edh_handler.extract_meta_data_from_edh(f, metadata)
+    elif f.endswith(".edh"):
+        edh_handler.extract_meta_data_from_edh(f, metadata)
+    metadata.add_path(f)
 

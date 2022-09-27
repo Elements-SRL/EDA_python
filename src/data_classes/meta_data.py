@@ -11,6 +11,12 @@ class MetaData:
     def __init__(self):
         self.common_data: CommonData | None = None
         self.data: Set[BasicData] = set()
+        self.paths: Set[str] = set()
+
+    def clear(self):
+        self.data.clear()
+        self.common_data = None
+        self.paths.clear()
 
     def get_x(self) -> ndarray:
         return self.common_data.x
@@ -40,5 +46,8 @@ class MetaData:
             if d.name == name:
                 d.visible = visibility
 
+    def add_path(self, path_to_file):
+        self.paths.add(path_to_file)
+
     def already_opened(self, file_path: str):
-        return file_path in set([d.path for d in self.data])
+        return file_path in self.paths
