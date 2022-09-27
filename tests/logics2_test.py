@@ -1,5 +1,7 @@
 import sys
+
 # importing
+
 sys.path.append("../src")
 from src.logics2 import Logics2
 import unittest
@@ -32,14 +34,38 @@ class LogicsTest(unittest.TestCase):
         x = logics_test.get_x()
         self.assertTrue(len(x) > 1)
 
-    def test_get_y_values(self):
+    def test_get_all_y(self):
         logics_test = Logics2()
         logics_test.open(self.path_to_abf1)
-        ch_to_y_values = logics_test.metadata.get_all_y()
+        ch_to_y_values = logics_test.get_y()
+        self.assertTrue(isinstance(ch_to_y_values, list))
+
+    def test_get_y_by_channel(self):
+        logics_test = Logics2()
+        logics_test.open(self.path_to_abf1)
+        l_temp = logics_test.get_y(0)
+        _, y = l_temp.pop()
+        self.assertTrue(isinstance(y, list))
+
+    def test_get_y_with_wrong_channel(self):
+        logics_test = Logics2()
+        logics_test.open(self.path_to_abf1)
+        not_existing_channel = 69
+        ch_to_y = logics_test.get_y(not_existing_channel)
+        self.assertTrue(isinstance(ch_to_y, list))
+        for d in ch_to_y:
+            x, y = d
+            self.assertTrue(isinstance(x, int))
+            self.assertTrue(isinstance(y, list))
+
+    def test_x_and_y_correctness(self):
+        logics_test = Logics2()
+        logics_test.open(self.path_to_abf1)
+        ch_to_y_sweeps = logics_test.get_y()
         x = logics_test.get_x()
-        print(x)
-        for ch in ch_to_y_values.keys():
-            for y in ch_to_y_values[ch]:
+        for t in ch_to_y_sweeps:
+            _, y_sweeps = t
+            for y in y_sweeps:
                 self.assertTrue(len(x) == len(y))
 
     def test_open_different_abf(self):
@@ -139,13 +165,15 @@ class LogicsTest(unittest.TestCase):
             total_sweepC += len(abf.sweepC)
         logics_test.clear()
 
-        logics_test.open_contiguous_abf([self.path_to_contiguous_abf1, self.path_to_contiguous_abf2, self.path_to_contiguous_abf3])
+        logics_test.open_contiguous_abf(
+            [self.path_to_contiguous_abf1, self.path_to_contiguous_abf2, self.path_to_contiguous_abf3])
         self.assertTrue(total_sweepX == len(logics_test.abfs[0].sweepX))
         self.assertTrue(total_sweepY == len(logics_test.abfs[0].sweepY))
         self.assertTrue(total_sweepC == len(logics_test.abfs[0].sweepC))
 
     def test_are_abfs_contiguous(self):
-        self.assertTrue(logics.are_files_contiguous([self.path_to_contiguous_abf1, self.path_to_contiguous_abf2, self.path_to_contiguous_abf3]))
+        self.assertTrue(logics.are_files_contiguous(
+            [self.path_to_contiguous_abf1, self.path_to_contiguous_abf2, self.path_to_contiguous_abf3]))
 
     def test_open_contiguous_abfs(self):
         logics_test = logics.Logics()
@@ -182,4 +210,3 @@ class LogicsTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

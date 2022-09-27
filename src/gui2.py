@@ -182,10 +182,11 @@ class UiMainWindow(object):
             # clear plot
             self.sc.draw()
             return
-        ch_to_y_values = self.logics.metadata.get_all_y()
         x = self.logics.get_x()
-        for ch in ch_to_y_values.keys():
-            for y in ch_to_y_values[ch]:
+        ch_to_y = self.logics.metadata.get_all_y()
+        for t in ch_to_y:
+            ch, y_sweeps = t
+            for y in y_sweeps:
                 match ch:
                     case 0:
                         self.sc.ax1.plot(x, y)

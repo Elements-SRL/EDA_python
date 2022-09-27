@@ -1,4 +1,4 @@
-from typing import Set, List, Dict
+from typing import Set, List, Dict, Tuple
 
 from numpy import ndarray
 
@@ -18,8 +18,9 @@ class MetaData:
     def get_channel_y(self, channel: int) -> List[ndarray]:
         return [d.y for d in self.data if d.ch == channel]
 
-    def get_all_y(self) -> Dict[int, List[ndarray]]:
-        return {ch: self.get_channel_y(ch) for ch in range(self.common_data.channel_count)}
+    def get_all_y(self) -> List[Tuple[int, List[ndarray]]]:
+        d = {ch: self.get_channel_y(ch) for ch in range(self.common_data.channel_count)}
+        return list(zip(d.keys(), d.values()))
 
     def add_data(self, basic_data: BasicData):
         self.data.add(basic_data)

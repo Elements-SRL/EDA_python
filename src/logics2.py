@@ -1,4 +1,5 @@
 from os.path import exists
+from typing import List, Tuple
 
 from numpy.core.records import ndarray
 
@@ -24,11 +25,10 @@ class Logics2:
     def get_x(self) -> ndarray:
         return self.metadata.get_x()
 
-    def get_y(self, channel: int = -1):
+    def get_y(self, channel: int = -1) -> List[Tuple[int, List[ndarray]]]:
         if channel in range(self.metadata.common_data.channel_count):
-            return self.metadata.get_channel_y(channel)
-        else:
-            return self.metadata.get_all_y()
+            return [(channel, self.metadata.get_channel_y(channel))]
+        return self.metadata.get_all_y()
 
     def clear(self):
         self.metadata.data.clear()
