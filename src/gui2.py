@@ -136,6 +136,7 @@ class UiMainWindow(object):
         self.action_csv.triggered.connect(lambda: self.csv())
         self.action_open_visible_channels.triggered.connect(lambda: self.open_filters_window())
         self.action_clear.triggered.connect(lambda: self.clear())
+
     # setupUi
 
     def retranslate_ui(self, main_window):
@@ -150,7 +151,8 @@ class UiMainWindow(object):
         self.action_csv.setText(QCoreApplication.translate("MainWindow", u".csv", None))
         self.menu_file.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menu_view.setTitle(QCoreApplication.translate("MainWindow", u"View", None))
-        self.action_open_visible_channels.setText(QCoreApplication.translate("MainWindow", u"Visible channels/sweeps", None))
+        self.action_open_visible_channels.setText(
+            QCoreApplication.translate("MainWindow", u"Visible channels/sweeps", None))
         self.action_clear.setText(QCoreApplication.translate("MainWindow", u"Clear current plots", None))
         self.menu_export_as.setTitle(QCoreApplication.translate("MainWindow", u"Export as ...", None))
 
@@ -183,15 +185,13 @@ class UiMainWindow(object):
             self.sc.draw()
             return
         x = self.logics.get_x()
-        ch_to_y = self.logics.metadata.get_all_y()
-        for t in ch_to_y:
-            ch, y_sweeps = t
-            for y in y_sweeps:
-                match ch:
-                    case 0:
-                        self.sc.ax1.plot(x, y)
-                    case 1:
-                        self.sc.ax2.plot(x, y)
+        data = self.logics.metadata.data
+        for d in data:
+            match d.ch:
+                case 0:
+                    self.sc.ax1.plot(x, d.y, label=d.name)
+                case 1:
+                    self.sc.ax2.plot(x, d.y, label=d.name)
             # label = logics2.channel_name(abf)
 
         self.sc.ax1.legend(loc='upper right')

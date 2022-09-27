@@ -30,4 +30,4 @@ def extract_multi_sweep_abf(abf: ABF, metadata: MetaData):
                                                     sampling_rate=abf.sampleRate,
                                                     channel_count=abf.channelCount))
             abf.setSweep(sweep, ch)
-            metadata.add_data(BasicData(ch=ch, y=abf.sweepY[:expected_length]))
+            metadata.add_data(BasicData(ch=ch, y=abf.sweepY[:expected_length], sweep_number=sweep))
