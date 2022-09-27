@@ -16,14 +16,14 @@ class MetaDataTest(unittest.TestCase):
 
     def test_add_basic_data(self):
         metadata = MetaData()
-        bd = BasicData(1, np.array([1, 2, 3]))
+        bd = BasicData(ch=1, y=np.array([1, 2, 3]), path="path/to/file")
         metadata.add_data(bd)
         self.assertTrue(len(metadata.data) == 1)
 
     def test_data_content(self):
         metadata = MetaData()
         arr = np.array([1, 2, 3])
-        bd = BasicData(1, arr)
+        bd = BasicData(ch=1, y=arr, path="path/to/file")
         metadata.add_data(bd)
         arr2 = metadata.data.pop().y
         self.assertListEqual(list(arr), list(arr2))
@@ -36,4 +36,8 @@ class MetaDataTest(unittest.TestCase):
         self.assertTrue(metadata.common_data.channel_count == 5)
         self.assertTrue(metadata.common_data.sampling_rate == 10)
 
-
+    def test_already_opened_file(self):
+        metadata = MetaData()
+        path = "path/to/file"
+        metadata.add_data(BasicData(ch=1, y=np.array([1, 2, 3]), path=path))
+        self.assertTrue(metadata.already_opened(path))

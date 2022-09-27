@@ -39,3 +39,6 @@ class MetaData:
         for d in self.data:
             if d.name == name:
                 d.visible = visibility
+
+    def already_opened(self, file_path: str):
+        return file_path in set([d.path for d in self.data])

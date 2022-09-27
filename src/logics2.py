@@ -1,10 +1,7 @@
 from os.path import exists
-from typing import List, Tuple
 
-from numpy.core.records import ndarray
-
+from src import file_handler
 from src.data_classes.meta_data import MetaData
-import handlers.abf_handler as abf_handler
 
 
 class Logics2:
@@ -16,7 +13,7 @@ class Logics2:
         if not path_to_file or not exists(path_to_file):
             # TODO tell something to the user?
             return
-        abf_handler.extract_meta_data_from_abf(path_to_file, self.metadata)
+        file_handler.extract_data(path_to_file, self.metadata)
         # else do nothing
 
     def is_all_data_hidden(self):

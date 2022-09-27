@@ -14,9 +14,9 @@ def extract_meta_data_from_abf(path_to_file: str, metadata: MetaData):
     """mono sweep abf"""
     cd = CommonData(abf.sweepX, abf.sampleRate, abf.channelCount)
     metadata.add_common_data(cd)
-    metadata.add_data(BasicData(0, abf.sweepY))
+    metadata.add_data(BasicData(0, y=abf.sweepY, path=path_to_file))
     if abf.data.size > 1:
-        metadata.add_data(BasicData(1, abf.data[1]))
+        metadata.add_data(BasicData(1, abf.data[1], path=path_to_file))
 
 
 # display only sweeps of equal length
