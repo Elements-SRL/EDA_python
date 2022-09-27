@@ -184,7 +184,7 @@ class UiMainWindow(object):
             # clear plot
             self.sc.draw()
             return
-        x = self.logics.get_x()
+        x = self.logics.metadata.get_x()
         data = self.logics.metadata.data
         for d in data:
             match d.ch:
