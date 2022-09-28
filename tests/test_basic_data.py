@@ -3,7 +3,7 @@ import numpy as np
 from src.data_classes.basic_data import BasicData
 
 
-class BasicDataTest(unittest.TestCase):
+class TestBasicData(unittest.TestCase):
 
     def test_data_creation(self):
         channel = 1

@@ -2,3 +2,4 @@ matplotlib==3.5.3
 pyabf>=2.3.7
 PyQt5~=5.15.7
 scipy~=1.9.1
+pytest~=7.1.3

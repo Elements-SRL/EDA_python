@@ -1,10 +1,5 @@
-import sys
-
-# importing
-
-sys.path.append("../src")
-from src.logics2 import Logics2
 import unittest
+from src.logics2 import Logics2
 
 
 class LogicsTest(unittest.TestCase):
