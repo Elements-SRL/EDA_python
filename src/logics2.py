@@ -1,6 +1,6 @@
 from os.path import exists
 
-from src import file_handler
+from src import file_handler, exporter
 from src.data_classes.meta_data import MetaData
 
 
@@ -21,3 +21,8 @@ class Logics2:
 
     def clear(self):
         self.metadata.clear()
+
+    def export(self, path_to_file: str):
+        if self.metadata.is_empty():
+            return
+        exporter.export(path_to_file=path_to_file, metadata=self.metadata)

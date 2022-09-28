@@ -26,12 +26,13 @@ def extract_multi_sweep_abf(abf: ABF, metadata: MetaData):
     for ch in range(abf.channelCount):
         for sweep in range(abf.sweepCount):
             if cd is None:
-                metadata.add_common_data(CommonData(x=abf.sweepX[:expected_length],
-                                                    sampling_rate=abf.sampleRate,
-                                                    channel_count=abf.channelCount,
-                                                    unit_x=abf.sweepUnitsX,
-                                                    unit_y=abf.sweepUnitsY,
-                                                    unit_c=abf.sweepUnitsC,
-                                                    ))
+                cd = CommonData(x=abf.sweepX[:expected_length],
+                                sampling_rate=abf.sampleRate,
+                                channel_count=abf.channelCount,
+                                unit_x=abf.sweepUnitsX,
+                                unit_y=abf.sweepUnitsY,
+                                unit_c=abf.sweepUnitsC,
+                                )
             abf.setSweep(sweep, ch)
             metadata.add_data(BasicData(ch=ch, y=abf.sweepY[:expected_length], sweep_number=sweep))
+    metadata.add_common_data(cd)

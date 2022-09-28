@@ -1,8 +1,9 @@
 import unittest
+import src.exporter as exporter
 from src.logics2 import Logics2
 
 
-class LogicsTest(unittest.TestCase):
+class ExplorerTest(unittest.TestCase):
     path_to_abf1 = "res/Data/Data_CH001_000.abf"
     path_to_abf2 = "res/Data/Data_CH002_000.abf"
 
@@ -18,21 +19,10 @@ class LogicsTest(unittest.TestCase):
     path_to_csv_of_contiguous_abfs = "res/ContiguousData/test_export.csv"
     path_to_csv_of_episodic_data = "res/EpisodicData/test_export.csv"
 
-    def test_open_first_abf(self):
-        logics_test = Logics2()
-        logics_test.open(self.path_to_abf1)
-        self.assertTrue(len(logics_test.metadata.data) == 2)
-
-    def test_common_data_from_abf(self):
-        logics_test = Logics2()
-        logics_test.open(self.path_to_abf1)
-        x = logics_test.metadata.get_x()
-        self.assertTrue(len(x) > 1)
-
-    def test_open_basic_edh(self):
-        logics_test = Logics2()
-        logics_test.open(self.path_to_basic_edh)
-        print(len(logics_test.metadata.data))
+    def test_generate_header(self):
+        test_logics = Logics2()
+        test_logics.open(self.path_to_episodic_abf)
+        print(exporter.generate_header(test_logics.metadata))
 
 
 if __name__ == '__main__':

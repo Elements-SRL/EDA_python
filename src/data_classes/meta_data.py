@@ -29,7 +29,8 @@ class MetaData:
         return list(zip(d.keys(), d.values()))
 
     def add_data(self, basic_data: BasicData):
-        self.data.add(basic_data)
+        if basic_data not in self.data:
+            self.data.add(basic_data)
 
     def add_common_data(self, cd: CommonData):
         # if cd != self.common_data:
