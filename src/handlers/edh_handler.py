@@ -55,7 +55,12 @@ def open_contiguous_abf(metadata: MetaData, path_to_files_of_same_channels: List
         # abf.sweepC = np.concatenate((abf.sweepC, other_abf.sweepC), axis=None)
         abf.data = [np.concatenate((d, od), axis=None) for d, od in zip(abf.data, other_abf.data)]
     if metadata.is_empty():
-        metadata.common_data = CommonData(x=abf.sweepX, sampling_rate=abf.sampleRate, channel_count=abf.channelCount)
+        metadata.common_data = CommonData(x=abf.sweepX,
+                                          sampling_rate=abf.sampleRate,
+                                          channel_count=abf.channelCount,
+                                          unit_x=abf.sweepUnitsX,
+                                          unit_y=abf.sweepUnitsY,
+                                          unit_c=abf.sweepUnitsC)
     metadata.add_data(BasicData(ch=0, y=abf.sweepY))
     metadata.add_data(BasicData(ch=1, y=abf.data[1]))
 

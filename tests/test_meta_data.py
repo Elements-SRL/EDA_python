@@ -27,7 +27,7 @@ class MetaDataTest(unittest.TestCase):
 
     def test_add_common_data(self):
         metadata = MetaData()
-        cd = CommonData(x=np.array([1, 2, 3]), sampling_rate=10, channel_count=5)
+        cd = CommonData(x=np.array([1, 2, 3]), sampling_rate=10, channel_count=5, unit_x="s", unit_y="pA", unit_c="mV")
         metadata.add_common_data(cd)
         self.assertTrue(len(metadata.common_data.x) == 3)
         self.assertTrue(metadata.common_data.channel_count == 5)

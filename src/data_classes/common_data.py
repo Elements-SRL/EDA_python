@@ -10,3 +10,6 @@ class CommonData:
     sampling_rate: float
     channel_count: int
     # measuring units
+    unit_x: str
+    unit_y: str
+    unit_c: str

@@ -12,7 +12,7 @@ def extract_meta_data_from_abf(path_to_file: str, metadata: MetaData):
     if abf.sweepCount > 1:
         return extract_multi_sweep_abf(abf, metadata)
     """mono sweep abf"""
-    cd = CommonData(abf.sweepX, abf.sampleRate, abf.channelCount)
+    cd = CommonData(abf.sweepX, abf.sampleRate, abf.channelCount, abf.sweepUnitsX, abf.sweepUnitsY, abf.sweepUnitsC)
     metadata.add_common_data(cd)
     metadata.add_data(BasicData(0, y=abf.sweepY))
     if abf.data.size > 1:
@@ -28,6 +28,10 @@ def extract_multi_sweep_abf(abf: ABF, metadata: MetaData):
             if cd is None:
                 metadata.add_common_data(CommonData(x=abf.sweepX[:expected_length],
                                                     sampling_rate=abf.sampleRate,
-                                                    channel_count=abf.channelCount))
+                                                    channel_count=abf.channelCount,
+                                                    unit_x=abf.sweepUnitsX,
+                                                    unit_y=abf.sweepUnitsY,
+                                                    unit_c=abf.sweepUnitsC,
+                                                    ))
             abf.setSweep(sweep, ch)
             metadata.add_data(BasicData(ch=ch, y=abf.sweepY[:expected_length], sweep_number=sweep))
