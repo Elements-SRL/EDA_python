@@ -4,15 +4,13 @@ from numpy import ndarray
 
 class BasicData:
 
-    def __init__(self, ch: int, y: ndarray, sweep_number: int = -1, visible: bool = True):
+    def __init__(self, ch: int, y: ndarray, measuring_unit: str, sweep_number: int = -1, visible: bool = True):
         self.ch: int = ch
         self.y: ndarray = y
         self.visible: bool = visible
         self.sweep_number: int = sweep_number
-        if sweep_number == -1:
-            self.name = "ch " + str(ch)
-        else:
-            self.name = "ch " + str(ch) + " s " + str(sweep_number)
+        self.measuring_unit = measuring_unit
+        self.name = "ch " + str(ch) + " s " + str(sweep_number)
 
     def __hash__(self):
         return hash((self.ch, str(self.y), self.sweep_number, self.visible))
