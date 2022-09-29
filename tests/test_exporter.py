@@ -33,6 +33,26 @@ class ExplorerTest(unittest.TestCase):
         self.assertTrue("nA" in measuring_units)
         self.assertTrue("mV" in measuring_units)
 
+    def test_generate_header_gap_free_from_single_abf(self):
+        test_logics = Logics2()
+        test_logics.open(self.path_to_abf1)
+        measuring_units = exporter._generate_header(test_logics.metadata)
+        self.assertTrue(len(measuring_units) == 3)
+        self.assertTrue("sec" in measuring_units[0])
+        self.assertTrue("mV" in measuring_units[1])
+        self.assertTrue("pA" in measuring_units[2])
+
+    def test_generate_header_gap_free_from_edh_composed_by_single_abf(self):
+        test_logics = Logics2()
+        test_logics.open(self.path_to_basic_edh)
+        measuring_units = exporter._generate_header(test_logics.metadata)
+        print(len(measuring_units))
+        self.assertTrue(len(measuring_units) == 6)
+        self.assertTrue("sec" in measuring_units[0])
+        self.assertTrue("mV" in measuring_units[1])
+        self.assertTrue("pA" in measuring_units[2])
+        self.assertTrue("pA" in measuring_units[4])
+
 
 if __name__ == '__main__':
     unittest.main()
