@@ -15,7 +15,25 @@ Download this repo, jump into it and run:
 ```
 pip install -r src/requirements.txt 
 ```
-Once installed to run it from source code just run:
+Once installed export env variable:
+##### Linux
+```
+ export PYTHONPATH="$PYTHONPATH:path/to/your/project/EDA_python"
+ ```
+ for example if you download this project in 
+ ```
+ /home/usr/something/
+```
+the command whould be:
+```
+ export PYTHONPATH="$PYTHONPATH:/home/usr/something/EDA_python"
+```
+##### Windows
+```
+set PYTHONPATH="${PYTHONPATH}:/path/to/your/project/EDA_python"
+```
+#### Launch it
+Move into EDA_python and run
 ```
 python src/main.py
 ```
