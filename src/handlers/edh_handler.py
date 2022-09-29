@@ -6,7 +6,7 @@ import pyabf
 from pyabf import ABF
 
 from src.data_classes.basic_data import BasicData
-from src.data_classes.common_data import CommonData
+from src.data_classes.common_data import CommonData, SweepType
 from src.data_classes.meta_data import MetaData
 # import abf_handler
 from src.handlers import abf_handler
@@ -43,24 +43,37 @@ def open_multiple_abf(path_to_files: List[str], dir_path: str, metadata: MetaDat
 
 
 def open_contiguous_abf(metadata: MetaData, path_to_files_of_same_channels: List[str]):
+    # TODO SAFELY READ ONLY 9 CONTIGUOUS ABFS
     path_to_files_of_same_channels.sort()
-    first_file = path_to_files_of_same_channels.pop(0)
-    abf = pyabf.ABF(first_file)
-    # merge useful information
-    for p in path_to_files_of_same_channels:
-        other_abf = pyabf.ABF(p)
-        abf.sweepY = np.concatenate((abf.sweepY, other_abf.sweepY), axis=None)
-        # time starts every time from zero
-        abf.sweepX = np.concatenate((abf.sweepX, other_abf.sweepX + abf.sweepX[-1:]), axis=None)
-        # abf.sweepC = np.concatenate((abf.sweepC, other_abf.sweepC), axis=None)
-        abf.data = [np.concatenate((d, od), axis=None) for d, od in zip(abf.data, other_abf.data)]
+    abfs = [pyabf.ABF(p) for p in path_to_files_of_same_channels]
+    first_abf = abfs[0]
+    x = first_abf.sweepX
+    first_abf.setSweep(channel=0, sweepNumber=0)
+    y0 = first_abf.sweepY
+    first_abf.setSweep(channel=1, sweepNumber=0)
+    y1 = first_abf.sweepY
+    i = 0
+    for other in abfs:
+        print(i)
+        i += 1
+        other.setSweep(channel=0, sweepNumber=0)
+        print("canale 0")
+        print(other.sweepUnitsY)
+        x = np.concatenate((x, other.sweepX + x[-1:]), axis=None)
+        y0 = np.concatenate((y0, other.sweepY), axis=None)
+        other.setSweep(channel=1, sweepNumber=0)
+        print("canale 1")
+        print(other.sweepUnitsY)
+        y1 = np.concatenate((y1, other.sweepY), axis=None)
     if metadata.is_empty():
-        metadata.common_data = CommonData(x=abf.sweepX,
-                                          sampling_rate=abf.sampleRate,
-                                          channel_count=abf.channelCount,
-                                          unit_x=abf.sweepUnitsX,
-                                          unit_y=abf.sweepUnitsY,
-                                          unit_c=abf.sweepUnitsC)
-    metadata.add_data(BasicData(ch=0, y=abf.sweepY))
-    metadata.add_data(BasicData(ch=1, y=abf.data[1]))
+        metadata.common_data = CommonData(x=x,
+                                          sampling_rate=first_abf.sampleRate,
+                                          channel_count=first_abf.channelCount,
+                                          sweep_type=SweepType.episodic,
+                                          measuring_unit=first_abf.sweepUnitsX)
+    first_abf.setSweep(channel=0, sweepNumber=0)
+    metadata.add_data(BasicData(ch=0, y=y0, measuring_unit=first_abf.sweepUnitsY, sweep_number=0))
+    first_abf.setSweep(channel=1, sweepNumber=0)
+    metadata.add_data(BasicData(ch=1, y=y1, measuring_unit=first_abf.sweepUnitsY, sweep_number=0))
 
+# TODO fare un metodo che dati n abf e un canale li sputi fuori una y con tutti gli abf concatenati?

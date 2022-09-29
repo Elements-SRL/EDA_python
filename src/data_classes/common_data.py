@@ -15,3 +15,4 @@ class CommonData:
     sampling_rate: float
     channel_count: int
     sweep_type: SweepType
+    measuring_unit: str

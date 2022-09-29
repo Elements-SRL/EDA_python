@@ -194,10 +194,11 @@ class UiMainWindow(object):
                     self.sc.ax2.plot(x, d.y, label=d.name)
             # label = logics2.channel_name(abf)
 
-        handles, labels = self.sc.ax1.get_legend_handles_labels()
-        # sort both labels and handles by labels
-        labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
-        self.sc.ax1.legend(handles, labels, loc='upper right')
+        # handles, labels = self.sc.ax1.get_legend_handles_labels()
+        # # sort both labels and handles by labels
+        # labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
+        # self.sc.ax1.legend(handles, labels, loc='upper right')
+        self.sc.ax1.legend(loc='upper right')
         self.sc.ax2.legend(loc='upper right')
         self.sc.draw()
 
