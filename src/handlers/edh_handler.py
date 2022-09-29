@@ -54,8 +54,12 @@ def _extract_common_data(abfs: List[ABF]) -> CommonData:
     x = abfs.pop(0).sweepX
     for abf in abfs:
         x = np.concatenate((x, abf.sweepX + x[-1:]), axis=None)
+    abf.setSweep(0, 0)
     return CommonData(x=x, sampling_rate=abf.sampleRate, channel_count=abf.channelCount,
-                      sweep_type=SweepType.episodic, measuring_unit=abf.sweepUnitsX)
+                      sweep_type=SweepType.episodic, measuring_unit=abf.sweepUnitsX,
+                      sweep_label_x=abf.sweepLabelX, sweep_label_y=abf.sweepLabelY,
+                      sweep_label_c=abf.sweepLabelC,
+                      )
 
 
 def _extract_data(abfs: List[ABF]) -> List[BasicData]:

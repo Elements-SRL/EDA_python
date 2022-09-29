@@ -3,8 +3,7 @@ from typing import List
 import matplotlib
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication
-from PyQt5.QtWidgets import QWidget, QMenuBar, QStatusBar, QMenu, QAction, QFileDialog, QGridLayout, QFrame, \
-    QMessageBox, QPushButton, QVBoxLayout, QLabel, QCheckBox
+from PyQt5.QtWidgets import *
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 import logics2
@@ -14,7 +13,7 @@ matplotlib.use('Qt5Agg')
 
 class MplCanvas(FigureCanvasQTAgg):
 
-    def __init__(self, parent=None, width=5, height=4, dpi=100):
+    def __init__(self):
         self.ax1 = None
         self.axs = None
         self.fig = None
@@ -93,7 +92,7 @@ class UiMainWindow(object):
 
         self.gridLayout.addWidget(self.frame_2, 1, 0, 1, 1)
 
-        self.sc = MplCanvas(self, width=5, height=4, dpi=100)
+        self.sc = MplCanvas()
 
         plot_layout = QtWidgets.QVBoxLayout()
         self.gridLayout.addLayout(plot_layout, 0, 0, 0, 0)
@@ -162,7 +161,7 @@ class UiMainWindow(object):
         f_name, _ = QFileDialog.getOpenFileName(None, 'Open file', filter="Edh files(*.edh);;Abf files (*.abf)")
         if f_name:
             self.logics.open(f_name)
-            self.update_plot()
+            self._update_plot()
 
     def csv(self):
         # if list is empty
@@ -177,7 +176,7 @@ class UiMainWindow(object):
         # TODO show progress_bar (?)
         self.logics.export(path_to_file)
 
-    def update_plot(self):
+    def _update_plot(self):
         self.sc.ax1.cla()
         self.sc.ax2.cla()
         if self.logics.is_all_data_hidden():
@@ -192,12 +191,9 @@ class UiMainWindow(object):
                     self.sc.ax1.plot(x, d.y, label=d.name)
                 case 1:
                     self.sc.ax2.plot(x, d.y, label=d.name)
-            # label = logics2.channel_name(abf)
-
-        # handles, labels = self.sc.ax1.get_legend_handles_labels()
-        # # sort both labels and handles by labels
-        # labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
-        # self.sc.ax1.legend(handles, labels, loc='upper right')
+        self.sc.ax1.set_ylabel(self.logics.metadata.common_data.sweep_label_y)
+        self.sc.ax2.set_ylabel(self.logics.metadata.common_data.sweep_label_c)
+        self.sc.ax2.set_xlabel(self.logics.metadata.common_data.sweep_label_x)
         self.sc.ax1.legend(loc='upper right')
         self.sc.ax2.legend(loc='upper right')
         self.sc.draw()
@@ -233,4 +229,4 @@ class UiMainWindow(object):
     def apply_filters(self, buttons: List[QCheckBox]):
         for b in buttons:
             self.logics.metadata.set_visibility(b.text(), b.isChecked())
-        self.update_plot()
+        self._update_plot()

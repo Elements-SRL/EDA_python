@@ -15,11 +15,11 @@ def extract_meta_data_from_abf(path_to_file: str, metadata: MetaData):
     for ch in range(abf.channelCount):
         for sweep in range(abf.sweepCount):
             if cd is None:
-                cd = CommonData(x=abf.sweepX[:expected_length],
-                                sampling_rate=abf.sampleRate,
-                                channel_count=abf.channelCount,
-                                sweep_type=sweep_type,
-                                measuring_unit=abf.sweepUnitsX)
+                cd = CommonData(x=abf.sweepX[:expected_length], sampling_rate=abf.sampleRate,
+                                channel_count=abf.channelCount, sweep_type=sweep_type,
+                                measuring_unit=abf.sweepUnitsX, sweep_label_x=abf.sweepLabelX,
+                                sweep_label_y=abf.sweepLabelY, sweep_label_c=abf.sweepLabelC,
+                                )
             abf.setSweep(sweepNumber=sweep, channel=ch)
             metadata.add_data(BasicData(ch=ch, y=abf.sweepY[:expected_length], sweep_number=sweep, measuring_unit=abf.sweepUnitsY))
     metadata.add_common_data(cd)

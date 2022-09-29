@@ -16,3 +16,6 @@ class CommonData:
     channel_count: int
     sweep_type: SweepType
     measuring_unit: str
+    sweep_label_x: str
+    sweep_label_y: str
+    sweep_label_c: str
