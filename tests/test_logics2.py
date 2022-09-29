@@ -44,7 +44,23 @@ class LogicsTest(unittest.TestCase):
     def test_open_edh_with_contiguous_data(self):
         logics_test = Logics2()
         logics_test.open(self.path_to_contiguous_edh)
+        print(len(logics_test.metadata.data))
+        for d in logics_test.metadata.data:
+            print(d)
         self.assertTrue(len(logics_test.metadata.data) == 5)
+
+    def test_file_path_in_episodic_data(self):
+        logics_test = Logics2()
+        logics_test.open(self.path_to_episodic_abf)
+        file_path = logics_test.metadata.data[0].filepath
+        for d in logics_test.metadata.data:
+            self.assertTrue(d.filepath == file_path)
+
+    def test_file_path_in_basic_edh(self):
+        logics_test = Logics2()
+        logics_test.open(self.path_to_basic_edh)
+        file_path_of_data_from_the_same_channel = {d.filepath for d in logics_test.metadata.data if d.ch == 0}
+        self.assertTrue(len(file_path_of_data_from_the_same_channel) == 4)
 
 
 if __name__ == '__main__':
