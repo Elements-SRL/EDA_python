@@ -54,7 +54,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install flake8 pytest pyinstaller
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          export PYTHONPATH="$PYTHONPATH:$HOME/EDA_python"
 
       - name: Install dependencies on windows systems
         if: matrix.os == 'windows-latest'
@@ -62,21 +61,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install flake8 pytest pyinstaller
           if (Test-Path -path requirements.txt){ pip install -r requirements.txt }
-          set PYTHONPATH="${PYTHONPATH}:%homepath%/EDA_python"
 
       - name: create windows bundle
         if: matrix.os == 'windows-latest'
         run: |
+          set PYTHONPATH="${PYTHONPATH}:%homepath%/EDA_python"
           pyinstaller --onefile --windowed src/main.py -n eda_win.exe
 
       - name: create macos bundle
         if: matrix.os == 'macos-latest'
         run: |
+          export PYTHONPATH="$PYTHONPATH:$HOME/EDA_python"
           pyinstaller --onefile --windowed src/main.py -n eda_macos
 
       - name: create linux bundle
         if: matrix.os == 'ubuntu-latest'
         run: |
+          export PYTHONPATH="$PYTHONPATH:$HOME/EDA_python"
           pyinstaller --onefile --windowed src/main.py -n eda_linux
 
       - uses: actions/upload-artifact@v3
