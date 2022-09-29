@@ -69,5 +69,5 @@ def _extract_data(abfs: List[ABF]) -> List[BasicData]:
         for abf in abfs:
             abf.setSweep(channel=ch, sweepNumber=0)
             y = np.concatenate((y, abf.sweepY), axis=None)
-        basic_data.append(BasicData(ch=ch, y=y, measuring_unit=abf.sweepUnitsY, sweep_number=0))
+        basic_data.append(BasicData(ch=ch, y=y, measuring_unit=abf.sweepUnitsY, sweep_number=0, file_path=abf.abfFilePath))
     return basic_data

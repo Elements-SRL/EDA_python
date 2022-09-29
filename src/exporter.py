@@ -1,7 +1,8 @@
 import csv
 from typing import List
 
-from src.data_classes.basic_data import BasicData
+from numpy import ndarray
+import numpy as np
 from src.data_classes.common_data import SweepType
 from src.data_classes.meta_data import MetaData
 
@@ -22,9 +23,47 @@ def _generate_header(metadata: MetaData) -> List[str]:
     if metadata.common_data.sweep_type == SweepType.episodic:
         different_measuring_units = {d.measuring_unit for d in metadata.data}
         return header + list(different_measuring_units)
-
-    return header
+    measuring_units = [d.measuring_unit for d in metadata.data]
+    measuring_units.sort()
+    return header + measuring_units
 
 
 def _generate_data(metadata: MetaData) -> List[List[float]]:
     pass
+    # return _format_to_csv()
+
+    # data_to_export = metadata.common_data.x
+    # different_measuring_units = {d.measuring_unit for d in metadata.data}
+
+
+
+def _arrange_episodic_data(metadata: MetaData) -> List[ndarray]:
+    pass
+
+
+def _format_to_csv(data: List[ndarray]):
+    # create matrix with all data
+    arrays = np.array(data)
+
+    # array with this form
+    # [[t1,t2,..tn],
+    #  [ch1_1, ch1_2.., ch1_n],
+    #  [vC1_1, vC1_2,.., vC1_n],
+    #  .
+    #  .
+    #  [chn_1, chn_2.., chn_n],
+    #  [vCn_1, vCn_2,.., vCn_n]]
+
+    formatted_data = []
+    # for each value of time the get the corresponding data
+    for i in range(len(data[0])):
+        row = arrays[:, i]
+        formatted_data.append(row)
+
+    # now data is in the form
+    # [[t1, ch1_1, vC1_1, .. chn_1, vCN_1],
+    #  [t2, ch1_2, vC1_2, .. chn_2, vCN_2],
+    #   .
+    #   .
+    #   [tn, ch1_n, vC1_n, .. chn_n, vCN_n]]
+    return formatted_data
