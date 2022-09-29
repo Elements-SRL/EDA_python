@@ -7,7 +7,6 @@ from src import digital_filters
 
 
 class DigitalFiltersTest(unittest.TestCase):
-
     frequency = 30
     time_sec = np.arange(0, 5, 1.0 / frequency)
     ys = np.sin(2 * np.pi * 1.0 * time_sec)

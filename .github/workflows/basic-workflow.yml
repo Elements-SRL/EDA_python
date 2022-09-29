@@ -31,7 +31,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          cd src
+          export PYTHONPATH="$PYTHONPATH:$HOME/EDA_python"
           pytest
 
   create_bundles:
