@@ -1,5 +1,5 @@
-from typing import Set, List, Dict, Tuple
-
+from typing import Set, List, Tuple
+from ordered_set import OrderedSet
 from numpy import ndarray
 
 from src.data_classes.basic_data import BasicData
@@ -10,13 +10,15 @@ class MetaData:
 
     def __init__(self):
         self.common_data: CommonData | None = None
-        self.data: Set[BasicData] = set()
+        self.data: OrderedSet[BasicData] = OrderedSet([])
         self.paths: Set[str] = set()
+        self.currentId: int = 0
 
     def clear(self):
         self.data.clear()
         self.common_data = None
         self.paths.clear()
+        self.currentId = 0
 
     def get_x(self) -> ndarray:
         return self.common_data.x
@@ -31,6 +33,8 @@ class MetaData:
     def add_data(self, basic_data: BasicData):
         if basic_data not in self.data:
             self.data.add(basic_data)
+            basic_data.name = str(self.currentId)
+            self.currentId += 1
 
     def add_common_data(self, cd: CommonData):
         # if cd != self.common_data:
