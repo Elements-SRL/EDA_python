@@ -57,12 +57,17 @@ class ExplorerTest(unittest.TestCase):
         test_logics = Logics2()
         test_logics.open(self.path_to_basic_edh)
         measuring_units = exporter._generate_header(test_logics.metadata)
-        print(len(measuring_units))
         self.assertTrue(len(measuring_units) == 6)
         self.assertTrue("sec" in measuring_units[0])
         self.assertTrue("mV" in measuring_units[1])
         self.assertTrue("pA" in measuring_units[2])
         self.assertTrue("pA" in measuring_units[4])
+
+    def test_generate_data_episodic(self):
+        test_logics = Logics2()
+        test_logics.open(self.path_to_episodic_abf)
+        exporter._generate_data(test_logics.metadata)
+        self.assertTrue(False)
 
 
 if __name__ == '__main__':

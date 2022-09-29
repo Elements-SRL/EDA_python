@@ -29,12 +29,23 @@ def _generate_header(metadata: MetaData) -> List[str]:
 
 
 def _generate_data(metadata: MetaData) -> List[List[float]]:
-    pass
-    # return _format_to_csv()
+    different_file_paths = {d.filepath for d in metadata.data}
 
-    # data_to_export = metadata.common_data.x
-    # different_measuring_units = {d.measuring_unit for d in metadata.data}
-
+    for file_path in different_file_paths:
+        data_with_same_file_path = list(filter(lambda x: x.filepath == file_path, metadata.data))
+        # episodic
+        if len(data_with_same_file_path) > 1:
+            episodic_data = np.tile(metadata.common_data.x, metadata.common_data.sweep_count)
+            # gg
+            print(len(episodic_data) == len(metadata.common_data.x) * 15)
+            distinct_measuring_units = {d.measuring_unit for d in metadata.data}
+            for measuring_unit in distinct_measuring_units:
+                data_with_same_measuring_unit = [d for d in data_with_same_file_path if
+                                                 d.measuring_unit == measuring_unit]
+                sorted_data = sorted(data_with_same_measuring_unit, key=lambda data: data.sweep_number)
+                # membrane potential
+                if len(sorted_data) == 1:
+                    pass
 
 
 def _arrange_episodic_data(metadata: MetaData) -> List[ndarray]:
