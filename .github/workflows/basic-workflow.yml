@@ -54,6 +54,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install flake8 pytest pyinstaller
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          export PYTHONPATH="$PYTHONPATH:$HOME/EDA_python"
 
       - name: Install dependencies on windows systems
         if: matrix.os == 'windows-latest'
@@ -61,6 +62,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install flake8 pytest pyinstaller
           if (Test-Path -path requirements.txt){ pip install -r requirements.txt }
+          set PYTHONPATH="${PYTHONPATH}:%homepath%/EDA_python"
 
       - name: create windows bundle
         if: matrix.os == 'windows-latest'
