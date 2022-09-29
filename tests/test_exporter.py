@@ -22,7 +22,16 @@ class ExplorerTest(unittest.TestCase):
     def test_generate_header(self):
         test_logics = Logics2()
         test_logics.open(self.path_to_episodic_abf)
-        print(exporter.generate_header(test_logics.metadata))
+        print(exporter._generate_header(test_logics.metadata))
+
+    def test_generate_header_episodic(self):
+        test_logics = Logics2()
+        test_logics.open(self.path_to_episodic_abf)
+        measuring_units = exporter._generate_header(test_logics.metadata)
+        self.assertTrue(len(measuring_units) == 3)
+        self.assertTrue("sec" in measuring_units)
+        self.assertTrue("nA" in measuring_units)
+        self.assertTrue("mV" in measuring_units)
 
 
 if __name__ == '__main__':

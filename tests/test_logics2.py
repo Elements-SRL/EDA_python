@@ -41,6 +41,11 @@ class LogicsTest(unittest.TestCase):
         data_in_mV = list(filter(lambda x: x.measuring_unit == "pA", logics_test.metadata.data))
         self.assertTrue(len(data_in_mV) == 4)
 
+    def test_open_edh_with_contiguous_data(self):
+        logics_test = Logics2()
+        logics_test.open(self.path_to_contiguous_edh)
+        self.assertTrue(len(logics_test.metadata.data) == 5)
+
 
 if __name__ == '__main__':
     unittest.main()
