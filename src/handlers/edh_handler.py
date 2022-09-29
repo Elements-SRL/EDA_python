@@ -58,7 +58,7 @@ def _extract_common_data(abfs: List[ABF]) -> CommonData:
     return CommonData(x=x, sampling_rate=abf.sampleRate, channel_count=abf.channelCount,
                       sweep_type=SweepType.episodic, measuring_unit=abf.sweepUnitsX,
                       sweep_label_x=abf.sweepLabelX, sweep_label_y=abf.sweepLabelY,
-                      sweep_label_c=abf.sweepLabelC,
+                      sweep_label_c=abf.sweepLabelC, sweep_count=abf.sweepCount,
                       )
 
 

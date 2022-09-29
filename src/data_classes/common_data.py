@@ -14,6 +14,7 @@ class CommonData:
     x: ndarray
     sampling_rate: float
     channel_count: int
+    sweep_count: int
     sweep_type: SweepType
     measuring_unit: str
     sweep_label_x: str
