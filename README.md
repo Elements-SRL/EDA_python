@@ -18,13 +18,9 @@ pip install -r src/requirements.txt
 Once installed export env variable:
 ##### Linux
 ```
- export PYTHONPATH="$PYTHONPATH:path/to/your/project/EDA_python"
- ```
- for example if you download this project in 
- ```
- /home/usr/something/
+export PYTHONPATH="$PYTHONPATH:path/to/your/project/EDA_python"
 ```
-the command whould be:
+for example if you download this project in `/home/usr/something/ ` the command whould be:
 ```
  export PYTHONPATH="$PYTHONPATH:/home/usr/something/EDA_python"
 ```
