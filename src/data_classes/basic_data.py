@@ -10,7 +10,7 @@ class BasicData:
         self.visible: bool = visible
         self.sweep_number: int = sweep_number
         self.measuring_unit = measuring_unit
-        self.name = "ch " + str(ch) + " s " + str(sweep_number)
+        self.name = ""
 
     def __hash__(self):
         return hash((self.ch, str(self.y), self.sweep_number, self.visible))
