@@ -45,4 +45,11 @@ def _generate_data_in_columnar_form(metadata: MetaData) -> ndarray:
                 episodic_data = np.vstack((episodic_data, y))
             return np.transpose(episodic_data)
         gap_free_data = metadata.common_data.x
+        for ch in range(metadata.common_data.channel_count):
+            data_with_same_channel = [d for d in data_with_same_file_path if d.ch == ch]
+            sorted_data = sorted(data_with_same_channel, key=lambda data: data.sweep_number)
+            y = np.array([])
+            for d in sorted_data:
+                y = np.vstack((y, d.y))
+            episodic_data = np.vstack((episodic_data, y))
         return gap_free_data

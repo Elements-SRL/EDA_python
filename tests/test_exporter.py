@@ -84,11 +84,17 @@ class ExplorerTest(unittest.TestCase):
         test_logics.export(path_to_file=self.path_to_csv_of_episodic_data)
         self.assertTrue(os.path.exists(self.path_to_csv_of_episodic_data))
 
+    def test_export_basic_abf(self):
+        test_logics = Logics2()
+        test_logics.open(self.path_to_abf1)
+        test_logics.export(path_to_file=self.path_to_csv)
+        self.assertTrue(os.path.exists(self.path_to_csv))
+
     def tearDown(self):
         if os.path.exists(self.path_to_csv_of_episodic_data):
             os.remove(self.path_to_csv_of_episodic_data)
-        # if os.path.exists(self.path_to_csv):
-        #     os.remove(self.path_to_csv)
+        if os.path.exists(self.path_to_csv):
+            os.remove(self.path_to_csv)
         # if os.path.exists(self.path_to_csv_of_contiguous_abfs):
         #     os.remove(self.path_to_csv_of_contiguous_abfs)
 
