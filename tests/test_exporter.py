@@ -1,7 +1,7 @@
 import os.path
 import unittest
 import src.exporter as exporter
-from src.logics2 import Logics2
+from src.logics import Logics
 
 
 class ExplorerTest(unittest.TestCase):
@@ -25,12 +25,12 @@ class ExplorerTest(unittest.TestCase):
     path_to_basic_edh_csv = "res/Data/test_export_basic_edh.csv"
 
     def test_generate_header(self):
-        test_logics = Logics2()
+        test_logics = Logics()
         test_logics.open(self.path_to_episodic_abf)
         print(exporter._generate_header(test_logics.metadata))
 
     def test_generate_header_episodic(self):
-        test_logics = Logics2()
+        test_logics = Logics()
         test_logics.open(self.path_to_episodic_abf)
         measuring_units = exporter._generate_header(test_logics.metadata)
         self.assertTrue(len(measuring_units) == 3)
@@ -39,7 +39,7 @@ class ExplorerTest(unittest.TestCase):
         self.assertTrue("mV" in measuring_units)
 
     def test_generate_header_gap_free_from_single_abf(self):
-        test_logics = Logics2()
+        test_logics = Logics()
         test_logics.open(self.path_to_basic_abf)
         measuring_units = exporter._generate_header(test_logics.metadata)
         self.assertTrue(len(measuring_units) == 3)
@@ -48,7 +48,7 @@ class ExplorerTest(unittest.TestCase):
         self.assertTrue("mV" in measuring_units[2])
 
     def test_generate_header_gap_free_from_edh_composed_by_single_abf(self):
-        test_logics = Logics2()
+        test_logics = Logics()
         test_logics.open(self.path_to_basic_edh)
         measuring_units = exporter._generate_header(test_logics.metadata)
         print(len(measuring_units))
@@ -59,7 +59,7 @@ class ExplorerTest(unittest.TestCase):
         self.assertTrue("mV" in measuring_units[len(measuring_units) - 1])
 
     def test_generate_header_gap_free_from_edh_composed_contiguous_abf(self):
-        test_logics = Logics2()
+        test_logics = Logics()
         test_logics.open(self.path_to_basic_edh)
         measuring_units = exporter._generate_header(test_logics.metadata)
         self.assertTrue(len(measuring_units) == 6)
@@ -69,7 +69,7 @@ class ExplorerTest(unittest.TestCase):
         self.assertTrue("mV" in measuring_units[len(measuring_units) - 1])
 
     def test_generate_data_episodic(self):
-        test_logics = Logics2()
+        test_logics = Logics()
         test_logics.open(self.path_to_episodic_abf)
         episodic_data = exporter._generate_data_in_columnar_form(test_logics.metadata)
         num_rows, num_cols = episodic_data.shape
@@ -87,25 +87,25 @@ class ExplorerTest(unittest.TestCase):
             i += 1
 
     def test_export_episodic_data(self):
-        test_logics = Logics2()
+        test_logics = Logics()
         test_logics.open(self.path_to_episodic_abf)
         test_logics.export(path_to_file=self.path_to_csv_of_episodic_data)
         self.assertTrue(os.path.exists(self.path_to_csv_of_episodic_data))
 
     def test_export_basic_abf(self):
-        test_logics = Logics2()
+        test_logics = Logics()
         test_logics.open(self.path_to_basic_abf)
         test_logics.export(path_to_file=self.path_to_csv)
         self.assertTrue(os.path.exists(self.path_to_csv))
 
     def test_export_basic_edh(self):
-        test_logics = Logics2()
+        test_logics = Logics()
         test_logics.open(self.path_to_basic_edh)
         test_logics.export(path_to_file=self.path_to_basic_edh_csv)
         self.assertTrue(os.path.exists(self.path_to_basic_edh_csv))
 
     def test_export_contiguous_edh(self):
-        test_logics = Logics2()
+        test_logics = Logics()
         test_logics.open(self.path_to_contiguous_edh)
         test_logics.export(path_to_file=self.path_to_csv_of_contiguous_abfs)
         self.assertTrue(os.path.exists(self.path_to_csv_of_contiguous_abfs))

@@ -1,10 +1,9 @@
-from typing import Set, List
+from typing import List
 
 import matplotlib
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication
-from PyQt5.QtWidgets import QWidget, QMenuBar, QStatusBar, QMenu, QAction, QFileDialog, QGridLayout, QFrame, \
-    QMessageBox, QPushButton, QVBoxLayout, QLabel, QCheckBox
+from PyQt5.QtWidgets import *
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 import logics
@@ -14,7 +13,7 @@ matplotlib.use('Qt5Agg')
 
 class MplCanvas(FigureCanvasQTAgg):
 
-    def __init__(self, parent=None, width=5, height=4, dpi=100):
+    def __init__(self):
         self.ax1 = None
         self.axs = None
         self.fig = None
@@ -93,7 +92,7 @@ class UiMainWindow(object):
 
         self.gridLayout.addWidget(self.frame_2, 1, 0, 1, 1)
 
-        self.sc = MplCanvas(self, width=5, height=4, dpi=100)
+        self.sc = MplCanvas()
 
         plot_layout = QtWidgets.QVBoxLayout()
         self.gridLayout.addLayout(plot_layout, 0, 0, 0, 0)
@@ -134,8 +133,9 @@ class UiMainWindow(object):
 
         self.actionOpen.triggered.connect(lambda: self.open())
         self.action_csv.triggered.connect(lambda: self.csv())
-        self.action_open_visible_channels.triggered.connect(lambda: self.open_filters_window())
+        self.action_open_visible_channels.triggered.connect(lambda: self.open_views_window())
         self.action_clear.triggered.connect(lambda: self.clear())
+
     # setupUi
 
     def retranslate_ui(self, main_window):
@@ -150,7 +150,8 @@ class UiMainWindow(object):
         self.action_csv.setText(QCoreApplication.translate("MainWindow", u".csv", None))
         self.menu_file.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menu_view.setTitle(QCoreApplication.translate("MainWindow", u"View", None))
-        self.action_open_visible_channels.setText(QCoreApplication.translate("MainWindow", u"Visible channels/sweeps", None))
+        self.action_open_visible_channels.setText(
+            QCoreApplication.translate("MainWindow", u"Visible channels/sweeps", None))
         self.action_clear.setText(QCoreApplication.translate("MainWindow", u"Clear current plots", None))
         self.menu_export_as.setTitle(QCoreApplication.translate("MainWindow", u"Export as ...", None))
 
@@ -158,12 +159,13 @@ class UiMainWindow(object):
 
     def open(self):
         f_name, _ = QFileDialog.getOpenFileName(None, 'Open file', filter="Edh files(*.edh);;Abf files (*.abf)")
-        self.logics.open(f_name)
-        self.update_plot()
+        if f_name:
+            self.logics.open(f_name)
+            self._update_plot()
 
     def csv(self):
         # if list is empty
-        if not self.logics.get_abfs():
+        if self.logics.metadata.is_empty():
             show_empty_abfs_dialog("Nothing to export.", "Export csv", "Open a file and try again.")
             return
         # TODO hint or choose a default name?
@@ -174,44 +176,24 @@ class UiMainWindow(object):
         # TODO show progress_bar (?)
         self.logics.export(path_to_file)
 
-    def update_plot(self):
+    def _update_plot(self):
         self.sc.ax1.cla()
         self.sc.ax2.cla()
-        abfs = self.logics.get_visible_abfs()
-        if len(abfs) <= 0:
+        if self.logics.is_all_data_hidden():
             # clear plot
             self.sc.draw()
             return
-        for abf in abfs:
-            # it's better not to display multiple channels and multiple sweeps in the same plot,
-            # implementation could change in future
-            if abf.sweepCount > 1:
-                dict_of_sweeps = self.logics.get_visible_sweeps()
-                for ch in dict_of_sweeps.keys():
-                    sweepX, sweepY = dict_of_sweeps[ch]
-                    for sweep in range(len(sweepX)):
-                        multi_sweep_label = "ch " + str(ch) + " sw " + str(sweep)
-                        # only used to check the units
-                        abf.setSweep(sweepNumber=0, channel=ch)
-                        match ch:
-                            case 0:
-                                self.sc.ax1.plot(sweepX.pop(0), sweepY.pop(0), label=multi_sweep_label)
-                                self.sc.ax1.set_ylabel(abf.sweepLabelY)
-                            case 1:
-                                self.sc.ax2.plot(sweepX.pop(0), sweepY.pop(0), label=multi_sweep_label)
-                                self.sc.ax2.set_ylabel(abf.sweepUnitsY)
-            else:
-                label = logics.channel_name(abf)
-                self.sc.ax1.plot(abf.sweepX, abf.sweepY, label=label)
-                if abf.channelCount > 1:
-                    self.sc.ax2.plot(abf.sweepX, abf.data[1], label=label)
-                self.sc.ax1.set_ylabel(abf.sweepLabelY)
-                self.sc.ax2.set_ylabel(abf.sweepLabelC)
-        # set label with the last abf read
-        # self.sc.ax1.set_ylabel(abf.sweepLabelY)
-        self.sc.ax2.set_xlabel(abf.sweepLabelX)
-        # self.sc.ax2.set_ylabel(abf.sweepLabelC)
-
+        x = self.logics.metadata.get_x()
+        data = self.logics.metadata.get_visible_data()
+        for d in data:
+            match d.ch:
+                case 0:
+                    self.sc.ax1.plot(x, d.y, label=d.name)
+                case 1:
+                    self.sc.ax2.plot(x, d.y, label=d.name)
+        self.sc.ax1.set_ylabel(self.logics.metadata.common_data.sweep_label_y)
+        self.sc.ax2.set_ylabel(self.logics.metadata.common_data.sweep_label_c)
+        self.sc.ax2.set_xlabel(self.logics.metadata.common_data.sweep_label_x)
         self.sc.ax1.legend(loc='upper right')
         self.sc.ax2.legend(loc='upper right')
         self.sc.draw()
@@ -222,41 +204,29 @@ class UiMainWindow(object):
         self.sc.ax2.cla()
         self.sc.draw()
 
-    def open_filters_window(self):
-        if not self.logics.get_abfs():
-            show_empty_abfs_dialog("Empty window", "Nothing to filter", "No abf has been opened.")
+    def open_views_window(self):
+        if self.logics.is_all_data_hidden():
+            show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
             return
-        filters_layout = QVBoxLayout()
+        views_layout = QVBoxLayout()
         if self.w is None:
             self.w = QWidget()
             self.w.setWindowTitle("Views")
             self.w.setMinimumSize(200, 300)
-            self.w.setLayout(filters_layout)
+            self.w.setLayout(views_layout)
         buttons = []
-        filters_layout.deleteLater()
-        if self.logics.get_abfs()[0].sweepCount <= 1:
-            for ch in self.logics.names_to_abfs.keys():
-                b = QCheckBox(ch)
-                filters_layout.addWidget(b)
-                if ch not in self.logics.hidden_channels:
-                    b.setChecked(True)
-                buttons.append(b)
-        else:
-            for s in range(self.logics.get_abfs()[0].sweepCount):
-                b = QCheckBox("sweep " + str(s))
-                filters_layout.addWidget(b)
-                if s not in self.logics.hidden_sweeps:
-                    b.setChecked(True)
-                buttons.append(b)
+        views_layout.deleteLater()
+        for d in self.logics.metadata.data:
+            b = QCheckBox(d.name)
+            views_layout.addWidget(b)
+            b.setChecked(d.visible)
+            buttons.append(b)
         apply_button = QPushButton("Show selected channels")
         apply_button.clicked.connect(lambda: self.apply_filters(buttons))
-        filters_layout.addWidget(apply_button)
+        views_layout.addWidget(apply_button)
         self.w.show()
 
     def apply_filters(self, buttons: List[QCheckBox]):
         for b in buttons:
-            if b.text().startswith("sweep"):
-                self.logics.set_sweep_visibility(buttons.index(b), b.isChecked())
-            else:
-                self.logics.set_channel_visibility(b.text(), b.isChecked())
-        self.update_plot()
+            self.logics.metadata.set_visibility(b.text(), b.isChecked())
+        self._update_plot()
