@@ -4,7 +4,7 @@ from numpy import ndarray
 
 class BasicData:
 
-    def __init__(self, ch: int, y: ndarray, measuring_unit: str, file_path: str, sweep_number: int = -1,
+    def __init__(self, ch: int, y: ndarray, measuring_unit: str, file_path: str, sweep_number: int = 0,
                  visible: bool = True):
         self.ch: int = ch
         self.y: ndarray = y
