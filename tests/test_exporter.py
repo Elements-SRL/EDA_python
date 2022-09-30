@@ -1,3 +1,4 @@
+import os.path
 import unittest
 import src.exporter as exporter
 from src.logics2 import Logics2
@@ -66,8 +67,9 @@ class ExplorerTest(unittest.TestCase):
     def test_generate_data_episodic(self):
         test_logics = Logics2()
         test_logics.open(self.path_to_episodic_abf)
-        episodic_data = exporter._generate_data(test_logics.metadata)
-        self.assertTrue(len(episodic_data) == 3)
+        episodic_data = exporter._generate_data_in_columnar_form(test_logics.metadata)
+        num_rows, num_cols = episodic_data.shape
+        self.assertTrue(num_cols == 3)
         ch = 0
         data_with_same_measuring_unit = [d for d in test_logics.metadata.data if d.ch == ch]
         sorted_data = sorted(data_with_same_measuring_unit, key=lambda data: data.sweep_number)
@@ -75,6 +77,20 @@ class ExplorerTest(unittest.TestCase):
         for sd in sorted_data:
             self.assertTrue(sd.sweep_number == i)
             i += 1
+
+    def test_export_episodic_data(self):
+        test_logics = Logics2()
+        test_logics.open(self.path_to_episodic_abf)
+        test_logics.export(path_to_file=self.path_to_csv_of_episodic_data)
+        self.assertTrue(os.path.exists(self.path_to_csv_of_episodic_data))
+
+    def tearDown(self):
+        if os.path.exists(self.path_to_csv_of_episodic_data):
+            os.remove(self.path_to_csv_of_episodic_data)
+        # if os.path.exists(self.path_to_csv):
+        #     os.remove(self.path_to_csv)
+        # if os.path.exists(self.path_to_csv_of_contiguous_abfs):
+        #     os.remove(self.path_to_csv_of_contiguous_abfs)
 
 
 if __name__ == '__main__':

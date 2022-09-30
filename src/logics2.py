@@ -23,5 +23,5 @@ class Logics2:
         self.metadata.clear()
 
     def export(self, path_to_file: str):
-        if self.metadata.is_empty():
+        if not self.metadata.is_empty():
             return exporter.export(path_to_file=path_to_file, metadata=self.metadata)
