@@ -3,7 +3,7 @@ from typing import List
 
 from numpy import ndarray
 import numpy as np
-from src.data_classes.meta_data import MetaData
+from src.metadata.meta_data import MetaData
 
 
 def export(path_to_file: str, metadata: MetaData):

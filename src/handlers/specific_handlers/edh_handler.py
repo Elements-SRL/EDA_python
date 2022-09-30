@@ -3,10 +3,10 @@ from typing import List
 import numpy as np
 import pyabf
 from pyabf import ABF
-from src.data_classes.basic_data import BasicData
-from src.data_classes.common_data import CommonData
-from src.data_classes.meta_data import MetaData
-from src.handlers import abf_handler
+from src.metadata.data_classes.basic_data import BasicData
+from src.metadata.data_classes.common_data import CommonData
+from src.metadata.meta_data import MetaData
+from src.handlers.specific_handlers import abf_handler
 
 
 def extract_meta_data_from_edh(path_to_file: str, metadata: MetaData):

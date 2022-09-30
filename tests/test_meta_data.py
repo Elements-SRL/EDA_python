@@ -1,8 +1,8 @@
 import unittest
 import numpy as np
-from src.data_classes.basic_data import BasicData
-from src.data_classes.common_data import CommonData
-from src.data_classes.meta_data import MetaData
+from src.metadata.data_classes.basic_data import BasicData
+from src.metadata.data_classes.common_data import CommonData
+from src.metadata.meta_data import MetaData
 
 
 class MetaDataTest(unittest.TestCase):

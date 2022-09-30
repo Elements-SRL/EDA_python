@@ -1,5 +1,5 @@
-from src.data_classes.meta_data import MetaData
-from src.handlers import abf_handler, edh_handler
+from src.metadata.meta_data import MetaData
+from src.handlers.specific_handlers import abf_handler, edh_handler
 
 
 def extract_data(f: str, metadata: MetaData):

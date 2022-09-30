@@ -1,5 +1,2 @@
 .idea/
-src/__pycache__/
-src/data_classes/__pycache__/
-src/handlers/__pycache__/
-tests/__pycache__/
+/**/__pycache__/**

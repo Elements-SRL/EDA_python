@@ -1,7 +1,8 @@
 from os.path import exists
 
-from src import file_handler, exporter
-from src.data_classes.meta_data import MetaData
+from src.exporters import exporter
+from src.handlers import file_handler
+from src.metadata.meta_data import MetaData
 
 
 class Logics:

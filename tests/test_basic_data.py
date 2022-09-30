@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from src.data_classes.basic_data import BasicData
+from src.metadata.data_classes.basic_data import BasicData
 
 
 class TestBasicData(unittest.TestCase):

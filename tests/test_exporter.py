@@ -1,6 +1,6 @@
 import os.path
 import unittest
-import src.exporter as exporter
+import src.exporters.exporter as exporter
 from src.logics import Logics
 
 
