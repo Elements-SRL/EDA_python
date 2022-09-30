@@ -84,7 +84,7 @@ class ExplorerTest(unittest.TestCase):
         i = 0
         for sd in sorted_data:
             self.assertTrue(sd.sweep_number == i)
-            i = 1
+            i += 1
 
     def test_export_episodic_data(self):
         test_logics = Logics2()
@@ -110,15 +110,15 @@ class ExplorerTest(unittest.TestCase):
         test_logics.export(path_to_file=self.path_to_csv_of_contiguous_abfs)
         self.assertTrue(os.path.exists(self.path_to_csv_of_contiguous_abfs))
 
-    def tearDown(self):
-        if os.path.exists(self.path_to_csv_of_episodic_data):
-            os.remove(self.path_to_csv_of_episodic_data)
-        if os.path.exists(self.path_to_csv):
-            os.remove(self.path_to_csv)
-        if os.path.exists(self.path_to_csv_of_contiguous_abfs):
-            os.remove(self.path_to_csv_of_contiguous_abfs)
-        if os.path.exists(self.path_to_basic_edh_csv):
-            os.remove(self.path_to_basic_edh_csv)
+    # def tearDown(self):
+    #     if os.path.exists(self.path_to_csv_of_episodic_data):
+    #         os.remove(self.path_to_csv_of_episodic_data)
+    #     if os.path.exists(self.path_to_csv):
+    #         os.remove(self.path_to_csv)
+    #     if os.path.exists(self.path_to_csv_of_contiguous_abfs):
+    #         os.remove(self.path_to_csv_of_contiguous_abfs)
+    #     if os.path.exists(self.path_to_basic_edh_csv):
+    #         os.remove(self.path_to_basic_edh_csv)
 
 
 if __name__ == "__main__":
