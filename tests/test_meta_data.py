@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from src.data_classes.basic_data import BasicData
-from src.data_classes.common_data import CommonData, SweepType
+from src.data_classes.common_data import CommonData
 from src.data_classes.meta_data import MetaData
 
 
@@ -28,8 +28,7 @@ class MetaDataTest(unittest.TestCase):
     def test_add_common_data(self):
         metadata = MetaData()
         cd = CommonData(x=np.array([1, 2, 3]), sampling_rate=10, channel_count=5, measuring_unit="s",
-                        sweep_label_y="pA", sweep_label_c="mV", sweep_label_x="sec", sweep_type=SweepType.episodic,
-                        sweep_count=5)
+                        sweep_label_y="pA", sweep_label_c="mV", sweep_label_x="sec", sweep_count=5)
         metadata.add_common_data(cd)
         self.assertTrue(len(metadata.common_data.x) == 3)
         self.assertTrue(metadata.common_data.channel_count == 5)

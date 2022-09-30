@@ -3,7 +3,6 @@ from typing import List
 
 from numpy import ndarray
 import numpy as np
-from src.data_classes.common_data import SweepType
 from src.data_classes.meta_data import MetaData
 
 
@@ -20,7 +19,7 @@ def export(path_to_file: str, metadata: MetaData):
 def _generate_header(metadata: MetaData) -> List[str]:
     header = [metadata.common_data.measuring_unit]
     for ch in range(metadata.common_data.channel_count):
-        if metadata.common_data.sweep_type == SweepType.episodic:
+        if metadata.common_data.sweep_count > 1:
             measuring_unit = {d.measuring_unit for d in metadata.data if d.ch == ch}
         else:
             measuring_unit = [d.measuring_unit for d in metadata.data if d.ch == ch]
@@ -30,7 +29,7 @@ def _generate_header(metadata: MetaData) -> List[str]:
 
 def _generate_data_in_columnar_form(metadata: MetaData) -> ndarray:
     different_file_paths = {d.filepath for d in metadata.data}
-    if metadata.common_data.sweep_type == SweepType.episodic:
+    if metadata.common_data.sweep_count > 1:
         rows_data = np.tile(metadata.common_data.x, metadata.common_data.sweep_count)
     else:
         rows_data = metadata.common_data.x
@@ -42,7 +41,7 @@ def _generate_data_in_columnar_form(metadata: MetaData) -> ndarray:
             if len(sorted_data) > 0:
                 y = sorted_data.pop(0).y
                 for d in sorted_data:
-                    if metadata.common_data.sweep_type == SweepType.episodic:
+                    if metadata.common_data.sweep_count > 1:
                         y = np.concatenate((y, d.y), axis=None)
                     else:
                         y = np.vstack((y, d.y))

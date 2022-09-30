@@ -4,7 +4,7 @@ import numpy as np
 import pyabf
 from pyabf import ABF
 from src.data_classes.basic_data import BasicData
-from src.data_classes.common_data import CommonData, SweepType
+from src.data_classes.common_data import CommonData
 from src.data_classes.meta_data import MetaData
 from src.handlers import abf_handler
 
@@ -55,8 +55,7 @@ def _extract_common_data(abfs: List[ABF]) -> CommonData:
     for abf in abfs:
         x = np.concatenate((x, abf.sweepX + x[-1:]), axis=None)
     abf.setSweep(0, 0)
-    return CommonData(x=x, sampling_rate=abf.sampleRate, channel_count=abf.channelCount,
-                      sweep_type=SweepType.episodic, measuring_unit=abf.sweepUnitsX,
+    return CommonData(x=x, sampling_rate=abf.sampleRate, channel_count=abf.channelCount, measuring_unit=abf.sweepUnitsX,
                       sweep_label_x=abf.sweepLabelX, sweep_label_y=abf.sweepLabelY,
                       sweep_label_c=abf.sweepLabelC, sweep_count=abf.sweepCount,
                       )
