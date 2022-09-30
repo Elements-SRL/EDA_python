@@ -39,8 +39,8 @@ class ExplorerTest(unittest.TestCase):
         measuring_units = exporter._generate_header(test_logics.metadata)
         self.assertTrue(len(measuring_units) == 3)
         self.assertTrue("sec" in measuring_units[0])
-        self.assertTrue("mV" in measuring_units[1])
-        self.assertTrue("pA" in measuring_units[2])
+        self.assertTrue("pA" in measuring_units[1])
+        self.assertTrue("mV" in measuring_units[2])
 
     def test_generate_header_gap_free_from_edh_composed_by_single_abf(self):
         test_logics = Logics2()
@@ -49,9 +49,9 @@ class ExplorerTest(unittest.TestCase):
         print(len(measuring_units))
         self.assertTrue(len(measuring_units) == 6)
         self.assertTrue("sec" in measuring_units[0])
-        self.assertTrue("mV" in measuring_units[1])
+        self.assertTrue("pA" in measuring_units[1])
         self.assertTrue("pA" in measuring_units[2])
-        self.assertTrue("pA" in measuring_units[4])
+        self.assertTrue("mV" in measuring_units[len(measuring_units) - 1])
 
     def test_generate_header_gap_free_from_edh_composed_contiguous_abf(self):
         test_logics = Logics2()
@@ -59,15 +59,22 @@ class ExplorerTest(unittest.TestCase):
         measuring_units = exporter._generate_header(test_logics.metadata)
         self.assertTrue(len(measuring_units) == 6)
         self.assertTrue("sec" in measuring_units[0])
-        self.assertTrue("mV" in measuring_units[1])
-        self.assertTrue("pA" in measuring_units[2])
+        self.assertTrue("pA" in measuring_units[1])
         self.assertTrue("pA" in measuring_units[4])
+        self.assertTrue("mV" in measuring_units[len(measuring_units) - 1])
 
     def test_generate_data_episodic(self):
         test_logics = Logics2()
         test_logics.open(self.path_to_episodic_abf)
-        exporter._generate_data(test_logics.metadata)
-        self.assertTrue(False)
+        episodic_data = exporter._generate_data(test_logics.metadata)
+        self.assertTrue(len(episodic_data) == 3)
+        ch = 0
+        data_with_same_measuring_unit = [d for d in test_logics.metadata.data if d.ch == ch]
+        sorted_data = sorted(data_with_same_measuring_unit, key=lambda data: data.sweep_number)
+        i = 0
+        for sd in sorted_data:
+            self.assertTrue(sd.sweep_number == i)
+            i += 1
 
 
 if __name__ == '__main__':

@@ -20,39 +20,38 @@ def export(path_to_file: str, metadata: MetaData):
 
 def _generate_header(metadata: MetaData) -> List[str]:
     header = [metadata.common_data.measuring_unit]
-    if metadata.common_data.sweep_type == SweepType.episodic:
-        different_measuring_units = {d.measuring_unit for d in metadata.data}
-        return header + list(different_measuring_units)
-    measuring_units = [d.measuring_unit for d in metadata.data]
-    measuring_units.sort()
-    return header + measuring_units
+    for ch in range(metadata.common_data.channel_count):
+        if metadata.common_data.sweep_type == SweepType.episodic:
+            measuring_unit = {d.measuring_unit for d in metadata.data if d.ch == ch}
+        else:
+            measuring_unit = [d.measuring_unit for d in metadata.data if d.ch == ch]
+        header.extend(measuring_unit)
+    return header
 
 
-def _generate_data(metadata: MetaData) -> List[List[float]]:
+def _generate_data(metadata: MetaData) -> ndarray:
     different_file_paths = {d.filepath for d in metadata.data}
-
     for file_path in different_file_paths:
         data_with_same_file_path = list(filter(lambda x: x.filepath == file_path, metadata.data))
         # episodic
         if len(data_with_same_file_path) > 1:
             episodic_data = np.tile(metadata.common_data.x, metadata.common_data.sweep_count)
-            # gg
-            print(len(episodic_data) == len(metadata.common_data.x) * 15)
-            distinct_measuring_units = {d.measuring_unit for d in metadata.data}
-            for measuring_unit in distinct_measuring_units:
-                data_with_same_measuring_unit = [d for d in data_with_same_file_path if
-                                                 d.measuring_unit == measuring_unit]
-                sorted_data = sorted(data_with_same_measuring_unit, key=lambda data: data.sweep_number)
-                # membrane potential
-                if len(sorted_data) == 1:
-                    pass
+            # group data in same channels have different measuring units
+            for ch in range(metadata.common_data.channel_count):
+                data_with_same_channel = [d for d in data_with_same_file_path if d.ch == ch]
+                sorted_data = sorted(data_with_same_channel, key=lambda data: data.sweep_number)
+                y = np.array([])
+                for d in sorted_data:
+                    y = np.concatenate((y, d.y), axis=None)
+                episodic_data = np.vstack((episodic_data, y))
+            return episodic_data
 
 
-def _arrange_episodic_data(metadata: MetaData) -> List[ndarray]:
+def _arrange_episodic_data(metadata: MetaData) -> ndarray:
     pass
 
 
-def _format_to_csv(data: List[ndarray]):
+def _format_to_csv(data: ndarray):
     # create matrix with all data
     arrays = np.array(data)
 
