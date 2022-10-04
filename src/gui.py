@@ -186,19 +186,19 @@ class UiMainWindow(object):
         x = self.logics.metadata.get_x()
         data = self.logics.metadata.get_visible_data()
         for d in data:
-            match d.ch:
-                case 0:
-                    self.sc.ax1.plot(x, d.y, label=d.name)
-                case 1:
-                    self.sc.ax2.plot(x, d.y, label=d.name)
-        self.sc.ax1.set_ylabel(self.logics.metadata.common_data.sweep_label_y)
-        self.sc.ax2.set_ylabel(self.logics.metadata.common_data.sweep_label_c)
-        self.sc.ax2.set_xlabel(self.logics.metadata.common_data.sweep_label_x)
+            if d.ch == 0:
+                self.sc.ax1.plot(x, d.y, label=d.name)
+            elif d.ch == 1:
+                self.sc.ax2.plot(x, d.y, label=d.name)
+        self.sc.ax1.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_y)
+        self.sc.ax2.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_c)
+        self.sc.ax2.set_xlabel(self.logics.metadata.selected_data_group.sweep_label_x)
         self.sc.ax1.legend(loc='upper right')
         self.sc.ax2.legend(loc='upper right')
         self.sc.draw()
 
     def clear(self):
+        # TODO FIRST ASK FOR CONFIRMATION
         self.logics.clear()
         self.sc.ax1.cla()
         self.sc.ax2.cla()

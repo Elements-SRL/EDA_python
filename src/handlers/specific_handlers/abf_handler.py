@@ -1,22 +1,33 @@
+import ordered_set
 from pyabf import ABF
 from src.metadata.data_classes.basic_data import BasicData
-from src.metadata.data_classes.common_data import CommonData
+from src.metadata.data_classes.data_group import DataGroup
 from src.metadata.meta_data import MetaData
 
 
 def extract_meta_data_from_abf(path_to_file: str, metadata: MetaData):
+    basic_data = extract_basic_data(path_to_file)
+    metadata.add_data_group(extract_data_group(basic_data=basic_data, path_to_file=path_to_file))
+
+
+def extract_basic_data(path_to_file: str) -> ordered_set.OrderedSet[BasicData]:
     abf = ABF(path_to_file)
     expected_length = round(abf.sampleRate * abf.sweepIntervalSec)
-    cd: CommonData | None = None
+    basic_data = ordered_set.OrderedSet()
     for ch in range(abf.channelCount):
         for sweep in range(abf.sweepCount):
-            if cd is None:
-                cd = CommonData(x=abf.sweepX[:expected_length], sampling_rate=abf.sampleRate,
-                                channel_count=abf.channelCount, sweep_count=abf.sweepCount,
-                                measuring_unit=abf.sweepUnitsX, sweep_label_x=abf.sweepLabelX,
-                                sweep_label_y=abf.sweepLabelY, sweep_label_c=abf.sweepLabelC,
-                                )
-            abf.setSweep(sweepNumber=sweep, channel=ch)
-            metadata.add_data(BasicData(ch=ch, y=abf.sweepY[:expected_length], sweep_number=sweep,
-                                        measuring_unit=abf.sweepUnitsY, file_path=abf.abfFilePath))
-    metadata.add_common_data(cd)
+            abf.setSweep(channel=ch, sweepNumber=sweep)
+            basic_data.add(BasicData(ch=ch, y=abf.sweepY[:expected_length], sweep_number=sweep,
+                                     measuring_unit=abf.sweepUnitsY, file_path=abf.abfFilePath))
+    return basic_data
+
+
+def extract_data_group(path_to_file: str, basic_data: ordered_set.OrderedSet[BasicData]) -> DataGroup:
+    abf = ABF(path_to_file)
+    expected_length = round(abf.sampleRate * abf.sweepIntervalSec)
+    abf.setSweep(sweepNumber=0, channel=0)
+    dg = DataGroup(x=abf.sweepX[:expected_length], sampling_rate=abf.sampleRate, channel_count=abf.channelCount,
+                   sweep_count=abf.sweepCount, measuring_unit=abf.sweepUnitsX, sweep_label_x=abf.sweepLabelX,
+                   sweep_label_y=abf.sweepLabelY, sweep_label_c=abf.sweepLabelC, basic_data=basic_data,
+                   )
+    return dg
