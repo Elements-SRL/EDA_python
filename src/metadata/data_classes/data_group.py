@@ -7,7 +7,7 @@ from src.metadata.data_classes.basic_data import BasicData
 
 @dataclass
 class DataGroup:
-    """data that is common to all loaded data"""
+    """data that is common to a certain group of data"""
     x: ndarray
     sampling_rate: float
     channel_count: int
