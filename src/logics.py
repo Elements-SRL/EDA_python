@@ -7,7 +7,7 @@ from src.metadata.meta_data import MetaData
 
 class Logics:
     def __init__(self):
-        self.metadata = MetaData()
+        self.metadata: MetaData = MetaData()
 
     def open(self, path_to_file):
         # if path to file is not empty extract it
@@ -18,7 +18,8 @@ class Logics:
         # else do nothing
 
     def is_all_data_hidden(self):
-        return True not in {v.visible for v in self.metadata.data}
+        return True if self.metadata.selected_data_group is None \
+            else True not in {v.visible for v in self.metadata.selected_data_group.basic_data}
 
     def clear(self):
         self.metadata.clear()

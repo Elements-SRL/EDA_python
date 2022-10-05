@@ -76,7 +76,7 @@ class ExplorerTest(unittest.TestCase):
         self.assertTrue(num_cols == 3)
         ch = 0
         data_with_same_measuring_unit = [
-            d for d in test_logics.metadata.data if d.ch == ch
+            d for d in test_logics.metadata.selected_data_group.basic_data if d.ch == ch
         ]
         sorted_data = sorted(
             data_with_same_measuring_unit, key=lambda data: data.sweep_number

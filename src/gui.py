@@ -186,19 +186,19 @@ class UiMainWindow(object):
         x = self.logics.metadata.get_x()
         data = self.logics.metadata.get_visible_data()
         for d in data:
-            match d.ch:
-                case 0:
-                    self.sc.ax1.plot(x, d.y, label=d.name)
-                case 1:
-                    self.sc.ax2.plot(x, d.y, label=d.name)
-        self.sc.ax1.set_ylabel(self.logics.metadata.common_data.sweep_label_y)
-        self.sc.ax2.set_ylabel(self.logics.metadata.common_data.sweep_label_c)
-        self.sc.ax2.set_xlabel(self.logics.metadata.common_data.sweep_label_x)
+            if d.ch == 0:
+                self.sc.ax1.plot(x, d.y, label=d.name)
+            elif d.ch == 1:
+                self.sc.ax2.plot(x, d.y, label=d.name)
+        self.sc.ax1.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_y)
+        self.sc.ax2.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_c)
+        self.sc.ax2.set_xlabel(self.logics.metadata.selected_data_group.sweep_label_x)
         self.sc.ax1.legend(loc='upper right')
         self.sc.ax2.legend(loc='upper right')
         self.sc.draw()
 
     def clear(self):
+        # TODO FIRST ASK FOR CONFIRMATION
         self.logics.clear()
         self.sc.ax1.cla()
         self.sc.ax2.cla()
@@ -209,14 +209,14 @@ class UiMainWindow(object):
             show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
             return
         views_layout = QVBoxLayout()
-        if self.w is None:
-            self.w = QWidget()
-            self.w.setWindowTitle("Views")
-            self.w.setMinimumSize(200, 300)
-            self.w.setLayout(views_layout)
+        # if self.w is None:
+        self.w = QWidget()
+        self.w.setWindowTitle("Views")
+        self.w.setMinimumSize(200, 300)
+        self.w.setLayout(views_layout)
         buttons = []
         views_layout.deleteLater()
-        for d in self.logics.metadata.data:
+        for d in self.logics.metadata.selected_data_group.basic_data:
             b = QCheckBox(d.name)
             views_layout.addWidget(b)
             b.setChecked(d.visible)

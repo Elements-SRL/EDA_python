@@ -21,8 +21,9 @@ class LogicsTest(unittest.TestCase):
     def test_open_first_abf(self):
         logics_test = Logics()
         logics_test.open(self.path_to_abf1)
-        self.assertTrue(logics_test.metadata.common_data.channel_count == 2)
-        self.assertTrue(len(logics_test.metadata.data) == 2)
+        self.assertTrue(logics_test.metadata.selected_data_group.channel_count == 2)
+        print(len(logics_test.metadata.selected_data_group.basic_data))
+        self.assertTrue(len(logics_test.metadata.selected_data_group.basic_data) == 2)
 
     def test_common_data_from_abf(self):
         logics_test = Logics()
@@ -33,33 +34,38 @@ class LogicsTest(unittest.TestCase):
     def test_open_basic_edh(self):
         logics_test = Logics()
         logics_test.open(self.path_to_basic_edh)
-        self.assertTrue(len(logics_test.metadata.data) == 5)
+        self.assertTrue(len(logics_test.metadata.selected_data_group.basic_data) == 5)
         # of all the data only one has the measuring unit mV
-        data_in_mV = list(filter(lambda x: x.measuring_unit == "mV", logics_test.metadata.data))
+        data_in_mV = list(
+            filter(lambda x: x.measuring_unit == "mV", logics_test.metadata.selected_data_group.basic_data))
         self.assertTrue(len(data_in_mV) == 1)
         # all the other data has the measuring unit pA
-        data_in_mV = list(filter(lambda x: x.measuring_unit == "pA", logics_test.metadata.data))
+        data_in_mV = list(
+            filter(lambda x: x.measuring_unit == "pA", logics_test.metadata.selected_data_group.basic_data))
         self.assertTrue(len(data_in_mV) == 4)
+        self.assertTrue(
+            len(logics_test.metadata.selected_data_group.x) ==
+            len(logics_test.metadata.selected_data_group.basic_data.pop(0).y))
+        self.assertTrue(logics_test.metadata.selected_data_group.channel_count == 4)
 
     def test_open_edh_with_contiguous_data(self):
         logics_test = Logics()
         logics_test.open(self.path_to_contiguous_edh)
-        print(len(logics_test.metadata.data))
-        for d in logics_test.metadata.data:
-            print(d)
-        self.assertTrue(len(logics_test.metadata.data) == 5)
+        self.assertTrue(len(logics_test.metadata.selected_data_group.basic_data) == 5)
+        self.assertTrue(logics_test.metadata.selected_data_group.channel_count == 4)
 
     def test_file_path_in_episodic_data(self):
         logics_test = Logics()
         logics_test.open(self.path_to_episodic_abf)
-        file_path = logics_test.metadata.data[0].filepath
-        for d in logics_test.metadata.data:
+        file_path = logics_test.metadata.selected_data_group.basic_data[0].filepath
+        for d in logics_test.metadata.selected_data_group.basic_data:
             self.assertTrue(d.filepath == file_path)
 
     def test_file_path_in_basic_edh(self):
         logics_test = Logics()
         logics_test.open(self.path_to_basic_edh)
-        file_path_of_data_from_the_same_channel = {d.filepath for d in logics_test.metadata.data if d.ch == 0}
+        file_path_of_data_from_the_same_channel = {d.filepath for d in
+                                                   logics_test.metadata.selected_data_group.basic_data if d.ch == 0}
         self.assertTrue(len(file_path_of_data_from_the_same_channel) == 4)
 
 

@@ -4,14 +4,14 @@ from numpy import ndarray
 
 class BasicData:
 
-    def __init__(self, ch: int, y: ndarray, measuring_unit: str, file_path: str, sweep_number: int = 0,
+    def __init__(self, ch: int, y: ndarray, measuring_unit: str, file_path: str, name: str, sweep_number: int = 0,
                  visible: bool = True):
         self.ch: int = ch
         self.y: ndarray = y
         self.visible: bool = visible
         self.sweep_number: int = sweep_number
         self.measuring_unit = measuring_unit
-        self.name = ""
+        self.name = name
         self.filepath = file_path
 
     def __hash__(self):
