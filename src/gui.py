@@ -216,7 +216,7 @@ class UiMainWindow(object):
             self.w.setLayout(views_layout)
         buttons = []
         views_layout.deleteLater()
-        for d in self.logics.metadata.data:
+        for d in self.logics.metadata.selected_data_group.basic_data:
             b = QCheckBox(d.name)
             views_layout.addWidget(b)
             b.setChecked(d.visible)

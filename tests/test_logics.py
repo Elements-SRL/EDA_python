@@ -34,7 +34,6 @@ class LogicsTest(unittest.TestCase):
     def test_open_basic_edh(self):
         logics_test = Logics()
         logics_test.open(self.path_to_basic_edh)
-        print(len(logics_test.metadata.selected_data_group.basic_data))
         self.assertTrue(len(logics_test.metadata.selected_data_group.basic_data) == 5)
         # of all the data only one has the measuring unit mV
         data_in_mV = list(
@@ -47,14 +46,13 @@ class LogicsTest(unittest.TestCase):
         self.assertTrue(
             len(logics_test.metadata.selected_data_group.x) ==
             len(logics_test.metadata.selected_data_group.basic_data.pop(0).y))
+        self.assertTrue(logics_test.metadata.selected_data_group.channel_count == 4)
 
     def test_open_edh_with_contiguous_data(self):
         logics_test = Logics()
         logics_test.open(self.path_to_contiguous_edh)
-        print(len(logics_test.metadata.selected_data_group.basic_data))
-        for d in logics_test.metadata.selected_data_group.basic_data:
-            print(d)
         self.assertTrue(len(logics_test.metadata.selected_data_group.basic_data) == 5)
+        self.assertTrue(logics_test.metadata.selected_data_group.channel_count == 4)
 
     def test_file_path_in_episodic_data(self):
         logics_test = Logics()

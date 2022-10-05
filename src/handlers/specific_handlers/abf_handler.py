@@ -17,8 +17,9 @@ def extract_basic_data(path_to_file: str) -> ordered_set.OrderedSet[BasicData]:
     for ch in range(abf.channelCount):
         for sweep in range(abf.sweepCount):
             abf.setSweep(channel=ch, sweepNumber=sweep)
+            name = abf.abfID if abf.sweepCount == 1 else "sw " + str(sweep)
             basic_data.add(BasicData(ch=ch, y=abf.sweepY[:expected_length], sweep_number=sweep,
-                                     measuring_unit=abf.sweepUnitsY, file_path=abf.abfFilePath))
+                                     measuring_unit=abf.sweepUnitsY, file_path=abf.abfFilePath, name=name))
     return basic_data
 
 
