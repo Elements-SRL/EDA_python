@@ -191,6 +191,8 @@ class UiMainWindow(object):
     def _update_plot(self):
         self.sc.ax1.cla()
         self.sc.ax2.cla()
+        # self.sc.ax1.set_title("Channel 0")
+        # self.sc.ax2.set_title("Channel 1")
         if self.logics.is_all_data_hidden():
             # clear plot
             self.sc.draw()
