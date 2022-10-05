@@ -1,4 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Set
+
 from numpy import ndarray
 from ordered_set import OrderedSet
 
@@ -16,6 +18,7 @@ class DataGroup:
     sweep_label_x: str
     sweep_label_y: str
     sweep_label_c: str
+    data_groups: Set = field(default_factory=set)
     basic_data: OrderedSet[BasicData] = OrderedSet()
     id: int = -1
 
