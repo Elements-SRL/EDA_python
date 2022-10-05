@@ -209,11 +209,11 @@ class UiMainWindow(object):
             show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
             return
         views_layout = QVBoxLayout()
-        if self.w is None:
-            self.w = QWidget()
-            self.w.setWindowTitle("Views")
-            self.w.setMinimumSize(200, 300)
-            self.w.setLayout(views_layout)
+        # if self.w is None:
+        self.w = QWidget()
+        self.w.setWindowTitle("Views")
+        self.w.setMinimumSize(200, 300)
+        self.w.setLayout(views_layout)
         buttons = []
         views_layout.deleteLater()
         for d in self.logics.metadata.selected_data_group.basic_data:
