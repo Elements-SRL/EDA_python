@@ -16,7 +16,7 @@ class MetaDataTest(unittest.TestCase):
     def test_add_common_data(self):
         metadata = MetaData()
         arr = np.array([1, 2, 3])
-        bd = BasicData(ch=1, y=arr, measuring_unit="p", file_path="path/to/file")
+        bd = BasicData(ch=1, y=arr, measuring_unit="p", file_path="path/to/file", name="name")
         dg = DataGroup(x=np.array([1, 2, 3]), sampling_rate=10, channel_count=5, measuring_unit="s",
                        sweep_label_y="pA", sweep_label_c="mV", sweep_label_x="sec", sweep_count=5,
                        basic_data=OrderedSet([bd]),
@@ -29,7 +29,7 @@ class MetaDataTest(unittest.TestCase):
     def test_add_same_element_two_times(self):
         metadata = MetaData()
         arr = np.array([1, 2, 3])
-        bd = BasicData(ch=1, y=arr, measuring_unit="p", file_path="path/to/file")
+        bd = BasicData(ch=1, y=arr, measuring_unit="p", file_path="path/to/file", name="name")
         dg = DataGroup(x=np.array([1, 2, 3]), sampling_rate=10, channel_count=5, measuring_unit="s",
                        sweep_label_y="pA", sweep_label_c="mV", sweep_label_x="sec", sweep_count=5,
                        basic_data=OrderedSet([bd]),
@@ -42,13 +42,13 @@ class MetaDataTest(unittest.TestCase):
     def test_add_different_data_groups(self):
         metadata = MetaData()
         arr = np.array([1, 2, 3])
-        bd = BasicData(ch=1, y=arr, measuring_unit="p", file_path="path/to/file")
+        bd = BasicData(ch=1, y=arr, measuring_unit="p", file_path="path/to/file", name="name")
         dg = DataGroup(x=np.array([1, 2, 3]), sampling_rate=10, channel_count=5, measuring_unit="s",
                        sweep_label_y="pA", sweep_label_c="mV", sweep_label_x="sec", sweep_count=5,
                        basic_data=OrderedSet([bd]),
                        )
         arr2 = np.array([1, 2, 3, 4, 5])
-        bd2 = BasicData(ch=1, y=arr2, measuring_unit="p", file_path="path/to/file")
+        bd2 = BasicData(ch=1, y=arr2, measuring_unit="p", file_path="path/to/file", name="name")
         dg2 = DataGroup(x=np.array([1, 2, 3]), sampling_rate=10, channel_count=5, measuring_unit="s",
                         sweep_label_y="pA", sweep_label_c="mV", sweep_label_x="sec", sweep_count=5,
                         basic_data=OrderedSet([bd2]),
