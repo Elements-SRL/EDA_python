@@ -49,6 +49,8 @@ class UiMainWindow(object):
     logics = None
 
     def __init__(self):
+        self.action_open_filters = None
+        self.menu_analyze = None
         self.action_open_visible_channels = None
         self.menu_view = None
         self.w = None
@@ -81,6 +83,8 @@ class UiMainWindow(object):
         self.action_open_visible_channels.setObjectName(u"action_open_visible_channels")
         self.action_clear = QAction(main_window)
         self.action_clear.setObjectName(u"action_clear")
+        self.action_open_filters = QAction(main_window)
+        self.action_open_filters.setObjectName(u"action_open_filters")
         self.central_widget = QWidget(main_window)
         self.central_widget.setObjectName(u"centralwidget")
         self.gridLayout = QGridLayout(self.central_widget)
@@ -109,23 +113,28 @@ class UiMainWindow(object):
         # MENU FILE
         self.menu_file = QMenu(self.menubar)
         self.menu_file.setObjectName(u"menufile")
+        self.menubar.addAction(self.menu_file.menuAction())
+        self.menu_file.addAction(self.actionOpen)
         # MENU EXPORT AS
         self.menu_export_as = QMenu(self.menu_file)
         self.menu_export_as.setObjectName(u"menuExport_as")
+        self.menu_file.addAction(self.menu_export_as.menuAction())
+        self.menu_export_as.addAction(self.action_csv)
         # Menu VIEW
         self.menu_view = QMenu(self.menubar)
         self.menu_view.setObjectName(u"menuview")
-        self.status_bar = QStatusBar(main_window)
-        # STATUS BAR
-        self.status_bar.setObjectName(u"statusbar")
-        main_window.setStatusBar(self.status_bar)
-        self.menubar.addAction(self.menu_file.menuAction())
         self.menubar.addAction(self.menu_view.menuAction())
-        self.menu_file.addAction(self.actionOpen)
-        self.menu_file.addAction(self.menu_export_as.menuAction())
-        self.menu_export_as.addAction(self.action_csv)
         self.menu_view.addAction(self.action_open_visible_channels)
         self.menu_view.addAction(self.action_clear)
+        # Menu ANALYZE
+        self.menu_analyze = QMenu(self.menubar)
+        self.menu_analyze.setObjectName(u"menuanalyze")
+        self.menubar.addAction(self.menu_analyze.menuAction())
+        self.menu_analyze.addAction(self.action_open_filters)
+        # STATUS BAR
+        self.status_bar = QStatusBar(main_window)
+        self.status_bar.setObjectName(u"statusbar")
+        main_window.setStatusBar(self.status_bar)
 
         self.retranslate_ui(main_window)
 
@@ -135,6 +144,7 @@ class UiMainWindow(object):
         self.action_csv.triggered.connect(lambda: self.csv())
         self.action_open_visible_channels.triggered.connect(lambda: self.open_views_window())
         self.action_clear.triggered.connect(lambda: self.clear())
+        self.action_open_filters.triggered.connect(lambda: print("opening filters"))
 
     # setupUi
 
@@ -150,10 +160,12 @@ class UiMainWindow(object):
         self.action_csv.setText(QCoreApplication.translate("MainWindow", u".csv", None))
         self.menu_file.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menu_view.setTitle(QCoreApplication.translate("MainWindow", u"View", None))
+        self.menu_analyze.setTitle(QCoreApplication.translate("MainWindow", u"Analyze", None))
         self.action_open_visible_channels.setText(
             QCoreApplication.translate("MainWindow", u"Visible channels/sweeps", None))
         self.action_clear.setText(QCoreApplication.translate("MainWindow", u"Clear current plots", None))
         self.menu_export_as.setTitle(QCoreApplication.translate("MainWindow", u"Export as ...", None))
+        self.action_open_filters.setText(QCoreApplication.translate("MainWindow", u"Filters", None))
 
     # retranslateUi
 
