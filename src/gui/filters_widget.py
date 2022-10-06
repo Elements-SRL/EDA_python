@@ -81,17 +81,12 @@ class FiltersWidget(QtWidgets.QWidget):
         self.mpl_canvas.axes.cla()
         order = self.order_spin_box.value()
         cutoff_frequency = self.cutoff_freq_spin_box.value()
-        if self.low_pass_radio_button.isChecked():
-            filter_type = "lowpass"
-        if self.band_pass_radio_button.isChecked():
-            filter_type = "bandpass"
-        if self.high_pass_radio_button.isChecked():
-            filter_type = "highpass"
+        low_band_high = self.get_low_band_high_pass()
         if self.band_pass_radio_button.isChecked():
             other_cutoff_frequency = self.other_cutoff_freq_spin_box.value()
-            b, a = signal.butter(order, [cutoff_frequency, other_cutoff_frequency], filter_type, analog=True)
+            b, a = signal.butter(order, [cutoff_frequency, other_cutoff_frequency], low_band_high, analog=True)
         else:
-            b, a = signal.butter(order, cutoff_frequency, filter_type, analog=True)
+            b, a = signal.butter(order, cutoff_frequency, low_band_high, analog=True)
         w, h = signal.freqs(b, a)
         self.mpl_canvas.axes.set_title('Butterworth filter frequency response')
         self.mpl_canvas.axes.set_xlabel('Frequency [radians / second]')
@@ -106,3 +101,11 @@ class FiltersWidget(QtWidgets.QWidget):
     def _deactivate_band_pass(self):
         self.cutoff_freq_spin_box.setEnabled(True)
         self.other_cutoff_freq_spin_box.setEnabled(False)
+
+    def get_low_band_high_pass(self) -> str:
+        if self.low_pass_radio_button.isChecked():
+            return "lowpass"
+        if self.band_pass_radio_button.isChecked():
+            return "bandpass"
+        if self.high_pass_radio_button.isChecked():
+            return "highpass"
