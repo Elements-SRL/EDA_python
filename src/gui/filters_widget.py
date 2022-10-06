@@ -72,9 +72,9 @@ class FiltersWidget(QtWidgets.QWidget):
         buttons_line.addWidget(self.apply_filter_button)
         first_col.addLayout(buttons_line)
         self.preview_button.pressed.connect(lambda: self.preview_action())
-        self.band_pass_radio_button.pressed.connect(lambda: self.activate_band_pass())
-        self.high_pass_radio_button.pressed.connect(lambda: self.deactivate_band_pass())
-        self.low_pass_radio_button.pressed.connect(lambda: self.deactivate_band_pass())
+        self.band_pass_radio_button.pressed.connect(lambda: self._activate_band_pass())
+        self.high_pass_radio_button.pressed.connect(lambda: self._deactivate_band_pass())
+        self.low_pass_radio_button.pressed.connect(lambda: self._deactivate_band_pass())
         self.show()
 
     def preview_action(self):
@@ -99,10 +99,10 @@ class FiltersWidget(QtWidgets.QWidget):
         self.mpl_canvas.axes.plot(w, h)
         self.mpl_canvas.draw()
 
-    def activate_band_pass(self):
+    def _activate_band_pass(self):
         self.cutoff_freq_spin_box.setEnabled(True)
         self.other_cutoff_freq_spin_box.setEnabled(True)
 
-    def deactivate_band_pass(self):
+    def _deactivate_band_pass(self):
         self.cutoff_freq_spin_box.setEnabled(True)
         self.other_cutoff_freq_spin_box.setEnabled(False)
