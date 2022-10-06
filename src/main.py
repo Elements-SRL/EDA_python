@@ -1,7 +1,7 @@
 import sys
 import matplotlib
 from PyQt5 import QtWidgets
-from gui import UiMainWindow
+from main_window import UiMainWindow
 
 matplotlib.use('Qt5Agg')
 

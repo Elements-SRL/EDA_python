@@ -6,7 +6,9 @@ from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication
 from PyQt5.QtWidgets import *
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
+
 import logics
+from src.gui.filters_widget import FiltersWidget
 
 matplotlib.use('Qt5Agg')
 
@@ -35,11 +37,12 @@ class UiMainWindow(object):
     logics = None
 
     def __init__(self):
+        self.filter_widget = None
         self.action_open_filters = None
         self.menu_analyze = None
         self.action_open_visible_channels = None
         self.menu_view = None
-        self.w = None
+        self.views_widget = None
         self.action_clear = None
         self.sc = None
         self.toolbar = None
@@ -130,7 +133,7 @@ class UiMainWindow(object):
         self.action_csv.triggered.connect(lambda: self.csv())
         self.action_open_visible_channels.triggered.connect(lambda: self.open_views_window())
         self.action_clear.triggered.connect(lambda: self.clear())
-        self.action_open_filters.triggered.connect(lambda: print("opening filters"))
+        self.action_open_filters.triggered.connect(lambda: self.open_filters())
 
     # setupUi
 
@@ -209,11 +212,10 @@ class UiMainWindow(object):
             show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
             return
         views_layout = QVBoxLayout()
-        # if self.w is None:
-        self.w = QWidget()
-        self.w.setWindowTitle("Views")
-        self.w.setMinimumSize(200, 300)
-        self.w.setLayout(views_layout)
+        self.views_widget = QWidget()
+        self.views_widget.setWindowTitle("Views")
+        self.views_widget.setMinimumSize(200, 300)
+        self.views_widget.setLayout(views_layout)
         buttons = []
         views_layout.deleteLater()
         for d in self.logics.metadata.selected_data_group.basic_data:
@@ -222,11 +224,22 @@ class UiMainWindow(object):
             b.setChecked(d.visible)
             buttons.append(b)
         apply_button = QPushButton("Show selected channels")
-        apply_button.clicked.connect(lambda: self.apply_filters(buttons))
+        apply_button.clicked.connect(lambda: self.hide_sweeps(buttons))
         views_layout.addWidget(apply_button)
-        self.w.show()
+        self.views_widget.show()
 
-    def apply_filters(self, buttons: List[QCheckBox]):
+    def hide_sweeps(self, buttons: List[QCheckBox]):
         for b in buttons:
             self.logics.metadata.set_visibility(b.text(), b.isChecked())
         self._update_plot()
+
+    def open_filters(self):
+        # if self.logics.is_all_data_hidden():
+        #     show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
+        #     return
+        if self.filter_widget is None:
+            self.filter_widget = FiltersWidget()
+            self.filter_widget.preview_button.pressed.connect(lambda: print("ciccia"))
+            self.filter_widget.apply_filter_button.pressed.connect(lambda: print("CULO"))
+        else:
+            self.filter_widget.show()
