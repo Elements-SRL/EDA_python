@@ -239,7 +239,7 @@ class UiMainWindow(object):
         #     return
         if self.filter_widget is None:
             self.filter_widget = FiltersWidget()
-            self.filter_widget.preview_button.pressed.connect(lambda: print("ciccia"))
+            # self.filter_widget.preview_button.pressed.connect(lambda: print("ciccia"))
             self.filter_widget.apply_filter_button.pressed.connect(lambda: print("CULO"))
         else:
             self.filter_widget.show()
