@@ -37,7 +37,7 @@ class UiMainWindow(object):
     logics = None
 
     def __init__(self):
-        self.filter_widget = None
+        self.filter_widget: FiltersWidget | None = None
         self.action_open_filters = None
         self.menu_analyze = None
         self.action_open_visible_channels = None
@@ -239,7 +239,12 @@ class UiMainWindow(object):
         #     return
         if self.filter_widget is None:
             self.filter_widget = FiltersWidget()
-            # self.filter_widget.preview_button.pressed.connect(lambda: print("ciccia"))
-            self.filter_widget.apply_filter_button.pressed.connect(lambda: print("CULO"))
+            self.filter_widget.preview_button.pressed.connect(lambda: self._filter_preview())
+            self.filter_widget.apply_filter_button.pressed.connect(lambda: print("ciccia"))
         else:
             self.filter_widget.show()
+
+    def _filter_preview(self):
+        filter_arguments = self.filter_widget.get_filter_args()
+        b, a = self.logics.filter_preview(filter_arguments)
+        self.filter_widget.draw_preview(b, a)

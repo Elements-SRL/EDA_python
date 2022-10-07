@@ -1,6 +1,8 @@
 from os.path import exists
 
 from src.exporters import exporter
+from src.filters import filter_handler
+from src.filters.filter_arguments import FilterArguments
 from src.handlers import file_handler
 from src.metadata.meta_data import MetaData
 
@@ -27,3 +29,6 @@ class Logics:
     def export(self, path_to_file: str):
         if not self.metadata.is_empty():
             return exporter.export(path_to_file=path_to_file, metadata=self.metadata)
+
+    def filter_preview(self, filter_args: FilterArguments):
+        return filter_handler.filter_preview(filter_args)

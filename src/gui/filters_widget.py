@@ -2,7 +2,10 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
+from numpy import ndarray
 from scipy import signal
+
+from src.filters.filter_arguments import FilterArguments
 
 
 class MplCanvas(FigureCanvasQTAgg):
@@ -19,7 +22,7 @@ class FiltersWidget(QtWidgets.QWidget):
         super(FiltersWidget, self).__init__()
         views_layout = QHBoxLayout()
         self.setWindowTitle("Filters")
-        self.setMinimumSize(600, 500)
+        self.setMinimumSize(600, 800)
         self.setLayout(views_layout)
         first_col = QVBoxLayout()
         # RadioButtons
@@ -68,25 +71,18 @@ class FiltersWidget(QtWidgets.QWidget):
         buttons_line = QHBoxLayout()
         self.preview_button = QPushButton("Preview")
         self.apply_filter_button = QPushButton("Apply filter")
+        self.preview_button.setEnabled(False)
+        self.apply_filter_button.setEnabled(False)
         buttons_line.addWidget(self.preview_button)
         buttons_line.addWidget(self.apply_filter_button)
         first_col.addLayout(buttons_line)
-        self.preview_button.pressed.connect(lambda: self.preview_action())
         self.band_pass_radio_button.pressed.connect(lambda: self._activate_band_pass())
         self.high_pass_radio_button.pressed.connect(lambda: self._deactivate_band_pass())
         self.low_pass_radio_button.pressed.connect(lambda: self._deactivate_band_pass())
         self.show()
 
-    def preview_action(self):
+    def draw_preview(self, b: ndarray, a: ndarray):
         self.mpl_canvas.axes.cla()
-        order = self.order_spin_box.value()
-        cutoff_frequency = self.cutoff_freq_spin_box.value()
-        low_band_high = self.get_low_band_high_pass()
-        if self.band_pass_radio_button.isChecked():
-            other_cutoff_frequency = self.other_cutoff_freq_spin_box.value()
-            b, a = signal.butter(order, [cutoff_frequency, other_cutoff_frequency], low_band_high, analog=True)
-        else:
-            b, a = signal.butter(order, cutoff_frequency, low_band_high, analog=True)
         w, h = signal.freqs(b, a)
         self.mpl_canvas.axes.set_title('Butterworth filter frequency response')
         self.mpl_canvas.axes.set_xlabel('Frequency [radians / second]')
@@ -97,15 +93,29 @@ class FiltersWidget(QtWidgets.QWidget):
     def _activate_band_pass(self):
         self.cutoff_freq_spin_box.setEnabled(True)
         self.other_cutoff_freq_spin_box.setEnabled(True)
+        self.preview_button.setEnabled(True)
+        self.apply_filter_button.setEnabled(True)
 
     def _deactivate_band_pass(self):
         self.cutoff_freq_spin_box.setEnabled(True)
         self.other_cutoff_freq_spin_box.setEnabled(False)
+        self.preview_button.setEnabled(True)
+        self.apply_filter_button.setEnabled(True)
 
-    def get_low_band_high_pass(self) -> str:
+    def get_b_type(self) -> str:
         if self.low_pass_radio_button.isChecked():
             return "lowpass"
         if self.band_pass_radio_button.isChecked():
             return "bandpass"
         if self.high_pass_radio_button.isChecked():
             return "highpass"
+
+    def get_filter_args(self) -> FilterArguments:
+        f_type = self.type_combo_box.currentText()
+        order = self.order_spin_box.value()
+        cutoff_frequency = self.cutoff_freq_spin_box.value()
+        other_cutoff_frequency = self.other_cutoff_freq_spin_box.value()
+        b_type = self.get_b_type()
+        # TODO analog set to true?
+        return FilterArguments(filter_type=f_type, b_type=b_type, cutoff_frequency=cutoff_frequency, order=order,
+                               other_cutoff_frequency=other_cutoff_frequency, analog=True)

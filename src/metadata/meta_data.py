@@ -18,22 +18,10 @@ class MetaData:
         self.data_groups.clear()
         self.paths.clear()
         self.currentId = 0
+        self.selected_data_group = None
 
     def get_x(self) -> ndarray:
         return self.selected_data_group.x
-
-    def get_channel_y(self, channel: int) -> List[ndarray]:
-        return [d.y for d in self.selected_data_group.basic_data if d.ch == channel]
-
-    def get_all_y(self) -> List[Tuple[int, List[ndarray]]]:
-        d = {ch: self.get_channel_y(ch) for ch in range(self.common_data.channel_count)}
-        return list(zip(d.keys(), d.values()))
-
-    # def add_data(self, basic_data: BasicData):
-    #     if basic_data not in self.data:
-    #         self.data.add(basic_data)
-    #         basic_data.name = str(self.currentId)
-    #         self.currentId += 1
 
     def get_visible_data(self) -> List[BasicData]:
         return [d for d in self.selected_data_group.basic_data if d.visible]
