@@ -240,7 +240,7 @@ class UiMainWindow(object):
         if self.filter_widget is None:
             self.filter_widget = FiltersWidget()
             self.filter_widget.preview_button.pressed.connect(lambda: self._filter_preview())
-            self.filter_widget.apply_filter_button.pressed.connect(lambda: print("ciccia"))
+            self.filter_widget.apply_filter_button.pressed.connect(lambda: self._apply_filter())
         else:
             self.filter_widget.show()
 
@@ -248,3 +248,8 @@ class UiMainWindow(object):
         filter_arguments = self.filter_widget.get_filter_args()
         b, a = self.logics.filter_preview(filter_arguments)
         self.filter_widget.draw_preview(b, a)
+
+    def _apply_filter(self):
+        filter_arguments = self.filter_widget.get_filter_args()
+        self.logics.filter_selected_data_group(filter_arguments)
+        self._update_plot()

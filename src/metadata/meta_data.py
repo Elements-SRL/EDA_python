@@ -11,13 +11,14 @@ class MetaData:
     def __init__(self):
         self.selected_data_group: DataGroup | None = None
         self.data_groups: OrderedSet[DataGroup] = OrderedSet()
+        # TODO remove this
         self.paths: Set[str] = set()
-        self.currentId: int = 0
+        self.current_id: int = 0
 
     def clear(self):
         self.data_groups.clear()
         self.paths.clear()
-        self.currentId = 0
+        self.current_id = 0
         self.selected_data_group = None
 
     def get_x(self) -> ndarray:
@@ -46,7 +47,12 @@ class MetaData:
         if dg in self.data_groups:
             return
         if dg.id == -1:
-            dg.id = self.currentId
-            self.currentId += 1
+            dg.id = self.current_id
+            self.current_id += 1
             self.selected_data_group = dg
             self.data_groups.add(dg)
+
+    def get_and_increment_id(self):
+        id_to_return = self.current_id
+        self.current_id += 1
+        return id_to_return

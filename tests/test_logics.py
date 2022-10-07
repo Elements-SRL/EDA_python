@@ -1,4 +1,7 @@
 import unittest
+
+import src.filters.filter_handler
+from src.filters.filter_arguments import FilterArguments
 from src.logics import Logics
 
 
@@ -67,6 +70,33 @@ class LogicsTest(unittest.TestCase):
         file_path_of_data_from_the_same_channel = {d.filepath for d in
                                                    logics_test.metadata.selected_data_group.basic_data if d.ch == 0}
         self.assertTrue(len(file_path_of_data_from_the_same_channel) == 4)
+
+    def test_filter(self):
+        logics_test = Logics()
+        logics_test.open("../"+self.path_to_basic_edh)
+        filter_args = FilterArguments(filter_type="butter",
+                                      order=4,
+                                      b_type="highpass",
+                                      cutoff_frequency=0.5,
+                                      analog=False)
+        y = src.filters.filter_handler.filter_signal(filter_args,
+                                                     y=logics_test.metadata.selected_data_group.basic_data[0].y)
+        print(y)
+
+    def test_filters(self):
+        logics_test = Logics()
+        logics_test.open("../"+self.path_to_basic_edh)
+        print(logics_test.metadata.selected_data_group.id)
+        filter_args = FilterArguments(filter_type="butter",
+                                      order=4,
+                                      b_type="highpass",
+                                      cutoff_frequency=500,
+                                      analog=True)
+        logics_test.filter_selected_data_group(filter_args=filter_args)
+        print(logics_test.metadata.selected_data_group.id)
+        for d in logics_test.metadata.selected_data_group.basic_data:
+            print(d.y)
+        self.assertTrue(len(logics_test.metadata.selected_data_group.basic_data) == 5)
 
 
 if __name__ == '__main__':

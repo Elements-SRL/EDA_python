@@ -25,3 +25,18 @@ class DataGroup:
     def __hash__(self):
         return hash((self.id, str(self.x), self.sampling_rate, self.channel_count, self.sweep_count,
                      self.measuring_unit, frozenset(self.basic_data)))
+
+
+def make_copy(dg: DataGroup, new_id: int) -> DataGroup:
+    return DataGroup(x=dg.x,
+                     sampling_rate=dg.sampling_rate,
+                     channel_count=dg.channel_count,
+                     sweep_count=dg.sweep_count,
+                     measuring_unit=dg.measuring_unit,
+                     sweep_label_x=dg.sweep_label_x,
+                     sweep_label_y=dg.sweep_label_y,
+                     sweep_label_c=dg.sweep_label_c,
+                     data_groups=dg.data_groups,
+                     basic_data=dg.basic_data,
+                     id=new_id
+                     )

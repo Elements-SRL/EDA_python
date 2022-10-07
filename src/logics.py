@@ -1,9 +1,11 @@
 from os.path import exists
 
+import src.metadata.data_classes.data_group
 from src.exporters import exporter
 from src.filters import filter_handler
 from src.filters.filter_arguments import FilterArguments
 from src.handlers import file_handler
+from src.metadata.data_classes.basic_data import BasicData
 from src.metadata.meta_data import MetaData
 
 
@@ -31,4 +33,19 @@ class Logics:
             return exporter.export(path_to_file=path_to_file, metadata=self.metadata)
 
     def filter_preview(self, filter_args: FilterArguments):
-        return filter_handler.filter_preview(filter_args)
+        return filter_handler.calc_filter(filter_args)
+
+    def filter_selected_data_group(self, filter_args: FilterArguments):
+        updated_data = [BasicData(ch=d.ch,
+                                  y=filter_handler.filter_signal(filter_args, d.y),
+                                  sweep_number=d.sweep_number,
+                                  # TODO measuring units?
+                                  measuring_unit=d.measuring_unit,
+                                  file_path=d.filepath,
+                                  name=d.name
+                                  ) for d in self.metadata.selected_data_group.basic_data]
+        sdg = self.metadata.selected_data_group
+        dg = src.metadata.data_classes.data_group.make_copy(sdg, self.metadata.get_and_increment_id())
+        dg.basic_data = updated_data
+        sdg.data_groups.add(dg)
+        self.metadata.selected_data_group = dg
