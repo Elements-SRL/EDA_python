@@ -4,7 +4,7 @@ import src.metadata.data_classes.data_group
 from src.exporters import exporter
 from src.filters import filter_handler
 from src.filters.filter_arguments import FilterArguments
-from src.handlers import file_handler
+from src.file_handlers import file_handler
 from src.metadata.data_classes.basic_data import BasicData
 from src.metadata.meta_data import MetaData
 

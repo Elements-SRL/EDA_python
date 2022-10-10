@@ -8,7 +8,7 @@ from pyabf import ABF
 from src.metadata.data_classes.basic_data import BasicData
 from src.metadata.data_classes.data_group import DataGroup
 from src.metadata.meta_data import MetaData
-from src.handlers.specific_handlers import abf_handler
+from src.file_handlers.specific_handlers import abf_handler
 
 
 def extract_meta_data_from_edh(path_to_edh: str, metadata: MetaData):
