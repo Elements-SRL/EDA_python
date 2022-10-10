@@ -84,6 +84,8 @@ class FiltersWidget(QtWidgets.QWidget):
         self.band_pass_radio_button.pressed.connect(lambda: self._activate_band_pass())
         self.high_pass_radio_button.pressed.connect(lambda: self._deactivate_band_pass())
         self.low_pass_radio_button.pressed.connect(lambda: self._deactivate_band_pass())
+        self.low_pass_radio_button.setChecked(True)
+        self._deactivate_band_pass()
         self.show()
 
     def draw_preview(self, b: ndarray, a: ndarray):
