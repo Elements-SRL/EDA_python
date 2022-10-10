@@ -37,7 +37,7 @@ class FiltersWidget(QtWidgets.QWidget):
         # Type Combobox
         self.type_label = QLabel("Type")
         self.type_combo_box = QComboBox()
-        self.type_combo_box.addItems(["butter"])
+        self.type_combo_box.addItems(["butter", "bessel"])
         # Order SpinBox
         self.order_label = QLabel("Order")
         self.order_spin_box = QSpinBox()
@@ -91,7 +91,7 @@ class FiltersWidget(QtWidgets.QWidget):
     def draw_preview(self, b: ndarray, a: ndarray):
         self.mpl_canvas.axes.cla()
         w, h = signal.freqz(b, a, fs=self.fs)
-        self.mpl_canvas.axes.set_title('Butterworth filter frequency response')
+        self.mpl_canvas.axes.set_title('Filter frequency response')
         self.mpl_canvas.axes.set_xlabel('Frequency [Hz]')
         self.mpl_canvas.axes.set_ylabel('Amplitude [db]')
         self.mpl_canvas.axes.semilogx(w, 20 * np.log10(np.abs(h)))
