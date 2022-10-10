@@ -22,7 +22,6 @@ class FiltersWidget(QtWidgets.QWidget):
     def __init__(self, fs: float):
         super(FiltersWidget, self).__init__()
         self.fs = fs
-        print(fs)
         views_layout = QHBoxLayout()
         self.setWindowTitle("Filters")
         self.setMinimumSize(600, 800)

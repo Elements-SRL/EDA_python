@@ -234,9 +234,9 @@ class UiMainWindow(object):
         self._update_plot()
 
     def open_filters(self):
-        # if self.logics.is_all_data_hidden():
-        #     show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
-        #     return
+        if self.logics.is_all_data_hidden():
+            show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
+            return
         if self.filter_widget is None:
             self.filter_widget = FiltersWidget(self.logics.metadata.selected_data_group.sampling_rate)
             self.filter_widget.preview_button.pressed.connect(lambda: self._filter_preview())
@@ -252,4 +252,5 @@ class UiMainWindow(object):
     def _apply_filter(self):
         filter_arguments = self.filter_widget.get_filter_args()
         self.logics.filter_selected_data_group(filter_arguments)
+        self.filter_widget.close()
         self._update_plot()
