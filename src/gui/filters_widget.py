@@ -124,6 +124,5 @@ class FiltersWidget(QtWidgets.QWidget):
         cutoff_frequency = self.cutoff_freq_spin_box.value()
         other_cutoff_frequency = self.other_cutoff_freq_spin_box.value()
         b_type = self.get_b_type()
-        # TODO analog set to true?
         return FilterArguments(filter_type=f_type, b_type=b_type, cutoff_frequency=cutoff_frequency, order=order,
                                other_cutoff_frequency=other_cutoff_frequency, fs=self.fs)
