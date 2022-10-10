@@ -94,9 +94,7 @@ class FiltersWidget(QtWidgets.QWidget):
         self.mpl_canvas.axes.set_title('Butterworth filter frequency response')
         self.mpl_canvas.axes.set_xlabel('Frequency [Hz]')
         self.mpl_canvas.axes.set_ylabel('Amplitude [db]')
-        abs_val = np.abs(h)
-        abs_val_in_db = 20 * np.log10(abs_val)
-        self.mpl_canvas.axes.semilogx(w, abs_val_in_db)
+        self.mpl_canvas.axes.semilogx(w, 20 * np.log10(np.abs(h)))
         self.mpl_canvas.draw()
 
     def _activate_band_pass(self):
