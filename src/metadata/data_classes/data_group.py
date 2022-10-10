@@ -36,7 +36,7 @@ def make_copy(dg: DataGroup, new_id: int) -> DataGroup:
                      sweep_label_x=dg.sweep_label_x,
                      sweep_label_y=dg.sweep_label_y,
                      sweep_label_c=dg.sweep_label_c,
-                     data_groups=dg.data_groups,
+                     data_groups=set(),
                      basic_data=dg.basic_data,
                      id=new_id
                      )

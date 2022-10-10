@@ -39,7 +39,6 @@ class Logics:
         updated_data = [BasicData(ch=d.ch,
                                   y=filter_handler.filter_signal(filter_args, d.y),
                                   sweep_number=d.sweep_number,
-                                  # TODO measuring units?
                                   measuring_unit=d.measuring_unit,
                                   file_path=d.filepath,
                                   name=d.name
