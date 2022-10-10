@@ -37,7 +37,7 @@ class FiltersWidget(QtWidgets.QWidget):
         # Type Combobox
         self.type_label = QLabel("Type")
         self.type_combo_box = QComboBox()
-        self.type_combo_box.addItems(["butter", "bessel"])
+        self.type_combo_box.addItems(["butter", "bessel", "cheby1"])
         # Order SpinBox
         self.order_label = QLabel("Order")
         self.order_spin_box = QSpinBox()
