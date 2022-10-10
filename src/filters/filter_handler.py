@@ -9,10 +9,11 @@ def calc_filter(filter_arguments: FilterArguments) -> (ndarray, ndarray):
               filter_arguments.other_cutoff_frequency] if filter_arguments.b_type in ["bandpass", "bandstop"]\
         else filter_arguments.cutoff_frequency
     if filter_arguments.filter_type == "butter":
+        # TODO change fs
         return signal.butter(N=filter_arguments.order, Wn=cutoff, btype=filter_arguments.b_type,
-                             analog=filter_arguments.analog)
+                             analog=filter_arguments.analog, fs=filter_arguments.fs)
 
 
 def filter_signal(filter_arguments: FilterArguments, y: ndarray) -> ndarray:
     b, a = calc_filter(filter_arguments)
-    return signal.filtfilt(b, a, y)
+    return signal.lfilter(b, a, y)

@@ -1,3 +1,4 @@
+import numpy as np
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
@@ -18,8 +19,10 @@ class MplCanvas(FigureCanvasQTAgg):
 
 class FiltersWidget(QtWidgets.QWidget):
 
-    def __init__(self):
+    def __init__(self, fs: float):
         super(FiltersWidget, self).__init__()
+        self.fs = fs
+        print(fs)
         views_layout = QHBoxLayout()
         self.setWindowTitle("Filters")
         self.setMinimumSize(600, 800)
@@ -83,11 +86,12 @@ class FiltersWidget(QtWidgets.QWidget):
 
     def draw_preview(self, b: ndarray, a: ndarray):
         self.mpl_canvas.axes.cla()
-        w, h = signal.freqs(b, a)
+        # TODO Change fs
+        w, h = signal.freqz(b, a, fs=self.fs)
         self.mpl_canvas.axes.set_title('Butterworth filter frequency response')
-        self.mpl_canvas.axes.set_xlabel('Frequency [radians / second]')
-        self.mpl_canvas.axes.set_ylabel('Amplitude [dB]')
-        self.mpl_canvas.axes.plot(w, h)
+        self.mpl_canvas.axes.set_xlabel('Frequency [Hz]')
+        self.mpl_canvas.axes.set_ylabel('Gain')
+        self.mpl_canvas.axes.plot(w, np.abs(h))
         self.mpl_canvas.draw()
 
     def _activate_band_pass(self):
@@ -118,4 +122,4 @@ class FiltersWidget(QtWidgets.QWidget):
         b_type = self.get_b_type()
         # TODO analog set to true?
         return FilterArguments(filter_type=f_type, b_type=b_type, cutoff_frequency=cutoff_frequency, order=order,
-                               other_cutoff_frequency=other_cutoff_frequency, analog=True)
+                               other_cutoff_frequency=other_cutoff_frequency, fs=self.fs)

@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class FilterArguments:
+    fs: float
     filter_type: str
     order: int
     b_type: str

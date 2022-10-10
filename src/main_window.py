@@ -238,7 +238,7 @@ class UiMainWindow(object):
         #     show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
         #     return
         if self.filter_widget is None:
-            self.filter_widget = FiltersWidget()
+            self.filter_widget = FiltersWidget(self.logics.metadata.selected_data_group.sampling_rate)
             self.filter_widget.preview_button.pressed.connect(lambda: self._filter_preview())
             self.filter_widget.apply_filter_button.pressed.connect(lambda: self._apply_filter())
         else:
