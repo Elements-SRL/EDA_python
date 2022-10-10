@@ -27,6 +27,9 @@ class FiltersWidget(QtWidgets.QWidget):
         self.setMinimumSize(600, 800)
         self.setLayout(views_layout)
         first_col = QVBoxLayout()
+        # FS Label
+        fs_label = QLabel("Frequency: " + str(fs))
+        first_col.addWidget(fs_label)
         # RadioButtons
         self.band_pass_radio_button = QRadioButton("Band pass")
         self.low_pass_radio_button = QRadioButton("Low pass")
@@ -43,15 +46,15 @@ class FiltersWidget(QtWidgets.QWidget):
         self.cutoff_freq_label = QLabel("Cutoff frequency (Hz)")
         self.cutoff_freq_spin_box = QDoubleSpinBox()
         # TODO is it enough?
-        self.cutoff_freq_spin_box.setMaximum(5000.000)
-        self.cutoff_freq_spin_box.setValue(100.00)
+        self.cutoff_freq_spin_box.setMinimum(0)
+        self.cutoff_freq_spin_box.setMaximum(fs / 2 - 1)
         self.cutoff_freq_spin_box.setEnabled(False)
         # Other cutoff Spinbox
         self.other_cutoff_freq_label = QLabel("Cutoff frequency (Hz)")
         self.other_cutoff_freq_spin_box = QDoubleSpinBox()
         # TODO is it enough?
-        self.other_cutoff_freq_spin_box.setMaximum(5000.000)
-        self.other_cutoff_freq_spin_box.setValue(300.00)
+        self.other_cutoff_freq_spin_box.setMinimum(0)
+        self.other_cutoff_freq_spin_box.setMaximum(fs / 2 - 1)
         self.other_cutoff_freq_spin_box.setEnabled(False)
         first_col.addWidget(self.band_pass_radio_button)
         first_col.addWidget(self.low_pass_radio_button)
