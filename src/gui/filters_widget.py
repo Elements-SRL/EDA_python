@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
@@ -46,14 +48,14 @@ class FiltersWidget(QtWidgets.QWidget):
         self.cutoff_freq_label = QLabel("Cutoff frequency (Hz)")
         self.cutoff_freq_spin_box = QDoubleSpinBox()
         # TODO is it enough?
-        self.cutoff_freq_spin_box.setMinimum(0)
+        self.cutoff_freq_spin_box.setMinimum(1)
         self.cutoff_freq_spin_box.setMaximum(fs / 2 - 1)
         self.cutoff_freq_spin_box.setEnabled(False)
         # Other cutoff Spinbox
         self.other_cutoff_freq_label = QLabel("Cutoff frequency (Hz)")
         self.other_cutoff_freq_spin_box = QDoubleSpinBox()
         # TODO is it enough?
-        self.other_cutoff_freq_spin_box.setMinimum(0)
+        self.other_cutoff_freq_spin_box.setMinimum(1)
         self.other_cutoff_freq_spin_box.setMaximum(fs / 2 - 1)
         self.other_cutoff_freq_spin_box.setEnabled(False)
         first_col.addWidget(self.band_pass_radio_button)
@@ -90,12 +92,13 @@ class FiltersWidget(QtWidgets.QWidget):
 
     def draw_preview(self, b: ndarray, a: ndarray):
         self.mpl_canvas.axes.cla()
-        # TODO Change fs
         w, h = signal.freqz(b, a, fs=self.fs)
         self.mpl_canvas.axes.set_title('Butterworth filter frequency response')
         self.mpl_canvas.axes.set_xlabel('Frequency [Hz]')
-        self.mpl_canvas.axes.set_ylabel('Gain')
-        self.mpl_canvas.axes.plot(w, np.abs(h))
+        self.mpl_canvas.axes.set_ylabel('Amplitude [db]')
+        abs_val = np.abs(h)
+        abs_val_in_db = 20 * np.log10(abs_val)
+        self.mpl_canvas.axes.semilogx(w, abs_val_in_db)
         self.mpl_canvas.draw()
 
     def _activate_band_pass(self):
