@@ -1,14 +1,16 @@
-from typing import List
+from typing import List, Iterable, Set
 
 import matplotlib
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication
+from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication, QModelIndex
+from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import *
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 
 import logics
 from src.gui.filters_widget import FiltersWidget
+from src.metadata.data_classes.data_group import DataGroup
 
 matplotlib.use('Qt5Agg')
 
@@ -37,6 +39,9 @@ class UiMainWindow(object):
     logics = None
 
     def __init__(self):
+        self.model: QStandardItemModel | None = None
+        self.tree_view: QTreeView | None = None
+        self.outer_div: QHBoxLayout | None = None
         self.filter_widget: FiltersWidget | None = None
         self.action_open_filters = None
         self.menu_analyze = None
@@ -76,7 +81,9 @@ class UiMainWindow(object):
         self.action_open_filters.setObjectName(u"action_open_filters")
         self.central_widget = QWidget(main_window)
         self.central_widget.setObjectName(u"centralwidget")
-        self.gridLayout = QGridLayout(self.central_widget)
+        self.outer_div = QHBoxLayout(self.central_widget)
+        # self.gridLayout = QGridLayout(self.central_widget)
+        self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
         self.frame_2 = QFrame(self.central_widget)
         self.frame_2.setObjectName(u"frame_2")
@@ -124,7 +131,24 @@ class UiMainWindow(object):
         self.status_bar = QStatusBar(main_window)
         self.status_bar.setObjectName(u"statusbar")
         main_window.setStatusBar(self.status_bar)
-
+        self.model = QStandardItemModel()
+        item0 = QStandardItem("ciccia1")
+        item1 = QStandardItem("culo1")
+        item2 = QStandardItem("ciccia2")
+        item3 = QStandardItem("culo2")
+        item3.setEditable(False)
+        # item3.clicked.connect(lambda: print("clicked"))
+        self.model.appendRow(item0)
+        item0.appendRow(item1)
+        self.model.appendRow(item2)
+        item1.appendRow(item3)
+        self.tree_view = QTreeView()
+        self.tree_view.setModel(self.model)
+        self.tree_view.setMaximumWidth(200)
+        self.tree_view.doubleClicked.connect(self.print_index)
+        self.gridLayout.addWidget(self.tree_view)
+        self.outer_div.addWidget(self.tree_view)
+        self.outer_div.addLayout(self.gridLayout)
         self.retranslate_ui(main_window)
 
         QMetaObject.connectSlotsByName(main_window)
@@ -162,6 +186,7 @@ class UiMainWindow(object):
         f_name, _ = QFileDialog.getOpenFileName(None, 'Open file', filter="Edh files(*.edh);;Abf files (*.abf)")
         if f_name:
             self.logics.open(f_name)
+            self._update_tree_view()
             self._update_plot()
 
     def csv(self):
@@ -254,3 +279,44 @@ class UiMainWindow(object):
         self.logics.filter_selected_data_group(filter_arguments)
         self.filter_widget.close()
         self._update_plot()
+        self._update_tree_view()
+
+    def print_index(self, index: QModelIndex):
+        print("clicked " + index.data())
+
+    def _update_tree_view(self):
+        self.model.clear()
+        # print_recursively(set(self.logics.metadata.data_groups))
+        items = _recursive_bundle(self.logics.metadata.data_groups)
+        for i in items:
+            self.model.appendRow(i)
+
+
+def _int_rec_bundle(data_groups:Iterable[DataGroup]):
+    pass
+
+
+def _recursive_bundle(data_groups: Iterable[DataGroup], level: int = 0) -> List[QStandardItem]:
+    items = []
+    for dg in data_groups:
+        if len(dg.data_groups) == 0:
+            item = QStandardItem(str(dg.id))
+            item.setEditable(False)
+            items.append(item)
+        elif len(dg.data_groups) > 0:
+            dgs = dg.data_groups
+            item = QStandardItem(str(dg.id))
+            item.setEditable(False)
+            internal_items = _recursive_bundle(dgs)
+            for i in internal_items:
+                item.appendRow(i)
+            items.append(item)
+    return items
+
+
+def print_recursively(data_groups: Set[DataGroup], level: int = 0):
+    for dg in data_groups:
+        if len(dg.data_groups) == 0:
+            print("leave" + str(level))
+        else:
+            print_recursively(dg.data_groups, level + 1)
