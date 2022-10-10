@@ -73,7 +73,7 @@ class LogicsTest(unittest.TestCase):
 
     def test_filter(self):
         logics_test = Logics()
-        logics_test.open("../"+self.path_to_basic_edh)
+        logics_test.open(self.path_to_basic_edh)
         filter_args = FilterArguments(filter_type="butter",
                                       order=4,
                                       b_type="highpass",
@@ -85,7 +85,7 @@ class LogicsTest(unittest.TestCase):
 
     def test_filters(self):
         logics_test = Logics()
-        logics_test.open("../"+self.path_to_basic_edh)
+        logics_test.open(self.path_to_basic_edh)
         print(logics_test.metadata.selected_data_group.id)
         filter_args = FilterArguments(filter_type="butter",
                                       order=4,

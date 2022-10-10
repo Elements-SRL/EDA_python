@@ -12,7 +12,7 @@ class TestFilters(unittest.TestCase):
                                       b_type="highpass",
                                       cutoff_frequency=500,
                                       analog=True)
-        b, a = fh.filter_preview(filter_args)
+        b, a = fh.calc_filter(filter_args)
         self.assertTrue(len(b) == len(a))
 
 
