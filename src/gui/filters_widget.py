@@ -97,6 +97,8 @@ class FiltersWidget(QtWidgets.QWidget):
         self.mpl_canvas.axes.set_xlabel('Frequency [Hz]')
         self.mpl_canvas.axes.set_ylabel('Amplitude [db]')
         self.mpl_canvas.axes.semilogx(w, 20 * np.log10(np.abs(h)))
+        self.mpl_canvas.axes.yaxis.grid()
+        self.mpl_canvas.axes.xaxis.grid()
         self.mpl_canvas.draw()
 
     def _activate_band_pass(self):
