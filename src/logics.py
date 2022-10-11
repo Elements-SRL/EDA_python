@@ -2,6 +2,7 @@ from os.path import exists
 from typing import Iterable, List, Tuple
 
 from numpy import ndarray
+from ordered_set import OrderedSet
 
 from src.metadata.data_classes.data_group import DataGroup
 from src.metadata.data_classes import data_group
@@ -68,6 +69,34 @@ class Logics:
                 if found_dg is not None:
                     return found_dg
 
-    def spectral_analysis(self, ch: int) -> List[Tuple[ndarray, ndarray]]:
+    def spectral_analysis(self):
+        bd = self.metadata.selected_data_group.basic_data
+        bd_ch0 = [self._create_spectral_analysis_basic_data(d, 0) for d in bd if d.ch == 0]
+        bd_ch1 = [self._create_spectral_analysis_basic_data(d, 1) for d in bd if d.ch == 1]
+        bd = OrderedSet(bd_ch0 + bd_ch1)
+        dg = self._create_spectral_analysis_data_group(self.metadata.selected_data_group, bd)
+        self.metadata.selected_data_group.data_groups.add(dg)
+        self.metadata.selected_data_group = dg
+        return
+
+    def _create_spectral_analysis_basic_data(self, d: BasicData, ch) -> BasicData:
         fs = self.metadata.selected_data_group.sampling_rate
-        return [sa.spectral_analysis(x=d.y, fs=fs) for d in self.metadata.selected_data_group.basic_data if d.ch == ch]
+        x, Pxx = sa.spectral_analysis(x=d.y, fs=fs)
+        # TODO problem with measuring units
+        m_unit = '[' + d.measuring_unit + '²/Hz]'
+        name = d.name + " PSD"
+        return BasicData(ch=ch, y=Pxx, sweep_number=d.sweep_number, measuring_unit=m_unit, file_path=d.filepath,
+                         name=name)
+
+    def _create_spectral_analysis_data_group(self, odg: DataGroup, bd: OrderedSet[BasicData]) -> DataGroup:
+        f, _ = sa.spectral_analysis(x=self.metadata.selected_data_group.basic_data[0].y, fs=odg.sampling_rate)
+        # TODO fix measuring units
+        l_0 = bd[0].measuring_unit
+        l_1 = bd[1].measuring_unit
+        x_label, y_label, c_label = "Frequency [Hz]", l_0, l_1
+        new_id = self.metadata.get_and_increment_id()
+        name = str(new_id) + " " + odg.name.split(" ")[1][:4] + " PSD"
+        return DataGroup(x=f, data_groups=set(), channel_count=odg.channel_count,
+                         sweep_count=odg.sweep_count, sweep_label_x=x_label, sweep_label_y=y_label,
+                         sweep_label_c=c_label, basic_data=bd, id=new_id,
+                         measuring_unit='Hz', name=name, sampling_rate=odg.sampling_rate)

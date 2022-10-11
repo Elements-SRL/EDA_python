@@ -272,17 +272,20 @@ class UiMainWindow(object):
         if self.logics.is_all_data_hidden():
             show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
             return
-        if self.spectral_analysis_widget is None:
-            spectra = self.logics.spectral_analysis(0)
-            self.spectral_analysis_widget = SpectralAnalysisWidget(spectra, "ciccia")
-            self.spectral_analysis_widget.rb_ch0.pressed.connect(lambda: self._draw_spectral_analysis(0))
-            self.spectral_analysis_widget.rb_ch0.setChecked(True)
-            self.spectral_analysis_widget.rb_ch1.pressed.connect(lambda: self._draw_spectral_analysis(1))
-        else:
-            spectra = self.logics.spectral_analysis(0)
-            self.spectral_analysis_widget.rb_ch0.setChecked(True)
-            self.spectral_analysis_widget.draw(spectra, "ciccia")
-            self.spectral_analysis_widget.show()
+        # if self.spectral_analysis_widget is None:
+        #     spectra = self.logics.spectral_analysis(0)
+        #     self.spectral_analysis_widget = SpectralAnalysisWidget(spectra, "ciccia")
+        #     self.spectral_analysis_widget.rb_ch0.pressed.connect(lambda: self._draw_spectral_analysis(0))
+        #     self.spectral_analysis_widget.rb_ch0.setChecked(True)
+        #     self.spectral_analysis_widget.rb_ch1.pressed.connect(lambda: self._draw_spectral_analysis(1))
+        # else:
+        #     spectra = self.logics.spectral_analysis(0)
+        #     self.spectral_analysis_widget.rb_ch0.setChecked(True)
+        #     self.spectral_analysis_widget.draw(spectra, "ciccia")
+        #     self.spectral_analysis_widget.show()
+        self.logics.spectral_analysis()
+        self._update_plot()
+        self._update_tree_view()
 
     def _filter_preview(self):
         filter_arguments = self.filter_widget.get_filter_args()
