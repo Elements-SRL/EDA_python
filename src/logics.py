@@ -63,4 +63,6 @@ class Logics:
             if dg.name == name:
                 return dg
             if len(dg.data_groups) > 0:
-                return self._recursive_search(name, dg.data_groups)
+                found_dg = self._recursive_search(name, dg.data_groups)
+                if found_dg is not None:
+                    return found_dg
