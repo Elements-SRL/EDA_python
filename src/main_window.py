@@ -105,7 +105,7 @@ class UiMainWindow(object):
         plot_layout.addWidget(toolbar)
         plot_layout.addWidget(self.sc)
 
-        main_window.setcentral_widget(self.central_widget)
+        main_window.setCentralWidget(self.central_widget)
         # MENU BAR
         self.menubar = QMenuBar(main_window)
         self.menubar.setObjectName(u"menubar")
