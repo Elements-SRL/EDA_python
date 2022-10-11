@@ -53,6 +53,7 @@ def _open_multiple_abf(path_to_files: List[str], metadata: MetaData, path_to_edh
     n_channels = _extract_channel_number(path_to_edh)
     dg = abf_handler.extract_data_group(path_to_file=path_to_files.pop(), basic_data=basic_data)
     dg.channel_count = n_channels
+    dg.name = path_to_edh.split(os.sep).pop()
     metadata.add_data_group(dg)
 
 

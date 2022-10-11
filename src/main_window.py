@@ -292,12 +292,12 @@ def _recursive_bundle(data_groups: Iterable[DataGroup], level: int = 0) -> List[
     items = []
     for dg in data_groups:
         if len(dg.data_groups) == 0:
-            item = QStandardItem(str(dg.id))
+            item = QStandardItem(dg.name)
             item.setEditable(False)
             items.append(item)
         elif len(dg.data_groups) > 0:
             dgs = dg.data_groups
-            item = QStandardItem(str(dg.id))
+            item = QStandardItem(dg.name)
             item.setEditable(False)
             internal_items = _recursive_bundle(dgs)
             for i in internal_items:
