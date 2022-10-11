@@ -73,7 +73,7 @@ def _extract_data_group(path_to_files: List[str], path_to_edh: str) -> DataGroup
     abf.setSweep(0, 0)
     return DataGroup(x=x, sampling_rate=abf.sampleRate, channel_count=n_channels, measuring_unit=abf.sweepUnitsX,
                      sweep_label_x=abf.sweepLabelX, sweep_label_y=abf.sweepLabelY, sweep_label_c=abf.sweepLabelC,
-                     sweep_count=abf.sweepCount,
+                     sweep_count=abf.sweepCount, name=path_to_edh.split(os.sep).pop()
                      )
 
 

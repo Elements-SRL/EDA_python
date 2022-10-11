@@ -19,7 +19,7 @@ class MetaDataTest(unittest.TestCase):
         bd = BasicData(ch=1, y=arr, measuring_unit="p", file_path="path/to/file", name="name")
         dg = DataGroup(x=np.array([1, 2, 3]), sampling_rate=10, channel_count=5, measuring_unit="s",
                        sweep_label_y="pA", sweep_label_c="mV", sweep_label_x="sec", sweep_count=5,
-                       basic_data=OrderedSet([bd]),
+                       basic_data=OrderedSet([bd]), name="ciccia",
                        )
         metadata.add_data_group(dg)
         self.assertTrue(len(metadata.selected_data_group.x) == len(dg.x))
@@ -32,7 +32,7 @@ class MetaDataTest(unittest.TestCase):
         bd = BasicData(ch=1, y=arr, measuring_unit="p", file_path="path/to/file", name="name")
         dg = DataGroup(x=np.array([1, 2, 3]), sampling_rate=10, channel_count=5, measuring_unit="s",
                        sweep_label_y="pA", sweep_label_c="mV", sweep_label_x="sec", sweep_count=5,
-                       basic_data=OrderedSet([bd]),
+                       basic_data=OrderedSet([bd]), name="ciccia",
                        )
         metadata.add_data_group(dg)
         metadata.add_data_group(dg)
@@ -45,13 +45,13 @@ class MetaDataTest(unittest.TestCase):
         bd = BasicData(ch=1, y=arr, measuring_unit="p", file_path="path/to/file", name="name")
         dg = DataGroup(x=np.array([1, 2, 3]), sampling_rate=10, channel_count=5, measuring_unit="s",
                        sweep_label_y="pA", sweep_label_c="mV", sweep_label_x="sec", sweep_count=5,
-                       basic_data=OrderedSet([bd]),
+                       basic_data=OrderedSet([bd]), name="ciccia",
                        )
         arr2 = np.array([1, 2, 3, 4, 5])
         bd2 = BasicData(ch=1, y=arr2, measuring_unit="p", file_path="path/to/file", name="name")
         dg2 = DataGroup(x=np.array([1, 2, 3]), sampling_rate=10, channel_count=5, measuring_unit="s",
                         sweep_label_y="pA", sweep_label_c="mV", sweep_label_x="sec", sweep_count=5,
-                        basic_data=OrderedSet([bd2]),
+                        basic_data=OrderedSet([bd2]), name="ciccia",
                         )
         metadata.add_data_group(dg)
         metadata.add_data_group(dg2)

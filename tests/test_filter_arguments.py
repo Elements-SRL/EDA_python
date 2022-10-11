@@ -9,6 +9,7 @@ class TestFilterArguments(unittest.TestCase):
                                       order=8,
                                       b_type="highpass",
                                       cutoff_frequency=500,
+                                      fs=2000,
                                       )
         self.assertTrue(type(filter_args) == FilterArguments)
 

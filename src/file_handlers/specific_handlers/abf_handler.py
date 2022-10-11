@@ -30,5 +30,5 @@ def extract_data_group(path_to_file: str, basic_data: ordered_set.OrderedSet[Bas
     dg = DataGroup(x=abf.sweepX[:expected_length], sampling_rate=abf.sampleRate, channel_count=abf.channelCount,
                    sweep_count=abf.sweepCount, measuring_unit=abf.sweepUnitsX, sweep_label_x=abf.sweepLabelX,
                    sweep_label_y=abf.sweepLabelY, sweep_label_c=abf.sweepLabelC, basic_data=basic_data,
-                   )
+                   name=abf.abfID)
     return dg

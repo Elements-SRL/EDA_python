@@ -1,8 +1,10 @@
 import unittest
+from typing import Set
 
 import src.filters.filter_handler
 from src.filters.filter_arguments import FilterArguments
 from src.logics import Logics
+from src.metadata.data_classes.data_group import DataGroup
 
 
 class LogicsTest(unittest.TestCase):
@@ -78,7 +80,8 @@ class LogicsTest(unittest.TestCase):
                                       order=4,
                                       b_type="highpass",
                                       cutoff_frequency=0.5,
-                                      analog=False)
+                                      analog=False,
+                                      fs=2000)
         y = src.filters.filter_handler.filter_signal(filter_args,
                                                      y=logics_test.metadata.selected_data_group.basic_data[0].y)
         print(y)
@@ -91,12 +94,22 @@ class LogicsTest(unittest.TestCase):
                                       order=4,
                                       b_type="highpass",
                                       cutoff_frequency=500,
-                                      analog=True)
+                                      analog=False,
+                                      fs=2000,
+                                      )
         logics_test.filter_selected_data_group(filter_args=filter_args)
         print(logics_test.metadata.selected_data_group.id)
         for d in logics_test.metadata.selected_data_group.basic_data:
             print(d.y)
-        self.assertTrue(len(logics_test.metadata.selected_data_group.basic_data) == 5)
+        sdg = logics_test.metadata.selected_data_group
+        print(sdg)
+        self.assertTrue(len(sdg.basic_data) == 5)
+        dg = logics_test.metadata.data_groups.pop()
+        print(dg)
+        self.assertTrue(len(dg.data_groups) != len(sdg.data_groups))
+        filtered_dg = dg.data_groups.pop()
+        print(filtered_dg)
+        self.assertTrue(len(filtered_dg.data_groups) == 0)
 
 
 if __name__ == '__main__':

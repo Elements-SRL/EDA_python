@@ -11,7 +11,8 @@ class TestFilters(unittest.TestCase):
                                       order=4,
                                       b_type="highpass",
                                       cutoff_frequency=500,
-                                      analog=True)
+                                      analog=False,
+                                      fs=2000)
         b, a = fh.calc_filter(filter_args)
         self.assertTrue(len(b) == len(a))
 

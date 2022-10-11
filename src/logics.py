@@ -36,6 +36,7 @@ class Logics:
         return filter_handler.calc_filter(filter_args)
 
     def filter_selected_data_group(self, filter_args: FilterArguments):
+        # TODO set new name with transformation
         updated_data = [BasicData(ch=d.ch,
                                   y=filter_handler.filter_signal(filter_args, d.y),
                                   sweep_number=d.sweep_number,

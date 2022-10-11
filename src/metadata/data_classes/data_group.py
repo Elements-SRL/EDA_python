@@ -18,6 +18,7 @@ class DataGroup:
     sweep_label_x: str
     sweep_label_y: str
     sweep_label_c: str
+    name: str
     data_groups: Set = field(default_factory=set)
     basic_data: OrderedSet[BasicData] = OrderedSet()
     id: int = -1
@@ -38,5 +39,5 @@ def make_copy(dg: DataGroup, new_id: int) -> DataGroup:
                      sweep_label_c=dg.sweep_label_c,
                      data_groups=set(),
                      basic_data=dg.basic_data,
-                     id=new_id
-                     )
+                     id=new_id,
+                     name="")
