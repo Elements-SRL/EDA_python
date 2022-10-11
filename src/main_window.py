@@ -39,6 +39,7 @@ class UiMainWindow(object):
     logics = None
 
     def __init__(self):
+        self.action_spectral_abalysis = None
         self.model: QStandardItemModel | None = None
         self.tree_view: QTreeView | None = None
         self.outer_div: QHBoxLayout | None = None
@@ -79,6 +80,8 @@ class UiMainWindow(object):
         self.action_clear.setObjectName(u"action_clear")
         self.action_open_filters = QAction(main_window)
         self.action_open_filters.setObjectName(u"action_open_filters")
+        self.action_spectral_abalysis = QAction(main_window)
+        self.action_spectral_abalysis.setObjectName(u"action_spectral_abalysis")
         self.central_widget = QWidget(main_window)
         self.central_widget.setObjectName(u"centralwidget")
         self.outer_div = QHBoxLayout(self.central_widget)
@@ -127,6 +130,7 @@ class UiMainWindow(object):
         self.menu_analyze.setObjectName(u"menuanalyze")
         self.menubar.addAction(self.menu_analyze.menuAction())
         self.menu_analyze.addAction(self.action_open_filters)
+        self.menu_analyze.addAction(self.action_spectral_abalysis)
         # STATUS BAR
         self.status_bar = QStatusBar(main_window)
         self.status_bar.setObjectName(u"statusbar")
@@ -149,6 +153,7 @@ class UiMainWindow(object):
         self.action_open_visible_channels.triggered.connect(lambda: self.open_views_window())
         self.action_clear.triggered.connect(lambda: self.clear())
         self.action_open_filters.triggered.connect(lambda: self.open_filters())
+        self.action_spectral_abalysis.triggered.connect(lambda: print("spectral analysis"))
 
     # setupUi
 
@@ -170,6 +175,7 @@ class UiMainWindow(object):
         self.action_clear.setText(QCoreApplication.translate("MainWindow", u"Clear current plots", None))
         self.menu_export_as.setTitle(QCoreApplication.translate("MainWindow", u"Export as ...", None))
         self.action_open_filters.setText(QCoreApplication.translate("MainWindow", u"Filters", None))
+        self.action_spectral_abalysis.setText(QCoreApplication.translate("MainWindow", u"Spectral analysis", None))
 
     # retranslateUi
 
