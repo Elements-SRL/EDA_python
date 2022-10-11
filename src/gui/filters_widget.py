@@ -46,14 +46,12 @@ class FiltersWidget(QtWidgets.QWidget):
         # Cutoff Spinbox
         self.cutoff_freq_label = QLabel("Cutoff frequency (Hz)")
         self.cutoff_freq_spin_box = QDoubleSpinBox()
-        # TODO is it enough?
         self.cutoff_freq_spin_box.setMinimum(1)
         self.cutoff_freq_spin_box.setMaximum(fs / 2 - 1)
         self.cutoff_freq_spin_box.setEnabled(False)
         # Other cutoff Spinbox
         self.other_cutoff_freq_label = QLabel("Cutoff frequency (Hz)")
         self.other_cutoff_freq_spin_box = QDoubleSpinBox()
-        # TODO is it enough?
         self.other_cutoff_freq_spin_box.setMinimum(1)
         self.other_cutoff_freq_spin_box.setMaximum(fs / 2 - 1)
         self.other_cutoff_freq_spin_box.setEnabled(False)

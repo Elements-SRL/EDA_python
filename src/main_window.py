@@ -1,6 +1,7 @@
 from typing import List, Iterable, Set
 
 import matplotlib
+import numpy as np
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication, QModelIndex
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
@@ -10,6 +11,7 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolb
 
 import logics
 from src.gui.filters_widget import FiltersWidget
+from src.gui.spectral_analysis_widget import SpectralAnalysisWidget
 from src.metadata.data_classes.data_group import DataGroup
 
 matplotlib.use('Qt5Agg')
@@ -39,7 +41,8 @@ class UiMainWindow(object):
     logics = None
 
     def __init__(self):
-        self.action_spectral_abalysis = None
+        self.spectral_analysis_widget: SpectralAnalysisWidget | None= None
+        self.action_spectral_analysis = None
         self.model: QStandardItemModel | None = None
         self.tree_view: QTreeView | None = None
         self.outer_div: QHBoxLayout | None = None
@@ -80,8 +83,8 @@ class UiMainWindow(object):
         self.action_clear.setObjectName(u"action_clear")
         self.action_open_filters = QAction(main_window)
         self.action_open_filters.setObjectName(u"action_open_filters")
-        self.action_spectral_abalysis = QAction(main_window)
-        self.action_spectral_abalysis.setObjectName(u"action_spectral_abalysis")
+        self.action_spectral_analysis = QAction(main_window)
+        self.action_spectral_analysis.setObjectName(u"action_spectral_analysis")
         self.central_widget = QWidget(main_window)
         self.central_widget.setObjectName(u"centralwidget")
         self.outer_div = QHBoxLayout(self.central_widget)
@@ -130,7 +133,7 @@ class UiMainWindow(object):
         self.menu_analyze.setObjectName(u"menuanalyze")
         self.menubar.addAction(self.menu_analyze.menuAction())
         self.menu_analyze.addAction(self.action_open_filters)
-        self.menu_analyze.addAction(self.action_spectral_abalysis)
+        self.menu_analyze.addAction(self.action_spectral_analysis)
         # STATUS BAR
         self.status_bar = QStatusBar(main_window)
         self.status_bar.setObjectName(u"statusbar")
@@ -153,7 +156,7 @@ class UiMainWindow(object):
         self.action_open_visible_channels.triggered.connect(lambda: self.open_views_window())
         self.action_clear.triggered.connect(lambda: self.clear())
         self.action_open_filters.triggered.connect(lambda: self.open_filters())
-        self.action_spectral_abalysis.triggered.connect(lambda: print("spectral analysis"))
+        self.action_spectral_analysis.triggered.connect(lambda: self._open_spectral_analysis())
 
     # setupUi
 
@@ -175,7 +178,7 @@ class UiMainWindow(object):
         self.action_clear.setText(QCoreApplication.translate("MainWindow", u"Clear current plots", None))
         self.menu_export_as.setTitle(QCoreApplication.translate("MainWindow", u"Export as ...", None))
         self.action_open_filters.setText(QCoreApplication.translate("MainWindow", u"Filters", None))
-        self.action_spectral_abalysis.setText(QCoreApplication.translate("MainWindow", u"Spectral analysis", None))
+        self.action_spectral_analysis.setText(QCoreApplication.translate("MainWindow", u"Spectral analysis", None))
 
     # retranslateUi
 
@@ -266,6 +269,15 @@ class UiMainWindow(object):
             self._filter_preview()
         else:
             self.filter_widget.show()
+            
+    def _open_spectral_analysis(self):
+        # if self.logics.is_all_data_hidden():
+        #     show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
+        #     return
+        if self.spectral_analysis_widget is None:
+            self.spectral_analysis_widget = SpectralAnalysisWidget(np.array([]), np.array([]))
+        else:
+            self.spectral_analysis_widget.show()
 
     def _filter_preview(self):
         filter_arguments = self.filter_widget.get_filter_args()
