@@ -274,10 +274,14 @@ class UiMainWindow(object):
             show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
             return
         if self.spectral_analysis_widget is None:
-            spectra = self.logics.spectral_analysis()
+            spectra = self.logics.spectral_analysis(0)
             self.spectral_analysis_widget = SpectralAnalysisWidget(spectra, "ciccia", "culo")
+            self.spectral_analysis_widget.rb_ch0.pressed.connect(lambda: self._draw_spectral_analysis(0))
+            self.spectral_analysis_widget.rb_ch0.setChecked(True)
+            self.spectral_analysis_widget.rb_ch1.pressed.connect(lambda: self._draw_spectral_analysis(1))
         else:
-            spectra = self.logics.spectral_analysis()
+            spectra = self.logics.spectral_analysis(0)
+            self.spectral_analysis_widget.rb_ch0.setChecked(True)
             self.spectral_analysis_widget.draw(spectra, "ciccia", "culo")
             self.spectral_analysis_widget.show()
 
@@ -303,6 +307,9 @@ class UiMainWindow(object):
         for i in items:
             self.model.appendRow(i)
 
+    def _draw_spectral_analysis(self, ch: int):
+        spectra = self.logics.spectral_analysis(int(ch))
+        self.spectral_analysis_widget.draw(spectra, "ciccia", "culo")
 
 def _recursive_bundle(data_groups: Iterable[DataGroup]) -> List[QStandardItem]:
     items = []

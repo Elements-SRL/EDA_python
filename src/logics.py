@@ -68,6 +68,6 @@ class Logics:
                 if found_dg is not None:
                     return found_dg
 
-    def spectral_analysis(self) -> List[Tuple[ndarray, ndarray]]:
+    def spectral_analysis(self, ch: int) -> List[Tuple[ndarray, ndarray]]:
         fs = self.metadata.selected_data_group.sampling_rate
-        return [sa.spectral_analysis(x=d.y, fs=fs) for d in self.metadata.selected_data_group.basic_data if d.ch == 0]
+        return [sa.spectral_analysis(x=d.y, fs=fs) for d in self.metadata.selected_data_group.basic_data if d.ch == ch]
