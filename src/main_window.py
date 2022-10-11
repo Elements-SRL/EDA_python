@@ -1,4 +1,4 @@
-from typing import List, Iterable, Set
+from typing import List, Iterable
 
 import matplotlib
 import numpy as np
@@ -41,7 +41,7 @@ class UiMainWindow(object):
     logics = None
 
     def __init__(self):
-        self.spectral_analysis_widget: SpectralAnalysisWidget | None= None
+        self.spectral_analysis_widget: SpectralAnalysisWidget | None = None
         self.action_spectral_analysis = None
         self.model: QStandardItemModel | None = None
         self.tree_view: QTreeView | None = None
@@ -86,9 +86,8 @@ class UiMainWindow(object):
         self.action_spectral_analysis = QAction(main_window)
         self.action_spectral_analysis.setObjectName(u"action_spectral_analysis")
         self.central_widget = QWidget(main_window)
-        self.central_widget.setObjectName(u"centralwidget")
+        self.central_widget.setObjectName(u"central_widget")
         self.outer_div = QHBoxLayout(self.central_widget)
-        # self.gridLayout = QGridLayout(self.central_widget)
         self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
         self.frame_2 = QFrame(self.central_widget)
@@ -106,7 +105,7 @@ class UiMainWindow(object):
         plot_layout.addWidget(toolbar)
         plot_layout.addWidget(self.sc)
 
-        main_window.setCentralWidget(self.central_widget)
+        main_window.setcentral_widget(self.central_widget)
         # MENU BAR
         self.menubar = QMenuBar(main_window)
         self.menubar.setObjectName(u"menubar")
@@ -114,23 +113,23 @@ class UiMainWindow(object):
         main_window.setMenuBar(self.menubar)
         # MENU FILE
         self.menu_file = QMenu(self.menubar)
-        self.menu_file.setObjectName(u"menufile")
+        self.menu_file.setObjectName(u"menu_file")
         self.menubar.addAction(self.menu_file.menuAction())
         self.menu_file.addAction(self.actionOpen)
         # MENU EXPORT AS
         self.menu_export_as = QMenu(self.menu_file)
-        self.menu_export_as.setObjectName(u"menuExport_as")
+        self.menu_export_as.setObjectName(u"menu_export_as")
         self.menu_file.addAction(self.menu_export_as.menuAction())
         self.menu_export_as.addAction(self.action_csv)
         # Menu VIEW
         self.menu_view = QMenu(self.menubar)
-        self.menu_view.setObjectName(u"menuview")
+        self.menu_view.setObjectName(u"menu_view")
         self.menubar.addAction(self.menu_view.menuAction())
         self.menu_view.addAction(self.action_open_visible_channels)
         self.menu_view.addAction(self.action_clear)
         # Menu ANALYZE
         self.menu_analyze = QMenu(self.menubar)
-        self.menu_analyze.setObjectName(u"menuanalyze")
+        self.menu_analyze.setObjectName(u"menu_analyze")
         self.menubar.addAction(self.menu_analyze.menuAction())
         self.menu_analyze.addAction(self.action_open_filters)
         self.menu_analyze.addAction(self.action_spectral_analysis)
@@ -163,9 +162,9 @@ class UiMainWindow(object):
     def retranslate_ui(self, main_window):
         main_window.setWindowTitle(QCoreApplication.translate("MainWindow", u"EDA", None))
         self.actionOpen.setText(QCoreApplication.translate("MainWindow", u"Open", None))
-        # if QT_CONFIG(statustip)
+        # if QT_CONFIG(status tip)
         self.actionOpen.setStatusTip(QCoreApplication.translate("MainWindow", u"Open an abf file", None))
-        # endif // QT_CONFIG(statustip)
+        # endif // QT_CONFIG(status tip)
         # if QT_CONFIG(shortcut)
         self.actionOpen.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+O", None))
         # endif // QT_CONFIG(shortcut)
@@ -275,9 +274,10 @@ class UiMainWindow(object):
         #     show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
         #     return
         if self.spectral_analysis_widget is None:
-            self.spectral_analysis_widget = SpectralAnalysisWidget(np.array([1,2,3]), np.array([1,2,3]), "ciccia", "culo")
+            self.spectral_analysis_widget = SpectralAnalysisWidget(np.array([1, 2, 3]), np.array([1, 2, 3]), "ciccia",
+                                                                   "culo")
         else:
-            self.spectral_analysis_widget.draw(np.array([3,2,1]), np.array([1,2,3]), "ciccia", "culo")
+            self.spectral_analysis_widget.draw(np.array([3, 2, 1]), np.array([1, 2, 3]), "ciccia", "culo")
             self.spectral_analysis_widget.show()
 
     def _filter_preview(self):
@@ -298,14 +298,9 @@ class UiMainWindow(object):
 
     def _update_tree_view(self):
         self.model.clear()
-        # print_recursively(set(self.logics.metadata.data_groups))
         items = _recursive_bundle(self.logics.metadata.data_groups)
         for i in items:
             self.model.appendRow(i)
-
-
-def _int_rec_bundle(data_groups: Iterable[DataGroup]):
-    pass
 
 
 def _recursive_bundle(data_groups: Iterable[DataGroup]) -> List[QStandardItem]:
@@ -324,11 +319,3 @@ def _recursive_bundle(data_groups: Iterable[DataGroup]) -> List[QStandardItem]:
                 item.appendRow(i)
             items.append(item)
     return items
-
-
-def print_recursively(data_groups: Set[DataGroup], level: int = 0):
-    for dg in data_groups:
-        if len(dg.data_groups) == 0:
-            print("leave" + str(level))
-        else:
-            print_recursively(dg.data_groups, level + 1)
