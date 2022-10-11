@@ -1,6 +1,8 @@
 from os.path import exists
+from typing import Iterable
 
-import src.metadata.data_classes.data_group
+from src.metadata.data_classes.data_group import DataGroup
+from src.metadata.data_classes import data_group
 from src.exporters import exporter
 from src.filters import filter_handler
 from src.filters.filter_arguments import FilterArguments
@@ -45,9 +47,20 @@ class Logics:
                                   name=d.name
                                   ) for d in self.metadata.selected_data_group.basic_data]
         sdg = self.metadata.selected_data_group
-        dg = src.metadata.data_classes.data_group.make_copy(sdg, self.metadata.get_and_increment_id())
+        dg = data_group.make_copy(sdg, self.metadata.get_and_increment_id())
         dg.basic_data = updated_data
         sdg.data_groups.add(dg)
         dg.name = str(dg.id) + " " + dg.name.split(" ")[1][:4] + " " + filter_args.filter_type[:4] + \
-                  "ord " + str(filter_args.order) + " " + filter_args.b_type
+                  " ord " + str(filter_args.order) + " " + filter_args.b_type
         self.metadata.selected_data_group = dg
+
+    def select_data_group(self, name):
+        dg = self._recursive_search(name, data_groups=self.metadata.data_groups)
+        self.metadata.selected_data_group = dg
+
+    def _recursive_search(self, name: str, data_groups: Iterable[DataGroup]) -> DataGroup:
+        for dg in data_groups:
+            if dg.name == name:
+                return dg
+            if len(dg.data_groups) > 0:
+                return self._recursive_search(name, dg.data_groups)

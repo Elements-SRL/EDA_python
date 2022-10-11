@@ -136,7 +136,7 @@ class UiMainWindow(object):
         self.tree_view = QTreeView()
         self.tree_view.setModel(self.model)
         self.tree_view.setMaximumWidth(200)
-        self.tree_view.doubleClicked.connect(self.print_index)
+        self.tree_view.doubleClicked.connect(self._select_data_group)
         self.gridLayout.addWidget(self.tree_view)
         self.outer_div.addWidget(self.tree_view)
         self.outer_div.addLayout(self.gridLayout)
@@ -273,8 +273,9 @@ class UiMainWindow(object):
         self._update_plot()
         self._update_tree_view()
 
-    def print_index(self, index: QModelIndex):
-        print("clicked " + index.data())
+    def _select_data_group(self, index: QModelIndex):
+        self.logics.select_data_group(index.data())
+        self._update_plot()
 
     def _update_tree_view(self):
         self.model.clear()
@@ -288,7 +289,7 @@ def _int_rec_bundle(data_groups: Iterable[DataGroup]):
     pass
 
 
-def _recursive_bundle(data_groups: Iterable[DataGroup], level: int = 0) -> List[QStandardItem]:
+def _recursive_bundle(data_groups: Iterable[DataGroup]) -> List[QStandardItem]:
     items = []
     for dg in data_groups:
         if len(dg.data_groups) == 0:
