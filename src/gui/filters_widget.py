@@ -6,7 +6,7 @@ from matplotlib.figure import Figure
 from numpy import ndarray
 from scipy import signal
 
-from src.filters.filter_arguments import FilterArguments
+from src.analysis.filters.filter_arguments import FilterArguments
 
 
 class MplCanvas(FigureCanvasQTAgg):

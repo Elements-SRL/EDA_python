@@ -1,6 +1,6 @@
 import unittest
-from src.filters.filter_arguments import FilterArguments
-import src.filters.filter_handler as fh
+from src.analysis.filters.filter_arguments import FilterArguments
+import src.analysis.filters.filter_handler as fh
 
 
 class TestFilters(unittest.TestCase):

@@ -1,7 +1,7 @@
 from numpy import ndarray
 from scipy import signal
 
-from src.filters.filter_arguments import FilterArguments
+from src.analysis.filters.filter_arguments import FilterArguments
 
 
 def calc_filter(filter_arguments: FilterArguments) -> (ndarray, ndarray):

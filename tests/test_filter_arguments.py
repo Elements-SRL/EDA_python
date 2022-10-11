@@ -1,5 +1,5 @@
 import unittest
-from src.filters.filter_arguments import FilterArguments
+from src.analysis.filters.filter_arguments import FilterArguments
 
 
 class TestFilterArguments(unittest.TestCase):

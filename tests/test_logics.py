@@ -1,10 +1,8 @@
 import unittest
-from typing import Set
 
-import src.filters.filter_handler
-from src.filters.filter_arguments import FilterArguments
+import src.analysis.filters.filter_handler
+from src.analysis.filters.filter_arguments import FilterArguments
 from src.logics import Logics
-from src.metadata.data_classes.data_group import DataGroup
 
 
 class LogicsTest(unittest.TestCase):
@@ -82,8 +80,8 @@ class LogicsTest(unittest.TestCase):
                                       cutoff_frequency=0.5,
                                       analog=False,
                                       fs=2000)
-        y = src.filters.filter_handler.filter_signal(filter_args,
-                                                     y=logics_test.metadata.selected_data_group.basic_data[0].y)
+        y = src.analysis.filters.filter_handler.filter_signal(filter_args,
+                                                              y=logics_test.metadata.selected_data_group.basic_data[0].y)
         print(y)
 
     def test_filters(self):
