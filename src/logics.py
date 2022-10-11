@@ -48,4 +48,6 @@ class Logics:
         dg = src.metadata.data_classes.data_group.make_copy(sdg, self.metadata.get_and_increment_id())
         dg.basic_data = updated_data
         sdg.data_groups.add(dg)
+        dg.name = str(dg.id) + " " + dg.name.split(" ")[1][:4] + " " + filter_args.filter_type[:4] + \
+                  "ord " + str(filter_args.order) + " " + filter_args.b_type
         self.metadata.selected_data_group = dg

@@ -47,8 +47,8 @@ class MetaData:
         if dg in self.data_groups:
             return
         if dg.id == -1:
-            dg.id = self.current_id
-            self.current_id += 1
+            dg.id = self.get_and_increment_id()
+            dg.name = str(dg.id) + " " + dg.name
             self.selected_data_group = dg
             self.data_groups.add(dg)
 

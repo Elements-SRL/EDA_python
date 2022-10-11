@@ -40,4 +40,4 @@ def make_copy(dg: DataGroup, new_id: int) -> DataGroup:
                      data_groups=set(),
                      basic_data=dg.basic_data,
                      id=new_id,
-                     name="")
+                     name=dg.name)
