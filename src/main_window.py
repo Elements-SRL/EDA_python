@@ -270,14 +270,15 @@ class UiMainWindow(object):
             self.filter_widget.show()
 
     def _open_spectral_analysis(self):
-        # if self.logics.is_all_data_hidden():
-        #     show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
-        #     return
+        if self.logics.is_all_data_hidden():
+            show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
+            return
         if self.spectral_analysis_widget is None:
-            self.spectral_analysis_widget = SpectralAnalysisWidget(np.array([1, 2, 3]), np.array([1, 2, 3]), "ciccia",
-                                                                   "culo")
+            spectra = self.logics.spectral_analysis()
+            self.spectral_analysis_widget = SpectralAnalysisWidget(spectra, "ciccia", "culo")
         else:
-            self.spectral_analysis_widget.draw(np.array([3, 2, 1]), np.array([1, 2, 3]), "ciccia", "culo")
+            spectra = self.logics.spectral_analysis()
+            self.spectral_analysis_widget.draw(spectra, "ciccia", "culo")
             self.spectral_analysis_widget.show()
 
     def _filter_preview(self):

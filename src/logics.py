@@ -1,5 +1,7 @@
 from os.path import exists
-from typing import Iterable
+from typing import Iterable, List, Tuple
+
+from numpy import ndarray
 
 from src.metadata.data_classes.data_group import DataGroup
 from src.metadata.data_classes import data_group
@@ -9,7 +11,7 @@ from src.analysis.filters.filter_arguments import FilterArguments
 from src.file_handlers import file_handler
 from src.metadata.data_classes.basic_data import BasicData
 from src.metadata.meta_data import MetaData
-
+from src.analysis.spectral_analysis import spectral_analysis as sa
 
 class Logics:
     def __init__(self):
@@ -38,7 +40,6 @@ class Logics:
         return filter_handler.calc_filter(filter_args)
 
     def filter_selected_data_group(self, filter_args: FilterArguments):
-        # TODO set new name with transformation
         updated_data = [BasicData(ch=d.ch,
                                   y=filter_handler.filter_signal(filter_args, d.y),
                                   sweep_number=d.sweep_number,
@@ -66,3 +67,7 @@ class Logics:
                 found_dg = self._recursive_search(name, dg.data_groups)
                 if found_dg is not None:
                     return found_dg
+
+    def spectral_analysis(self) -> List[Tuple[ndarray, ndarray]]:
+        fs = self.metadata.selected_data_group.sampling_rate
+        return [sa.spectral_analysis(x=d.y, fs=fs) for d in self.metadata.selected_data_group.basic_data if d.ch == 0]
