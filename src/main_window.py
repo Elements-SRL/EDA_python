@@ -257,6 +257,7 @@ class UiMainWindow(object):
             self.filter_widget = FiltersWidget(self.logics.metadata.selected_data_group.sampling_rate)
             self.filter_widget.preview_button.pressed.connect(lambda: self._filter_preview())
             self.filter_widget.apply_filter_button.pressed.connect(lambda: self._apply_filter())
+            self._filter_preview()
         else:
             self.filter_widget.show()
 
@@ -283,7 +284,7 @@ class UiMainWindow(object):
             self.model.appendRow(i)
 
 
-def _int_rec_bundle(data_groups:Iterable[DataGroup]):
+def _int_rec_bundle(data_groups: Iterable[DataGroup]):
     pass
 
 
