@@ -277,6 +277,7 @@ class UiMainWindow(object):
         if self.spectral_analysis_widget is None:
             self.spectral_analysis_widget = SpectralAnalysisWidget(np.array([1,2,3]), np.array([1,2,3]), "ciccia", "culo")
         else:
+            self.spectral_analysis_widget.draw(np.array([3,2,1]), np.array([1,2,3]), "ciccia", "culo")
             self.spectral_analysis_widget.show()
 
     def _filter_preview(self):
