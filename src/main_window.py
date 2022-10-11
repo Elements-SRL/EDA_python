@@ -1,7 +1,6 @@
 from typing import List, Iterable
 
 import matplotlib
-import numpy as np
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication, QModelIndex
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
@@ -275,14 +274,14 @@ class UiMainWindow(object):
             return
         if self.spectral_analysis_widget is None:
             spectra = self.logics.spectral_analysis(0)
-            self.spectral_analysis_widget = SpectralAnalysisWidget(spectra, "ciccia", "culo")
+            self.spectral_analysis_widget = SpectralAnalysisWidget(spectra, "ciccia")
             self.spectral_analysis_widget.rb_ch0.pressed.connect(lambda: self._draw_spectral_analysis(0))
             self.spectral_analysis_widget.rb_ch0.setChecked(True)
             self.spectral_analysis_widget.rb_ch1.pressed.connect(lambda: self._draw_spectral_analysis(1))
         else:
             spectra = self.logics.spectral_analysis(0)
             self.spectral_analysis_widget.rb_ch0.setChecked(True)
-            self.spectral_analysis_widget.draw(spectra, "ciccia", "culo")
+            self.spectral_analysis_widget.draw(spectra, "ciccia")
             self.spectral_analysis_widget.show()
 
     def _filter_preview(self):
@@ -309,7 +308,8 @@ class UiMainWindow(object):
 
     def _draw_spectral_analysis(self, ch: int):
         spectra = self.logics.spectral_analysis(int(ch))
-        self.spectral_analysis_widget.draw(spectra, "ciccia", "culo")
+        self.spectral_analysis_widget.draw(spectra, "ciccia")
+
 
 def _recursive_bundle(data_groups: Iterable[DataGroup]) -> List[QStandardItem]:
     items = []

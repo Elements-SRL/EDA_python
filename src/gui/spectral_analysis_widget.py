@@ -1,12 +1,10 @@
 from typing import Tuple, List
 
-import numpy as np
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from numpy import ndarray
-from scipy import signal
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 
 
 class MplCanvas(FigureCanvasQTAgg):
@@ -19,7 +17,7 @@ class MplCanvas(FigureCanvasQTAgg):
 
 class SpectralAnalysisWidget(QtWidgets.QWidget):
 
-    def __init__(self, spectra: List[Tuple[ndarray, ndarray]], x_label: str, y_label: str):
+    def __init__(self, spectra: List[Tuple[ndarray, ndarray]], y_label: str):
         super(SpectralAnalysisWidget, self).__init__()
         views_layout = QHBoxLayout()
         first_col = QVBoxLayout()
@@ -36,13 +34,13 @@ class SpectralAnalysisWidget(QtWidgets.QWidget):
         views_layout.addLayout(first_col)
         views_layout.addLayout(second_col)
         views_layout.addWidget(self.mpl_canvas)
-        self.draw(spectra, x_label, y_label)
+        self.draw(spectra, y_label)
         self.show()
 
-    def draw(self, spectra: List[Tuple[ndarray, ndarray]], x_label: str, y_label: str):
+    def draw(self, spectra: List[Tuple[ndarray, ndarray]], y_label: str):
         self.mpl_canvas.axes.cla()
-        self.mpl_canvas.axes.set_title('Spectral Analysis')
-        self.mpl_canvas.axes.set_xlabel(x_label)
+        self.mpl_canvas.axes.set_title('Power Spectral Density')
+        self.mpl_canvas.axes.set_xlabel("Frequency [Hz]")
         self.mpl_canvas.axes.set_ylabel(y_label)
         for s in spectra:
             f, Pxx_den = s
