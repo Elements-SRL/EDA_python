@@ -39,6 +39,7 @@ class UiMainWindow(object):
     logics = None
 
     def __init__(self):
+        self.action_histogram = None
         self.action_spectral_analysis = None
         self.model: QStandardItemModel | None = None
         self.tree_view: QTreeView | None = None
@@ -82,6 +83,8 @@ class UiMainWindow(object):
         self.action_open_filters.setObjectName(u"action_open_filters")
         self.action_spectral_analysis = QAction(main_window)
         self.action_spectral_analysis.setObjectName(u"action_spectral_analysis")
+        self.action_histogram = QAction(main_window)
+        self.action_histogram.setObjectName(u"action_histogram")
         self.central_widget = QWidget(main_window)
         self.central_widget.setObjectName(u"central_widget")
         self.outer_div = QHBoxLayout(self.central_widget)
@@ -130,6 +133,7 @@ class UiMainWindow(object):
         self.menubar.addAction(self.menu_analyze.menuAction())
         self.menu_analyze.addAction(self.action_open_filters)
         self.menu_analyze.addAction(self.action_spectral_analysis)
+        self.menu_analyze.addAction(self.action_histogram)
         # STATUS BAR
         self.status_bar = QStatusBar(main_window)
         self.status_bar.setObjectName(u"statusbar")
@@ -153,6 +157,7 @@ class UiMainWindow(object):
         self.action_clear.triggered.connect(lambda: self.clear())
         self.action_open_filters.triggered.connect(lambda: self.open_filters())
         self.action_spectral_analysis.triggered.connect(lambda: self._open_spectral_analysis())
+        self.action_histogram.triggered.connect(lambda: print("ciccia"))
 
     # setupUi
 
@@ -175,6 +180,7 @@ class UiMainWindow(object):
         self.menu_export_as.setTitle(QCoreApplication.translate("MainWindow", u"Export as ...", None))
         self.action_open_filters.setText(QCoreApplication.translate("MainWindow", u"Filters", None))
         self.action_spectral_analysis.setText(QCoreApplication.translate("MainWindow", u"Spectral analysis", None))
+        self.action_histogram.setText(QCoreApplication.translate("MainWindow", u"Histogram", None))
 
     # retranslateUi
 
