@@ -18,11 +18,16 @@ matplotlib.use('Qt5Agg')
 class MplCanvas(FigureCanvasQTAgg):
 
     def __init__(self):
-        self.ax1 = None
-        self.axs = None
-        self.fig = None
-        self.fig, (self.ax1, self.ax2) = plt.subplots(2, sharex=True)
+        self.fig = plt.figure()
+        self.ax1 = plt.subplot(211)
+        self.ax2 = plt.subplot(212, sharex=self.ax1)
         super(MplCanvas, self).__init__(self.fig)
+
+    def connect_axis(self):
+        self.ax2.get_shared_x_axes().join(self.ax1, self.ax2)
+
+    def disconnect_axis(self):
+        self.ax2.get_shared_x_axes().remove(self.ax1)
 
 
 def show_empty_abfs_dialog(title, text, informative_text):
@@ -51,7 +56,7 @@ class UiMainWindow(object):
         self.menu_view = None
         self.views_widget = None
         self.action_clear = None
-        self.sc = None
+        self.mpl: MplCanvas | None = None
         self.toolbar = None
         self.canvas = None
         self.figure = None
@@ -97,13 +102,13 @@ class UiMainWindow(object):
 
         self.gridLayout.addWidget(self.frame_2, 1, 0, 1, 1)
 
-        self.sc = MplCanvas()
+        self.mpl = MplCanvas()
 
         plot_layout = QtWidgets.QVBoxLayout()
         self.gridLayout.addLayout(plot_layout, 0, 0, 0, 0)
-        toolbar = NavigationToolbar(self.sc, main_window)
+        toolbar = NavigationToolbar(self.mpl, main_window)
         plot_layout.addWidget(toolbar)
-        plot_layout.addWidget(self.sc)
+        plot_layout.addWidget(self.mpl)
 
         main_window.setCentralWidget(self.central_widget)
         # MENU BAR
@@ -205,13 +210,15 @@ class UiMainWindow(object):
         self.logics.export(path_to_file)
 
     def _update_plot(self):
-        self.sc.ax1.cla()
-        self.sc.ax2.cla()
-        # self.sc.ax1.set_title("Channel 0")
-        # self.sc.ax2.set_title("Channel 1")
+        self.mpl.ax1.cla()
+        self.mpl.ax2.cla()
+        # self.mpl.disconnect_axis()
+        # self.mpl.connect_axis()
+        # self.mpl.ax1.set_title("Channel 0")
+        # self.mpl.ax2.set_title("Channel 1")
         if self.logics.is_all_data_hidden():
             # clear plot
-            self.sc.draw()
+            self.mpl.draw()
             return
         if len(self.logics.metadata.selected_data_group.x) > 1:
             x = [self.logics.metadata.get_x(), self.logics.metadata.get_x(1)]
@@ -220,22 +227,22 @@ class UiMainWindow(object):
         data = self.logics.metadata.get_visible_data()
         for d in data:
             if d.ch == 0:
-                self.sc.ax1.plot(x[0], d.y, label=d.name, linewidth=1)
+                self.mpl.ax1.plot(x[0], d.y, label=d.name, linewidth=1)
             elif d.ch == 1:
-                self.sc.ax2.plot(x[1], d.y, label=d.name)
-        self.sc.ax1.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_y)
-        self.sc.ax2.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_c)
-        self.sc.ax2.set_xlabel(self.logics.metadata.selected_data_group.sweep_label_x)
-        self.sc.ax1.legend(loc='upper right')
-        self.sc.ax2.legend(loc='upper right')
-        self.sc.draw()
+                self.mpl.ax2.plot(x[1], d.y, label=d.name)
+        self.mpl.ax1.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_y)
+        self.mpl.ax2.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_c)
+        self.mpl.ax2.set_xlabel(self.logics.metadata.selected_data_group.sweep_label_x)
+        self.mpl.ax1.legend(loc='upper right')
+        self.mpl.ax2.legend(loc='upper right')
+        self.mpl.draw()
 
     def clear(self):
         # TODO FIRST ASK FOR CONFIRMATION
         self.logics.clear()
-        self.sc.ax1.cla()
-        self.sc.ax2.cla()
-        self.sc.draw()
+        self.mpl.ax1.cla()
+        self.mpl.ax2.cla()
+        self.mpl.draw()
 
     def open_views_window(self):
         if self.logics.is_all_data_hidden():
