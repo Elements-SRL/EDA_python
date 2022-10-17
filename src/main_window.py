@@ -213,13 +213,16 @@ class UiMainWindow(object):
             # clear plot
             self.sc.draw()
             return
-        x = self.logics.metadata.get_x()
+        if len(self.logics.metadata.selected_data_group.x) > 1:
+            x = [self.logics.metadata.get_x(), self.logics.metadata.get_x(1)]
+        else:
+            x = [self.logics.metadata.get_x(), self.logics.metadata.get_x()]
         data = self.logics.metadata.get_visible_data()
         for d in data:
             if d.ch == 0:
-                self.sc.ax1.plot(x, d.y, label=d.name, linewidth=1)
+                self.sc.ax1.plot(x[0], d.y, label=d.name, linewidth=1)
             elif d.ch == 1:
-                self.sc.ax2.plot(x, d.y, label=d.name)
+                self.sc.ax2.plot(x[1], d.y, label=d.name)
         self.sc.ax1.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_y)
         self.sc.ax2.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_c)
         self.sc.ax2.set_xlabel(self.logics.metadata.selected_data_group.sweep_label_x)
