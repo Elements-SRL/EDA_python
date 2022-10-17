@@ -5,7 +5,6 @@ import src.analysis.filters.filter_handler as fh
 
 class TestFilters(unittest.TestCase):
 
-    # TODO not analog filters need cutoff freq normalized between 0 and 1
     def test_butter_filter_preview(self):
         filter_args = FilterArguments(filter_type="butter",
                                       order=4,
