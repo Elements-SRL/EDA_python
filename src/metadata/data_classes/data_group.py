@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Set
+from typing import Set, List
 
 from numpy import ndarray
 from ordered_set import OrderedSet
@@ -10,7 +10,7 @@ from src.metadata.data_classes.basic_data import BasicData
 @dataclass
 class DataGroup:
     """data that is common to a certain group of data"""
-    x: ndarray
+    x: List[ndarray]
     sampling_rate: float
     channel_count: int
     sweep_count: int

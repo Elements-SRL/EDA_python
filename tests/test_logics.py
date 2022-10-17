@@ -47,7 +47,7 @@ class LogicsTest(unittest.TestCase):
             filter(lambda x: x.measuring_unit == "pA", logics_test.metadata.selected_data_group.basic_data))
         self.assertTrue(len(data_in_mV) == 4)
         self.assertTrue(
-            len(logics_test.metadata.selected_data_group.x) ==
+            len(logics_test.metadata.get_x()) ==
             len(logics_test.metadata.selected_data_group.basic_data.pop(0).y))
         self.assertTrue(logics_test.metadata.selected_data_group.channel_count == 4)
 

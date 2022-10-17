@@ -30,9 +30,9 @@ def _generate_header(metadata: MetaData) -> List[str]:
 def _generate_data_in_columnar_form(metadata: MetaData) -> ndarray:
     different_file_paths = {d.filepath for d in metadata.selected_data_group.basic_data}
     if metadata.selected_data_group.sweep_count > 1:
-        rows_data = np.tile(metadata.selected_data_group.x, metadata.selected_data_group.sweep_count)
+        rows_data = np.tile(metadata.get_x(), metadata.selected_data_group.sweep_count)
     else:
-        rows_data = metadata.selected_data_group.x
+        rows_data = metadata.get_x()
     for ch in range(metadata.selected_data_group.channel_count):
         for file_path in different_file_paths:
             data_with_same_file_path = list(

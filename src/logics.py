@@ -94,7 +94,7 @@ class Logics:
         x_label, y_label, c_label = "Frequency [Hz]", l_0, l_1
         new_id = self.metadata.get_and_increment_id()
         name = str(new_id) + " " + odg.name.split(" ")[1][:4] + " PSD"
-        return DataGroup(x=f, data_groups=set(), channel_count=odg.channel_count,
+        return DataGroup(x=[f], data_groups=set(), channel_count=odg.channel_count,
                          sweep_count=odg.sweep_count, sweep_label_x=x_label, sweep_label_y=y_label,
                          sweep_label_c=c_label, basic_data=bd, id=new_id,
                          measuring_unit='Hz', name=name, sampling_rate=odg.sampling_rate)
