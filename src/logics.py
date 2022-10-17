@@ -1,7 +1,6 @@
 from os.path import exists
-from typing import Iterable, List, Tuple
+from typing import Iterable
 
-from numpy import ndarray
 from ordered_set import OrderedSet
 
 from src.metadata.data_classes.data_group import DataGroup
@@ -13,6 +12,7 @@ from src.file_handlers import file_handler
 from src.metadata.data_classes.basic_data import BasicData
 from src.metadata.meta_data import MetaData
 from src.analysis.spectral_analysis import spectral_analysis as sa
+
 
 class Logics:
     def __init__(self):
@@ -82,7 +82,6 @@ class Logics:
     def _create_spectral_analysis_basic_data(self, d: BasicData, ch) -> BasicData:
         fs = self.metadata.selected_data_group.sampling_rate
         x, Pxx = sa.spectral_analysis(x=d.y, fs=fs)
-        # TODO problem with measuring units
         m_unit = '[' + d.measuring_unit + '²/Hz]'
         name = d.name + " PSD"
         return BasicData(ch=ch, y=Pxx, sweep_number=d.sweep_number, measuring_unit=m_unit, file_path=d.filepath,
@@ -90,9 +89,8 @@ class Logics:
 
     def _create_spectral_analysis_data_group(self, odg: DataGroup, bd: OrderedSet[BasicData]) -> DataGroup:
         f, _ = sa.spectral_analysis(x=self.metadata.selected_data_group.basic_data[0].y, fs=odg.sampling_rate)
-        # TODO fix measuring units
         l_0 = bd[0].measuring_unit
-        l_1 = bd[1].measuring_unit
+        l_1 = bd[len(bd) - 1].measuring_unit
         x_label, y_label, c_label = "Frequency [Hz]", l_0, l_1
         new_id = self.metadata.get_and_increment_id()
         name = str(new_id) + " " + odg.name.split(" ")[1][:4] + " PSD"

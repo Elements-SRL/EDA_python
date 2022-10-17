@@ -10,7 +10,6 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolb
 
 import logics
 from src.gui.filters_widget import FiltersWidget
-from src.gui.spectral_analysis_widget import SpectralAnalysisWidget
 from src.metadata.data_classes.data_group import DataGroup
 
 matplotlib.use('Qt5Agg')
@@ -40,7 +39,6 @@ class UiMainWindow(object):
     logics = None
 
     def __init__(self):
-        self.spectral_analysis_widget: SpectralAnalysisWidget | None = None
         self.action_spectral_analysis = None
         self.model: QStandardItemModel | None = None
         self.tree_view: QTreeView | None = None
@@ -272,17 +270,6 @@ class UiMainWindow(object):
         if self.logics.is_all_data_hidden():
             show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
             return
-        # if self.spectral_analysis_widget is None:
-        #     spectra = self.logics.spectral_analysis(0)
-        #     self.spectral_analysis_widget = SpectralAnalysisWidget(spectra, "ciccia")
-        #     self.spectral_analysis_widget.rb_ch0.pressed.connect(lambda: self._draw_spectral_analysis(0))
-        #     self.spectral_analysis_widget.rb_ch0.setChecked(True)
-        #     self.spectral_analysis_widget.rb_ch1.pressed.connect(lambda: self._draw_spectral_analysis(1))
-        # else:
-        #     spectra = self.logics.spectral_analysis(0)
-        #     self.spectral_analysis_widget.rb_ch0.setChecked(True)
-        #     self.spectral_analysis_widget.draw(spectra, "ciccia")
-        #     self.spectral_analysis_widget.show()
         self.logics.spectral_analysis()
         self._update_plot()
         self._update_tree_view()
@@ -308,10 +295,6 @@ class UiMainWindow(object):
         items = _recursive_bundle(self.logics.metadata.data_groups)
         for i in items:
             self.model.appendRow(i)
-
-    def _draw_spectral_analysis(self, ch: int):
-        spectra = self.logics.spectral_analysis(int(ch))
-        self.spectral_analysis_widget.draw(spectra, "ciccia")
 
 
 def _recursive_bundle(data_groups: Iterable[DataGroup]) -> List[QStandardItem]:
