@@ -28,6 +28,7 @@ def extract_meta_data_from_edh(path_to_edh: str, metadata: MetaData):
                 basic_data.add(d)
             if dg is None:
                 dg = _extract_data_group(path_to_files=complete_batch_of_files, path_to_edh=path_to_edh)
+        _fix_basic_data_channels(basic_data)
         dg.basic_data = basic_data
         metadata.add_data_group(dg)
     else:
@@ -49,6 +50,7 @@ def _open_multiple_abf(path_to_files: List[str], metadata: MetaData, path_to_edh
         data = abf_handler.extract_basic_data(path_to_file=f)
         for d in data:
             basic_data.add(d)
+    _fix_basic_data_channels(basic_data)
     n_channels = _extract_channel_number(path_to_edh)
     dg = abf_handler.extract_data_group(path_to_file=path_to_files.pop(), basic_data=basic_data)
     dg.channel_count = n_channels
@@ -56,12 +58,18 @@ def _open_multiple_abf(path_to_files: List[str], metadata: MetaData, path_to_edh
     metadata.add_data_group(dg)
 
 
+def _fix_basic_data_channels(basic_data: OrderedSet[BasicData]):
+    i = 0
+    for b in basic_data:
+        b.set_ch(i)
+        i += 1
+
+
 def _extract_basic_data_from_contiguous_abf(path_to_files_of_same_channels: List[str]) -> OrderedSet[BasicData]:
     # TODO SAFELY READ ONLY 9 CONTIGUOUS ABFS
     path_to_files_of_same_channels.sort()
     abfs = [pyabf.ABF(p) for p in path_to_files_of_same_channels]
-    basic_data = _extract_basic_data(abfs)
-    return basic_data
+    return _extract_basic_data(abfs)
 
 
 def _extract_data_group(path_to_files: List[str], path_to_edh: str) -> DataGroup:
@@ -84,8 +92,8 @@ def _extract_basic_data(abfs: List[ABF]) -> OrderedSet[BasicData]:
         for abf in abfs:
             abf.setSweep(channel=ch, sweepNumber=0)
             y = np.concatenate((y, abf.sweepY), axis=None)
-        basic_data.add(BasicData(ch=ch, y=y, measuring_unit=abf.sweepUnitsY, sweep_number=0, file_path=abf.abfFilePath,
-                                 name=abf.abfID))
+        basic_data.add(BasicData(ch=-1, y=y, measuring_unit=abf.sweepUnitsY, sweep_number=0, file_path=abf.abfFilePath,
+                                 name=abf.abfID, axis=ch))
     return basic_data
 
 

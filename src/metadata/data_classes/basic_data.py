@@ -4,8 +4,9 @@ from numpy import ndarray
 
 class BasicData:
 
-    def __init__(self, ch: int, y: ndarray, measuring_unit: str, file_path: str, name: str, sweep_number: int = 0,
-                 visible: bool = True):
+    def __init__(self, ch: int, y: ndarray, measuring_unit: str, file_path: str, name: str, axis: int,
+                 sweep_number: int = 0, visible: bool = True):
+        self.axis: int = axis
         self.ch: int = ch
         self.y: ndarray = y
         self.visible: bool = visible
@@ -13,6 +14,10 @@ class BasicData:
         self.measuring_unit = measuring_unit
         self.name = name
         self.filepath = file_path
+
+    def set_ch(self, ch: int):
+        self.ch = ch
+        self.name = self.name + " ch " + str(self.ch)
 
     def __hash__(self):
         return hash(str(self.y))

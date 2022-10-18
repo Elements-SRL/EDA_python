@@ -226,9 +226,9 @@ class UiMainWindow(object):
             x = [self.logics.metadata.get_x(), self.logics.metadata.get_x()]
         data = self.logics.metadata.get_visible_data()
         for d in data:
-            if d.ch == 0:
+            if d.axis == 0:
                 self.mpl.ax1.plot(x[0], d.y, label=d.name, linewidth=1)
-            elif d.ch == 1:
+            elif d.axis == 1:
                 self.mpl.ax2.plot(x[1], d.y, label=d.name)
         self.mpl.ax1.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_y)
         self.mpl.ax2.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_c)
