@@ -67,9 +67,9 @@ class LogicsTest(unittest.TestCase):
     def test_file_path_in_basic_edh(self):
         logics_test = Logics()
         logics_test.open(self.path_to_basic_edh)
-        file_path_of_data_from_the_same_channel = {d.filepath for d in
-                                                   logics_test.metadata.selected_data_group.basic_data if d.ch == 0}
-        self.assertTrue(len(file_path_of_data_from_the_same_channel) == 4)
+        file_path_of_data_from_the_same_axis = {d.filepath for d in
+                                                logics_test.metadata.selected_data_group.basic_data if d.axis == 0}
+        self.assertTrue(len(file_path_of_data_from_the_same_axis) == 4)
 
     def test_filter(self):
         logics_test = Logics()

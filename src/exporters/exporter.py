@@ -20,9 +20,9 @@ def _generate_header(metadata: MetaData) -> List[str]:
     header = [metadata.selected_data_group.measuring_unit]
     for ch in range(metadata.selected_data_group.channel_count):
         if metadata.selected_data_group.sweep_count > 1:
-            measuring_unit = {d.measuring_unit for d in metadata.selected_data_group.basic_data if d.ch == ch}
+            measuring_unit = {d.measuring_unit for d in metadata.selected_data_group.basic_data if d.axis == ch}
         else:
-            measuring_unit = [d.measuring_unit for d in metadata.selected_data_group.basic_data if d.ch == ch]
+            measuring_unit = [d.measuring_unit for d in metadata.selected_data_group.basic_data if d.axis == ch]
         header.extend(measuring_unit)
     return header
 
