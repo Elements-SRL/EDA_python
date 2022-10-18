@@ -80,13 +80,13 @@ class Logics:
         self.metadata.selected_data_group = dg
         return
 
-    def _create_spectral_analysis_basic_data(self, d: BasicData, ch) -> BasicData:
+    def _create_spectral_analysis_basic_data(self, d: BasicData, ch: int) -> BasicData:
         fs = self.metadata.selected_data_group.sampling_rate
         x, Pxx = sa.spectral_analysis(x=d.y, fs=fs)
         m_unit = '[' + d.measuring_unit + '²/Hz]'
         name = d.name + " PSD"
         return BasicData(ch=ch, y=Pxx, sweep_number=d.sweep_number, measuring_unit=m_unit, file_path=d.filepath,
-                         name=name)
+                         name=name, axis=d.axis)
 
     def _create_spectral_analysis_data_group(self, odg: DataGroup, bd: OrderedSet[BasicData]) -> DataGroup:
         f, _ = sa.spectral_analysis(x=self.metadata.selected_data_group.basic_data[0].y, fs=odg.sampling_rate)
