@@ -8,7 +8,7 @@ class TestBasicData(unittest.TestCase):
     def test_data_creation(self):
         channel = 1
         arr = np.array([1, 2, 3])
-        bd = BasicData(channel, arr, "m", file_path="path/to/file", name="charles")
+        bd = BasicData(channel, arr, "m", file_path="path/to/file", name="charles", axis=0)
         self.assertTrue(bd.ch == channel)
         self.assertTrue(bd.y[0] == arr[0])
 

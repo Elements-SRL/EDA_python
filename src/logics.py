@@ -46,7 +46,8 @@ class Logics:
                                   sweep_number=d.sweep_number,
                                   measuring_unit=d.measuring_unit,
                                   file_path=d.filepath,
-                                  name=d.name
+                                  name=d.name,
+                                  axis=d.axis,
                                   ) for d in self.metadata.selected_data_group.basic_data]
         sdg = self.metadata.selected_data_group
         dg = data_group.make_copy(sdg, self.metadata.get_and_increment_id())
