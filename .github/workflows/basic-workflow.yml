@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.x"]
+        python-version: [ "3.x" ]
 
     steps:
       - uses: actions/checkout@v3
@@ -49,36 +49,38 @@ jobs:
           python-version: "3.10"
 
       - name: Install dependencies on unix systems
-        if: matrix.os != 'windows-latest'
+        if: matrix.os == 'ubuntu-latest'
         run: |
           python -m pip install --upgrade pip
           pip install flake8 pytest pyinstaller
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-      - name: Install dependencies on windows systems
-        if: matrix.os == 'windows-latest'
-        run: |
-          python -m pip install --upgrade pip
-          pip install flake8 pytest pyinstaller
-          if (Test-Path -path requirements.txt){ pip install -r requirements.txt }
-
-      - name: create windows bundle
-        if: matrix.os == 'windows-latest'
-        run: |
-          set PYTHONPATH="${PYTHONPATH}:%homepath%/EDA_python"
-          pyinstaller --onefile --windowed src/main.py -n eda_win.exe
-
-      - name: create macos bundle
-        if: matrix.os == 'macos-latest'
-        run: |
-          export PYTHONPATH="$PYTHONPATH:$HOME/EDA_python"
-          pyinstaller --onefile --windowed src/main.py -n eda_macos
-
-      - name: create linux bundle
-        if: matrix.os == 'ubuntu-latest'
-        run: |
           export PYTHONPATH="$PYTHONPATH:$HOME/EDA_python"
           pyinstaller --onefile --windowed src/main.py -n eda_linux
+
+#      - name: Install dependencies on windows systems
+#        if: matrix.os == 'windows-latest'
+#        run: |
+#          python -m pip install --upgrade pip
+#          pip install flake8 pytest pyinstaller
+#          if (Test-Path -path requirements.txt){ pip install -r requirements.txt }
+#
+#      - name: create windows bundle
+#        if: matrix.os == 'windows-latest'
+#        run: |
+#          set PYTHONPATH="${PYTHONPATH}:%homepath%/EDA_python"
+#          pyinstaller --onefile --windowed src/main.py -n eda_win.exe
+#
+#      - name: create macos bundle
+#        if: matrix.os == 'macos-latest'
+#        run: |
+#          export PYTHONPATH="$PYTHONPATH:$HOME/EDA_python"
+#          pyinstaller --onefile --windowed src/main.py -n eda_macos
+#
+#      - name: create linux bundle
+#        if: matrix.os == 'ubuntu-latest'
+#        run: |
+#          export PYTHONPATH="$PYTHONPATH:$HOME/EDA_python"
+#          pyinstaller --onefile --windowed src/main.py -n eda_linux
 
       - uses: actions/upload-artifact@v3
         with:
@@ -104,8 +106,8 @@ jobs:
           title: "Development Build"
           files: |
             dist/eda_linux
-            dist/eda_macos
-            dist/eda_win.exe
+#            dist/eda_macos
+#            dist/eda_win.exe
 
   clean-up:
     name: "Clean up"
