@@ -2,7 +2,7 @@ from typing import List, Iterable
 
 import matplotlib
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication, QModelIndex
+from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication, QModelIndex, Qt
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import *
 from matplotlib import pyplot as plt
@@ -249,6 +249,10 @@ class UiMainWindow(object):
             show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
             return
         views_layout = QVBoxLayout()
+        scroll_layout = QVBoxLayout()
+        scroll_widget = QWidget()
+        scroll_area = QScrollArea()
+        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.views_widget = QWidget()
         self.views_widget.setWindowTitle("Views")
         self.views_widget.setMinimumSize(200, 300)
@@ -257,9 +261,12 @@ class UiMainWindow(object):
         views_layout.deleteLater()
         for d in self.logics.metadata.selected_data_group.basic_data:
             b = QCheckBox(d.name)
-            views_layout.addWidget(b)
+            scroll_layout.addWidget(b)
             b.setChecked(d.visible)
             buttons.append(b)
+        scroll_widget.setLayout(scroll_layout)
+        scroll_area.setWidget(scroll_widget)
+        views_layout.addWidget(scroll_area)
         apply_button = QPushButton("Show selected channels")
         apply_button.clicked.connect(lambda: self.hide_sweeps(buttons))
         views_layout.addWidget(apply_button)
