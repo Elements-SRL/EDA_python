@@ -269,6 +269,7 @@ class UiMainWindow(object):
         for b in buttons:
             self.logics.metadata.set_visibility(b.text(), b.isChecked())
         self._update_plot()
+        self.views_widget.close()
 
     def open_filters(self):
         if self.logics.is_all_data_hidden():
