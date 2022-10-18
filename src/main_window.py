@@ -218,7 +218,8 @@ class UiMainWindow(object):
             # clear plot
             self.mpl.draw()
             return
-        if len(self.logics.metadata.selected_data_group.x) > 1:
+        is_histogram = len(self.logics.metadata.selected_data_group.x) > 1
+        if is_histogram:
             x = [self.logics.metadata.get_x(), self.logics.metadata.get_x(1)]
             self.mpl.disconnect_axis()
         else:
@@ -226,10 +227,20 @@ class UiMainWindow(object):
             self.mpl.connect_axis()
         data = self.logics.metadata.get_visible_data()
         for d in data:
-            if d.axis == 0:
-                self.mpl.ax1.plot(x[0], d.y, label=d.name, linewidth=1)
-            elif d.axis == 1:
-                self.mpl.ax2.plot(x[1], d.y, label=d.name)
+            if is_histogram:
+                if d.axis == 0:
+                    # TODO try with stairs instead of bars
+                    self.mpl.ax1.bar(x[0], d.y, label=d.name, linewidth=1)
+                    # self.mpl.ax1.set_xticks(x[0])
+                elif d.axis == 1:
+                    # TODO try with stairs instead of bars
+                    self.mpl.ax2.bar(x[1], d.y, label=d.name)
+                    # self.mpl.ax2.set_xticks(x[1])
+            else:
+                if d.axis == 0:
+                    self.mpl.ax1.plot(x[0], d.y, label=d.name, linewidth=1)
+                elif d.axis == 1:
+                    self.mpl.ax2.plot(x[1], d.y, label=d.name)
         self.mpl.ax1.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_y)
         self.mpl.ax2.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_c)
         self.mpl.ax2.set_xlabel(self.logics.metadata.selected_data_group.sweep_label_x)
