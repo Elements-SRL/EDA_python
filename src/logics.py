@@ -1,8 +1,9 @@
+import math
 from os.path import exists
 from typing import Iterable
 
 from ordered_set import OrderedSet
-
+from src.analysis.histogram import histogram
 from src.metadata.data_classes.data_group import DataGroup
 from src.metadata.data_classes import data_group
 from src.exporters import exporter
@@ -78,7 +79,16 @@ class Logics:
         dg = self._create_spectral_analysis_data_group(self.metadata.selected_data_group, bd)
         self.metadata.selected_data_group.data_groups.add(dg)
         self.metadata.selected_data_group = dg
-        return
+
+    def hist(self, n_bins: int = -1):
+        if n_bins == -1:
+            n_bins = math.floor(math.sqrt(len(self.metadata.get_x())))
+        dg = histogram.calc_data_group_hist(dg=self.metadata.selected_data_group, n_bins=n_bins)
+        dg.id = self.metadata.get_and_increment_id()
+        dg.name = str(dg.id) + dg.name[dg.name.find(" "):]
+        # TODO this could be in a function in metadata
+        self.metadata.selected_data_group.data_groups.add(dg)
+        self.metadata.selected_data_group = dg
 
     def _create_spectral_analysis_basic_data(self, d: BasicData, ch: int) -> BasicData:
         fs = self.metadata.selected_data_group.sampling_rate

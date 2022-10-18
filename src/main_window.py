@@ -162,7 +162,7 @@ class UiMainWindow(object):
         self.action_clear.triggered.connect(lambda: self.clear())
         self.action_open_filters.triggered.connect(lambda: self.open_filters())
         self.action_spectral_analysis.triggered.connect(lambda: self._open_spectral_analysis())
-        self.action_histogram.triggered.connect(lambda: print("ciccia"))
+        self.action_histogram.triggered.connect(lambda: self._perform_histogram())
 
     # setupUi
 
@@ -212,8 +212,6 @@ class UiMainWindow(object):
     def _update_plot(self):
         self.mpl.ax1.cla()
         self.mpl.ax2.cla()
-        # self.mpl.disconnect_axis()
-        # self.mpl.connect_axis()
         # self.mpl.ax1.set_title("Channel 0")
         # self.mpl.ax2.set_title("Channel 1")
         if self.logics.is_all_data_hidden():
@@ -222,8 +220,10 @@ class UiMainWindow(object):
             return
         if len(self.logics.metadata.selected_data_group.x) > 1:
             x = [self.logics.metadata.get_x(), self.logics.metadata.get_x(1)]
+            self.mpl.disconnect_axis()
         else:
             x = [self.logics.metadata.get_x(), self.logics.metadata.get_x()]
+            self.mpl.connect_axis()
         data = self.logics.metadata.get_visible_data()
         for d in data:
             if d.axis == 0:
@@ -295,6 +295,14 @@ class UiMainWindow(object):
             show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
             return
         self.logics.spectral_analysis()
+        self._update_plot()
+        self._update_tree_view()
+
+    def _perform_histogram(self):
+        if self.logics.is_all_data_hidden():
+            show_empty_abfs_dialog("Empty window", "Nothing to display", "No data has been opened.")
+            return
+        self.logics.hist()
         self._update_plot()
         self._update_tree_view()
 
