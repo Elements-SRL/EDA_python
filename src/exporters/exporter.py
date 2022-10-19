@@ -33,10 +33,9 @@ def _generate_data_in_columnar_form(metadata: MetaData) -> ndarray:
         rows_data = np.tile(metadata.get_x(), metadata.selected_data_group.sweep_count)
     else:
         rows_data = metadata.get_x()
-    for ch in range(metadata.selected_data_group.channel_count):
+    for ch in range(metadata.selected_data_group.channel_count * 2):
         for file_path in different_file_paths:
-            data_with_same_file_path = list(
-                filter(lambda x: x.filepath == file_path, metadata.selected_data_group.basic_data))
+            data_with_same_file_path = [d for d in metadata.selected_data_group.basic_data if d.filepath == file_path]
             data_with_same_channel = [d for d in data_with_same_file_path if d.ch == ch]
             sorted_data = sorted(data_with_same_channel, key=lambda data: data.sweep_number)
             if len(sorted_data) > 0:

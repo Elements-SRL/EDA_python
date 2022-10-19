@@ -23,6 +23,7 @@ class ExplorerTest(unittest.TestCase):
     path_to_csv_of_contiguous_abfs = "res/ContiguousData/test_export.csv"
     path_to_csv_of_episodic_data = "res/EpisodicData/test_export.csv"
     path_to_basic_edh_csv = "res/Data/test_export_basic_edh.csv"
+    path_to_csv_of_hist = "res/Data/test_hist.csv"
 
     def test_generate_header(self):
         test_logics = Logics()
@@ -110,6 +111,13 @@ class ExplorerTest(unittest.TestCase):
         test_logics.export(path_to_file=self.path_to_csv_of_contiguous_abfs)
         self.assertTrue(os.path.exists(self.path_to_csv_of_contiguous_abfs))
 
+    def test_export_histogram(self):
+        test_logics = Logics()
+        test_logics.open(self.path_to_basic_edh)
+        test_logics.hist()
+        test_logics.export(path_to_file=self.path_to_csv_of_hist)
+        self.assertTrue(os.path.exists(self.path_to_csv_of_hist))
+
     def tearDown(self):
         if os.path.exists(self.path_to_csv_of_episodic_data):
             os.remove(self.path_to_csv_of_episodic_data)
@@ -119,6 +127,8 @@ class ExplorerTest(unittest.TestCase):
             os.remove(self.path_to_csv_of_contiguous_abfs)
         if os.path.exists(self.path_to_basic_edh_csv):
             os.remove(self.path_to_basic_edh_csv)
+        if os.path.exists(self.path_to_csv_of_hist):
+            os.remove(self.path_to_csv_of_hist)
 
 
 if __name__ == "__main__":

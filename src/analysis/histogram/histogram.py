@@ -23,7 +23,7 @@ def calc_data_group_hist(dg: DataGroup, axis: int, n_bins: int = 10) -> DataGrou
     bins = _calc_bins(next(bd.y for bd in dg.basic_data if bd.axis == axis), n_bins)
     bds = OrderedSet([_calc_bd_hist(bd, n_bins) for bd in dg.basic_data if bd.axis == axis])
     return DataGroup(x=bins, name=_name_strategy(dg.name), basic_data=bds, channel_count=dg.channel_count,
-                     sweep_count=dg.sweep_count, measuring_unit="-", sweep_label_x="Bins", sweep_label_c="Count",
+                     sweep_count=dg.sweep_count, measuring_unit="bins avg", sweep_label_x="Bins", sweep_label_c="Count",
                      sweep_label_y="Count", sampling_rate=-1, type="hist")
 
 
@@ -47,5 +47,5 @@ def _calc_bins(y: ndarray, n_bins: int) -> ndarray:
 def _calc_bd_hist(bd: BasicData, n_bins: int) -> BasicData:
     y, _ = np.histogram(bd.y, n_bins)
     name = _find_name(bd.name)
-    return BasicData(ch=bd.ch, measuring_unit="-", sweep_number=bd.sweep_number, y=y, name=name, file_path=bd.filepath,
+    return BasicData(ch=bd.ch, measuring_unit="Count", sweep_number=bd.sweep_number, y=y, name=name, file_path=bd.filepath,
                      axis=bd.axis)
