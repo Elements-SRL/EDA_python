@@ -229,11 +229,10 @@ class UiMainWindow(object):
         for d in data:
             if is_histogram:
                 if d.axis == 0:
-                    # TODO try with stairs instead of bars
-                    self.mpl.ax1.bar(x[0], d.y, label=d.name, linewidth=1)
+                    w = x[0][1] - x[0][0]
+                    self.mpl.ax1.bar(x[0], d.y, label=d.name, width=w)
                     # self.mpl.ax1.set_xticks(x[0])
                 elif d.axis == 1:
-                    # TODO try with stairs instead of bars
                     self.mpl.ax2.bar(x[1], d.y, label=d.name)
                     # self.mpl.ax2.set_xticks(x[1])
             else:
