@@ -1,5 +1,3 @@
-from typing import Iterable, Tuple, List
-
 import numpy as np
 from numpy import ndarray
 from ordered_set import OrderedSet
@@ -12,9 +10,11 @@ def _name_strategy(name: str) -> str:
     if name.endswith("hist"):
         return name + " 1"
     if name[-1].isdigit():
-        return name + str(int(name.split(" ").pop()) + 1)
+        rev = name.split(" ")[::-1]
+        if rev[1] == "hist":
+            return name + str(int(name.split(" ").pop()) + 1)
     else:
-        return name + "hist"
+        return name + " hist"
 
 
 def calc_data_group_hist(dg: DataGroup, n_bins: int = 10) -> DataGroup:
@@ -23,8 +23,8 @@ def calc_data_group_hist(dg: DataGroup, n_bins: int = 10) -> DataGroup:
     bin_1 = _calc_bins(next(bd.y for bd in dg.basic_data if bd.axis == 1), n_bins)
     bds = OrderedSet([_calc_bd_hist(bd, n_bins) for bd in dg.basic_data])
     return DataGroup(x=[bin_0, bin_1], name=_name_strategy(dg.name), basic_data=bds, channel_count=dg.channel_count,
-                     sweep_count=dg.sweep_count, measuring_unit="-", sweep_label_x="", sweep_label_c="",
-                     sweep_label_y="", sampling_rate=-1)
+                     sweep_count=dg.sweep_count, measuring_unit="-", sweep_label_x="Bins", sweep_label_c="Count",
+                     sweep_label_y="Count", sampling_rate=-1)
 
 
 def _find_name(name: str) -> str:
