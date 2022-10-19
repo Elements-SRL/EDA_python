@@ -227,6 +227,7 @@ class UiMainWindow(object):
             self.mpl.draw()
             return
         data = self.logics.metadata.get_visible_data()
+        axis_number = len({bd.axis for bd in self.logics.metadata.selected_data_group.basic_data})
         is_histogram = self.logics.metadata.selected_data_group.type.startswith("hist")
         x = self.logics.metadata.get_x()
         if is_histogram:
@@ -234,6 +235,16 @@ class UiMainWindow(object):
             for d in data:
                 w = x[1] - x[0]
                 self.mpl.only_one_ax.bar(x, d.y, label=d.name, width=w)
+            self.mpl.only_one_ax.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_y)
+            self.mpl.only_one_ax.set_xlabel(self.logics.metadata.selected_data_group.sweep_label_x)
+            self.mpl.only_one_ax.legend(loc='upper right')
+        elif axis_number == 1:
+            self.mpl.set_one_plot()
+            for d in data:
+                self.mpl.only_one_ax.plot(x, d.y, label=d.name)
+            self.mpl.only_one_ax.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_y)
+            self.mpl.only_one_ax.set_xlabel(self.logics.metadata.selected_data_group.sweep_label_x)
+            self.mpl.only_one_ax.legend(loc='upper right')
         else:
             self.mpl.set_two_plots()
             for d in data:
