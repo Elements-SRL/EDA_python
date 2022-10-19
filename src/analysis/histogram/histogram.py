@@ -14,6 +14,8 @@ def _name_strategy(name: str) -> str:
         if rev[1] == "hist":
             index = name.find(str(int(name.split(" ").pop()) + 1))
             return name[:index] + str(int(name.split(" ").pop()) + 1)
+        else:
+            return name + " hist"
     else:
         return name + " hist"
 
@@ -27,15 +29,6 @@ def calc_data_group_hist(dg: DataGroup, axis: int, n_bins: int = 10) -> DataGrou
                      sweep_label_y="Count", sampling_rate=-1, type="hist")
 
 
-def _find_name(name: str) -> str:
-    if name.endswith("hist"):
-        return name + " 2"
-    elif name[-1].isdigit():
-        return name + str(int(name.split(" ").pop()) + 1)
-    else:
-        return name + "hist"
-
-
 def _calc_bins(y: ndarray, n_bins: int) -> ndarray:
     _, bins = np.histogram(y, n_bins)
     bin_values = []
@@ -46,6 +39,6 @@ def _calc_bins(y: ndarray, n_bins: int) -> ndarray:
 
 def _calc_bd_hist(bd: BasicData, n_bins: int) -> BasicData:
     y, _ = np.histogram(bd.y, n_bins)
-    name = _find_name(bd.name)
+    name = _name_strategy(bd.name)
     return BasicData(ch=bd.ch, measuring_unit="Count", sweep_number=bd.sweep_number, y=y, name=name, file_path=bd.filepath,
                      axis=bd.axis)

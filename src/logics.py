@@ -92,7 +92,6 @@ class Logics:
         self.metadata.selected_data_group.data_groups.add(dg0)
         self.metadata.selected_data_group.data_groups.add(dg1)
         self.metadata.selected_data_group = dg0
-        print(self.metadata.selected_data_group)
 
     def _common_hist_ops(self, dg: DataGroup):
         dg.id = self.metadata.get_and_increment_id()
