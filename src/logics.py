@@ -83,12 +83,20 @@ class Logics:
     def hist(self, n_bins: int = -1):
         if n_bins == -1:
             n_bins = math.floor(math.sqrt(len(self.metadata.get_x())))
-        dg = histogram.calc_data_group_hist(dg=self.metadata.selected_data_group, n_bins=n_bins)
+        # TODO Tell something to the user about the creation of 2 datagroups
+        dg0 = histogram.calc_data_group_hist(dg=self.metadata.selected_data_group, axis=0, n_bins=n_bins)
+        dg1 = histogram.calc_data_group_hist(dg=self.metadata.selected_data_group, axis=1, n_bins=n_bins)
+        self._common_hist_ops(dg0)
+        self._common_hist_ops(dg1)
+        # TODO this could be in a function in metadata
+        self.metadata.selected_data_group.data_groups.add(dg0)
+        self.metadata.selected_data_group.data_groups.add(dg1)
+        self.metadata.selected_data_group = dg0
+        print(self.metadata.selected_data_group)
+
+    def _common_hist_ops(self, dg: DataGroup):
         dg.id = self.metadata.get_and_increment_id()
         dg.name = str(dg.id) + dg.name[dg.name.find(" "):]
-        # TODO this could be in a function in metadata
-        self.metadata.selected_data_group.data_groups.add(dg)
-        self.metadata.selected_data_group = dg
 
     def _create_spectral_analysis_basic_data(self, d: BasicData, ch: int) -> BasicData:
         fs = self.metadata.selected_data_group.sampling_rate
@@ -105,7 +113,7 @@ class Logics:
         x_label, y_label, c_label = "Frequency [Hz]", l_0, l_1
         new_id = self.metadata.get_and_increment_id()
         name = str(new_id) + " " + odg.name.split(" ")[1][:4] + " PSD"
-        return DataGroup(x=[f], data_groups=set(), channel_count=odg.channel_count,
+        return DataGroup(x=f, data_groups=set(), channel_count=odg.channel_count,
                          sweep_count=odg.sweep_count, sweep_label_x=x_label, sweep_label_y=y_label,
                          sweep_label_c=c_label, basic_data=bd, id=new_id,
-                         measuring_unit='Hz', name=name, sampling_rate=odg.sampling_rate)
+                         measuring_unit='Hz', name=name, sampling_rate=odg.sampling_rate, type="psd")

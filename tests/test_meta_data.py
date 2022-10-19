@@ -17,12 +17,12 @@ class MetaDataTest(unittest.TestCase):
         metadata = MetaData()
         arr = np.array([1, 2, 3])
         bd = BasicData(ch=1, y=arr, measuring_unit="p", file_path="path/to/file", name="name", axis=0)
-        dg = DataGroup(x=[np.array([1, 2, 3])], sampling_rate=10, channel_count=5, measuring_unit="s",
+        dg = DataGroup(x=arr, sampling_rate=10, channel_count=5, measuring_unit="s",
                        sweep_label_y="pA", sweep_label_c="mV", sweep_label_x="sec", sweep_count=5,
-                       basic_data=OrderedSet([bd]), name="ciccia",
+                       basic_data=OrderedSet([bd]), name="ciccia", type="raw",
                        )
         metadata.add_data_group(dg)
-        self.assertTrue(len(metadata.get_x()) == len(dg.x[0]))
+        self.assertTrue(len(metadata.get_x()) == len(dg.x))
         self.assertTrue(metadata.selected_data_group.channel_count == 5)
         self.assertTrue(metadata.selected_data_group.sampling_rate == 10)
 
@@ -30,9 +30,9 @@ class MetaDataTest(unittest.TestCase):
         metadata = MetaData()
         arr = np.array([1, 2, 3])
         bd = BasicData(ch=1, y=arr, measuring_unit="p", file_path="path/to/file", name="name", axis=0)
-        dg = DataGroup(x=[np.array([1, 2, 3])], sampling_rate=10, channel_count=5, measuring_unit="s",
+        dg = DataGroup(x=np.array([1, 2, 3]), sampling_rate=10, channel_count=5, measuring_unit="s",
                        sweep_label_y="pA", sweep_label_c="mV", sweep_label_x="sec", sweep_count=5,
-                       basic_data=OrderedSet([bd]), name="ciccia",
+                       basic_data=OrderedSet([bd]), name="ciccia", type="raw",
                        )
         metadata.add_data_group(dg)
         metadata.add_data_group(dg)
@@ -43,15 +43,15 @@ class MetaDataTest(unittest.TestCase):
         metadata = MetaData()
         arr = np.array([1, 2, 3])
         bd = BasicData(ch=1, y=arr, measuring_unit="p", file_path="path/to/file", name="name", axis=0)
-        dg = DataGroup(x=[np.array([1, 2, 3])], sampling_rate=10, channel_count=5, measuring_unit="s",
+        dg = DataGroup(x=np.array([1, 2, 3]), sampling_rate=10, channel_count=5, measuring_unit="s",
                        sweep_label_y="pA", sweep_label_c="mV", sweep_label_x="sec", sweep_count=5,
-                       basic_data=OrderedSet([bd]), name="ciccia",
+                       basic_data=OrderedSet([bd]), name="ciccia", type="raw",
                        )
         arr2 = np.array([1, 2, 3, 4, 5])
         bd2 = BasicData(ch=1, y=arr2, measuring_unit="p", file_path="path/to/file", name="name", axis=0)
-        dg2 = DataGroup(x=[np.array([1, 2, 3])], sampling_rate=10, channel_count=5, measuring_unit="s",
+        dg2 = DataGroup(x=np.array([1, 2, 3]), sampling_rate=10, channel_count=5, measuring_unit="s",
                         sweep_label_y="pA", sweep_label_c="mV", sweep_label_x="sec", sweep_count=5,
-                        basic_data=OrderedSet([bd2]), name="ciccia",
+                        basic_data=OrderedSet([bd2]), name="ciccia", type="raw",
                         )
         metadata.add_data_group(dg)
         metadata.add_data_group(dg2)

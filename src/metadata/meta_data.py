@@ -21,8 +21,8 @@ class MetaData:
         self.current_id = 0
         self.selected_data_group = None
 
-    def get_x(self, index: int = 0) -> ndarray:
-        return self.selected_data_group.x[index]
+    def get_x(self) -> ndarray:
+        return self.selected_data_group.x
 
     def get_visible_data(self) -> List[BasicData]:
         return [d for d in self.selected_data_group.basic_data if d.visible]

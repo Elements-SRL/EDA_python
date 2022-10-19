@@ -21,13 +21,20 @@ class MplCanvas(FigureCanvasQTAgg):
         self.fig = plt.figure()
         self.ax1 = plt.subplot(211)
         self.ax2 = plt.subplot(212, sharex=self.ax1)
+        self.only_one_ax = plt.subplot(111)
         super(MplCanvas, self).__init__(self.fig)
 
-    def connect_axis(self):
-        self.ax2.get_shared_x_axes().join(self.ax1, self.ax2)
+    def set_one_plot(self):
+        if self.only_one_ax not in self.fig.axes:
+            self.fig.delaxes(self.ax1)
+            self.fig.delaxes(self.ax2)
+            self.only_one_ax = plt.subplot(111)
 
-    def disconnect_axis(self):
-        self.ax2.get_shared_x_axes().remove(self.ax1)
+    def set_two_plots(self):
+        if self.only_one_ax in self.fig.axes:
+            self.fig.delaxes(self.only_one_ax)
+            self.ax1 = plt.subplot(211)
+            self.ax2 = plt.subplot(212, sharex=self.ax1)
 
 
 def show_empty_abfs_dialog(title, text, informative_text):
@@ -103,7 +110,7 @@ class UiMainWindow(object):
         self.gridLayout.addWidget(self.frame_2, 1, 0, 1, 1)
 
         self.mpl = MplCanvas()
-
+        self.mpl.set_two_plots()
         plot_layout = QtWidgets.QVBoxLayout()
         self.gridLayout.addLayout(plot_layout, 0, 0, 0, 0)
         toolbar = NavigationToolbar(self.mpl, main_window)
@@ -212,39 +219,34 @@ class UiMainWindow(object):
     def _update_plot(self):
         self.mpl.ax1.cla()
         self.mpl.ax2.cla()
+        self.mpl.only_one_ax.cla()
         # self.mpl.ax1.set_title("Channel 0")
         # self.mpl.ax2.set_title("Channel 1")
         if self.logics.is_all_data_hidden():
             # clear plot
             self.mpl.draw()
             return
-        is_histogram = len(self.logics.metadata.selected_data_group.x) > 1
-        if is_histogram:
-            x = [self.logics.metadata.get_x(), self.logics.metadata.get_x(1)]
-            self.mpl.disconnect_axis()
-        else:
-            x = [self.logics.metadata.get_x(), self.logics.metadata.get_x()]
-            self.mpl.connect_axis()
         data = self.logics.metadata.get_visible_data()
-        for d in data:
-            if is_histogram:
+        is_histogram = self.logics.metadata.selected_data_group.type.startswith("hist")
+        x = self.logics.metadata.get_x()
+        if is_histogram:
+            self.mpl.set_one_plot()
+            for d in data:
+                w = x[1] - x[0]
+                self.mpl.only_one_ax.bar(x, d.y, label=d.name, width=w)
+        else:
+            self.mpl.set_two_plots()
+            for d in data:
                 if d.axis == 0:
-                    w = x[0][1] - x[0][0]
-                    self.mpl.ax1.bar(x[0], d.y, label=d.name, width=w)
-                    # self.mpl.ax1.set_xticks(x[0])
+                    self.mpl.ax1.plot(x, d.y, label=d.name, linewidth=1)
                 elif d.axis == 1:
-                    self.mpl.ax2.bar(x[1], d.y, label=d.name)
-                    # self.mpl.ax2.set_xticks(x[1])
-            else:
-                if d.axis == 0:
-                    self.mpl.ax1.plot(x[0], d.y, label=d.name, linewidth=1)
-                elif d.axis == 1:
-                    self.mpl.ax2.plot(x[1], d.y, label=d.name)
-        self.mpl.ax1.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_y)
-        self.mpl.ax2.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_c)
-        self.mpl.ax2.set_xlabel(self.logics.metadata.selected_data_group.sweep_label_x)
-        self.mpl.ax1.legend(loc='upper right')
-        self.mpl.ax2.legend(loc='upper right')
+                    self.mpl.ax2.plot(x, d.y, label=d.name)
+                self.mpl.ax1.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_y)
+                self.mpl.ax1.set_xlabel(self.logics.metadata.selected_data_group.sweep_label_x)
+                self.mpl.ax2.set_ylabel(self.logics.metadata.selected_data_group.sweep_label_c)
+                self.mpl.ax2.set_xlabel(self.logics.metadata.selected_data_group.sweep_label_x)
+                self.mpl.ax1.legend(loc='upper right')
+                self.mpl.ax2.legend(loc='upper right')
         self.mpl.draw()
 
     def clear(self):

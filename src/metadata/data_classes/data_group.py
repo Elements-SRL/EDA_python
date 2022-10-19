@@ -10,7 +10,7 @@ from src.metadata.data_classes.basic_data import BasicData
 @dataclass
 class DataGroup:
     """data that is common to a certain group of data"""
-    x: List[ndarray]
+    x: ndarray
     sampling_rate: float
     channel_count: int
     sweep_count: int
@@ -19,6 +19,7 @@ class DataGroup:
     sweep_label_y: str
     sweep_label_c: str
     name: str
+    type: str
     data_groups: Set = field(default_factory=set)
     basic_data: OrderedSet[BasicData] = OrderedSet()
     id: int = -1
@@ -40,4 +41,6 @@ def make_copy(dg: DataGroup, new_id: int) -> DataGroup:
                      data_groups=set(),
                      basic_data=dg.basic_data,
                      id=new_id,
-                     name=dg.name)
+                     name=dg.name,
+                     type=dg.type,
+                     )
