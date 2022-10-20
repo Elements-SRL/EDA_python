@@ -6,7 +6,10 @@ from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication, QModelIndex, Qt
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import *
 from matplotlib import pyplot as plt
+from matplotlib.axes import Axes
+from matplotlib.lines import Line2D
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
 from matplotlib.widgets import RangeSlider
 
 import logics
@@ -19,14 +22,16 @@ matplotlib.use('Qt5Agg')
 class MplCanvas(FigureCanvasQTAgg):
 
     def __init__(self):
+        self.func = None
         self.slider: RangeSlider | None = None
-        self.fig = plt.figure()
+        self.fig: Figure = plt.figure()
         self.ax1 = plt.subplot(211)
         self.ax2 = plt.subplot(212, sharex=self.ax1)
         self.ax1.callbacks.connect('xlim_changed', self.on_x_lims_change)
         self.ax2.callbacks.connect('xlim_changed', self.on_x_lims_change)
         self.slider_ax = self.fig.add_axes([0.1, 0, 0.8, 0.03])
         self.only_one_ax = plt.subplot(111)
+        self.active_axis = [self.ax1, self.ax2]
         super(MplCanvas, self).__init__(self.fig)
 
     def set_one_plot(self):
@@ -35,6 +40,7 @@ class MplCanvas(FigureCanvasQTAgg):
             self.fig.delaxes(self.ax2)
             self.only_one_ax = plt.subplot(111)
             self.only_one_ax.callbacks.connect('xlim_changed', self.on_x_lims_change)
+        self.active_axis = [self.only_one_ax]
 
     def set_two_plots(self):
         if self.only_one_ax in self.fig.axes:
@@ -43,9 +49,14 @@ class MplCanvas(FigureCanvasQTAgg):
             self.ax2 = plt.subplot(212, sharex=self.ax1)
             self.ax1.callbacks.connect('xlim_changed', self.on_x_lims_change)
             self.ax2.callbacks.connect('xlim_changed', self.on_x_lims_change)
+            self.active_axis = [self.ax1, self.ax2]
         if self.ax1 is not None and self.ax2 is not None:
             self.ax1.callbacks.connect('xlim_changed', self.on_x_lims_change)
             self.ax2.callbacks.connect('xlim_changed', self.on_x_lims_change)
+            self.active_axis = [self.ax1, self.ax2]
+
+    def get_active_axis(self) -> List[Axes]:
+        return self.active_axis
 
     def clean_slider(self):
         self.fig.delaxes(self.slider_ax)
@@ -54,10 +65,13 @@ class MplCanvas(FigureCanvasQTAgg):
             self.slider.reset()
 
     def on_x_lims_change(self, event_ax):
+        self.clean_slider()
         x_min, x_max = event_ax.get_xlim()
-        self.slider.set_min(x_max)
-        self.slider.set_max(x_min)
-        print(event_ax.get_xlim())
+        self.slider = RangeSlider(self.slider_ax, "Range selector", x_min, x_max)
+        self.slider.on_changed(self.func)
+
+    def set_func(self, func):
+        self.func = func
 
 
 def show_empty_abfs_dialog(title, text, informative_text):
@@ -73,6 +87,8 @@ def show_empty_abfs_dialog(title, text, informative_text):
 class UiMainWindow(object):
 
     def __init__(self):
+        self.lower_limit: List[Line2D] | None = []
+        self.upper_limit: List[Line2D] | None = []
         self.action_histogram = None
         self.action_spectral_analysis = None
         self.model: QStandardItemModel | None = None
@@ -192,7 +208,6 @@ class UiMainWindow(object):
         self.action_open_filters.triggered.connect(lambda: self.open_filters())
         self.action_spectral_analysis.triggered.connect(lambda: self._open_spectral_analysis())
         self.action_histogram.triggered.connect(lambda: self._perform_histogram())
-        # self.left_slider.sliderReleased.connect(lambda: self.draw_line(self.left_slider.value()))
 
     # setupUi
 
@@ -283,6 +298,8 @@ class UiMainWindow(object):
                 self.mpl.ax2.set_xlabel(self.logics.metadata.selected_data_group.sweep_label_x)
                 self.mpl.ax1.legend(loc='upper right')
                 self.mpl.ax2.legend(loc='upper right')
+        self.mpl.set_func(self._update_limit_lines)
+        self._init_limit_lines(self.mpl.slider.val, self.mpl.get_active_axis())
         self.mpl.draw()
 
     def clear(self):
@@ -375,6 +392,22 @@ class UiMainWindow(object):
         items = _recursive_bundle(self.logics.metadata.data_groups)
         for i in items:
             self.model.appendRow(i)
+
+    def _init_limit_lines(self, val, axs: Iterable[Axes]):
+        self.upper_limit.clear()
+        self.lower_limit.clear()
+        for ax in axs:
+            self.lower_limit.append(ax.axvline(val[0], color='k'))
+            self.upper_limit.append(ax.axvline(val[1], color='k'))
+        self.mpl.fig.canvas.draw_idle()
+
+    def _update_limit_lines(self, val):
+        # TODO move initialization in _update_plot
+        for ll in self.lower_limit:
+            ll.set_xdata(val[0])
+        for ul in self.upper_limit:
+            ul.set_xdata(val[1])
+        self.mpl.fig.canvas.draw_idle()
 
 
 def _recursive_bundle(data_groups: Iterable[DataGroup]) -> List[QStandardItem]:
