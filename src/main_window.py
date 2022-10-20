@@ -7,6 +7,7 @@ from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import *
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
+from matplotlib.widgets import RangeSlider
 
 import logics
 from src.gui.filters_widget import FiltersWidget
@@ -18,9 +19,13 @@ matplotlib.use('Qt5Agg')
 class MplCanvas(FigureCanvasQTAgg):
 
     def __init__(self):
+        self.slider: RangeSlider | None = None
         self.fig = plt.figure()
         self.ax1 = plt.subplot(211)
         self.ax2 = plt.subplot(212, sharex=self.ax1)
+        self.ax1.callbacks.connect('xlim_changed', self.on_x_lims_change)
+        self.ax2.callbacks.connect('xlim_changed', self.on_x_lims_change)
+        self.slider_ax = self.fig.add_axes([0.1, 0, 0.8, 0.03])
         self.only_one_ax = plt.subplot(111)
         super(MplCanvas, self).__init__(self.fig)
 
@@ -29,12 +34,30 @@ class MplCanvas(FigureCanvasQTAgg):
             self.fig.delaxes(self.ax1)
             self.fig.delaxes(self.ax2)
             self.only_one_ax = plt.subplot(111)
+            self.only_one_ax.callbacks.connect('xlim_changed', self.on_x_lims_change)
 
     def set_two_plots(self):
         if self.only_one_ax in self.fig.axes:
             self.fig.delaxes(self.only_one_ax)
             self.ax1 = plt.subplot(211)
             self.ax2 = plt.subplot(212, sharex=self.ax1)
+            self.ax1.callbacks.connect('xlim_changed', self.on_x_lims_change)
+            self.ax2.callbacks.connect('xlim_changed', self.on_x_lims_change)
+        if self.ax1 is not None and self.ax2 is not None:
+            self.ax1.callbacks.connect('xlim_changed', self.on_x_lims_change)
+            self.ax2.callbacks.connect('xlim_changed', self.on_x_lims_change)
+
+    def clean_slider(self):
+        self.fig.delaxes(self.slider_ax)
+        self.slider_ax = self.fig.add_axes([0.1, 0, 0.8, 0.03])
+        if self.slider is not None:
+            self.slider.reset()
+
+    def on_x_lims_change(self, event_ax):
+        x_min, x_max = event_ax.get_xlim()
+        self.slider.set_min(x_max)
+        self.slider.set_max(x_min)
+        print(event_ax.get_xlim())
 
 
 def show_empty_abfs_dialog(title, text, informative_text):
@@ -48,7 +71,6 @@ def show_empty_abfs_dialog(title, text, informative_text):
 
 
 class UiMainWindow(object):
-    logics = None
 
     def __init__(self):
         self.action_histogram = None
@@ -170,6 +192,7 @@ class UiMainWindow(object):
         self.action_open_filters.triggered.connect(lambda: self.open_filters())
         self.action_spectral_analysis.triggered.connect(lambda: self._open_spectral_analysis())
         self.action_histogram.triggered.connect(lambda: self._perform_histogram())
+        # self.left_slider.sliderReleased.connect(lambda: self.draw_line(self.left_slider.value()))
 
     # setupUi
 
@@ -220,8 +243,9 @@ class UiMainWindow(object):
         self.mpl.ax1.cla()
         self.mpl.ax2.cla()
         self.mpl.only_one_ax.cla()
-        # self.mpl.ax1.set_title("Channel 0")
-        # self.mpl.ax2.set_title("Channel 1")
+        self.mpl.fig.tight_layout()
+        self.mpl.clean_slider()
+        self.mpl.fig.subplots_adjust(bottom=0.15)
         if self.logics.is_all_data_hidden():
             # clear plot
             self.mpl.draw()
@@ -230,6 +254,7 @@ class UiMainWindow(object):
         axis_number = len({bd.axis for bd in self.logics.metadata.selected_data_group.basic_data})
         is_histogram = self.logics.metadata.selected_data_group.type.startswith("hist")
         x = self.logics.metadata.get_x()
+        self.mpl.slider = RangeSlider(self.mpl.slider_ax, "Range selector", x.min(), x.max())
         if is_histogram:
             self.mpl.set_one_plot()
             for d in data:
