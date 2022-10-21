@@ -4,6 +4,9 @@ from src.analysis.fitting import fitting
 
 class TestFitting(unittest.TestCase):
 
+    def test_linear_fitting(self):
+        fitting.try_linear_fitting()
+
     def test_curve_fitting(self):
         fitting.try_exponential_fitting()
 

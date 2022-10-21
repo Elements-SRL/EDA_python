@@ -6,6 +6,10 @@ from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
 
 
+def linear(x, a, b):
+    return a * x + b
+
+
 def exponential(x, a, b):
     return a * np.exp(b * x)
 
@@ -18,6 +22,22 @@ def power_law(x, a, b):
 # Function to calculate the Gaussian with constants a, b, and c
 def gaussian(x, a, b, c):
     return a * np.exp(-np.power(x - b, 2) / (2 * np.power(c, 2)))
+
+
+def try_linear_fitting():
+    x_dummy = np.linspace(0, 1000, 100)
+    y_dummy = linear(x_dummy, 3, 5)
+    noise = 20 * np.random.normal(size=y_dummy.size)
+    y_dummy = y_dummy + noise
+    fig, ax = plt.subplots()
+    ax.scatter(x_dummy, y_dummy, s=20, color='#00b3b3', label='Data')
+    pars, cov = curve_fit(f=linear, xdata=x_dummy, ydata=y_dummy)
+    stdevs = np.sqrt(np.diag(cov))
+    # Calculate the residuals
+    res = y_dummy - linear(x_dummy, *pars)
+    print(stdevs, "res: ", res)
+    ax.plot(x_dummy, linear(x_dummy, *pars), linestyle='--', linewidth=2, color='black')
+    plt.show()
 
 
 def try_exponential_fitting():
@@ -33,7 +53,8 @@ def try_exponential_fitting():
     ax.scatter(x_dummy, y_dummy, s=20, color='#00b3b3', label='Data')
     # ax.set_yscale('log')
     # plt.show()
-    pars, cov = curve_fit(f=exponential, xdata=x_dummy, ydata=y_dummy, p0=[0, 0], bounds=(-np.inf, np.inf))
+    # pars, cov = curve_fit(f=exponential, xdata=x_dummy, ydata=y_dummy, p0=[0, 0])
+    pars, cov = curve_fit(f=exponential, xdata=x_dummy, ydata=y_dummy)
     # Get the standard deviations of the parameters (square roots of the # diagonal of the covariance)
     stdevs = np.sqrt(np.diag(cov))
     # Calculate the residuals
@@ -53,14 +74,12 @@ def try_power_law_fitting():
     # Set the x and y-axis scaling to logarithmic
     ax.set_xscale('log')
     ax.set_yscale('log')
-    # # Edit the major and minor tick locations of x and y axes
-    # ax.xaxis.set_major_locator(mpl.ticker.LogLocator(base=10.0))
-    # ax.yaxis.set_major_locator(mpl.ticker.LogLocator(base=10.0))
     # Set the axis limits
     ax.set_xlim(10, 1000)
     ax.set_ylim(1, 100)
     # Fit the dummy power-law data
-    pars, cov = curve_fit(f=power_law, xdata=x_dummy, ydata=y_dummy, p0=[0, 0], bounds=(-np.inf, np.inf))
+    # pars, cov = curve_fit(f=power_law, xdata=x_dummy, ydata=y_dummy, p0=[0, 0])
+    pars, cov = curve_fit(f=power_law, xdata=x_dummy, ydata=y_dummy)
     # Get the standard deviations of the parameters (square roots of the # diagonal of the covariance)
     stdevs = np.sqrt(np.diag(cov))
     # Calculate the residuals
@@ -81,7 +100,8 @@ def try_gaussian_peak_fitting():
     # pars, cov = curve_fit(f=gaussian, xdata=x_dummy, ydata=y_dummy, p0=[0, 0, 0], bounds=(-np.inf, np.inf))
 
     # Fit the dummy Gaussian data
-    pars, cov = curve_fit(f=gaussian, xdata=x_dummy, ydata=y_dummy, p0=[5, -1, 1], bounds=(-np.inf, np.inf))
+    # pars, cov = curve_fit(f=gaussian, xdata=x_dummy, ydata=y_dummy, p0=[5, -1, 1])
+    pars, cov = curve_fit(f=gaussian, xdata=x_dummy, ydata=y_dummy)
     fig, ax = plt.subplots()
     # Get the standard deviations of the parameters (square roots of the # diagonal of the covariance)
     stdevs = np.sqrt(np.diag(cov))
