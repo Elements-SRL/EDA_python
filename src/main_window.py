@@ -488,7 +488,14 @@ class UiMainWindow(object):
         self._update_tree_view()
 
     def _perform_fit(self, func_name: str):
-        print(func_name + " fitting")
+        if self.logics.is_all_data_hidden():
+            show_empty_abfs_dialog(
+                "Empty window", "Nothing to display", "No data has been opened."
+            )
+            return
+        self.logics.fit(func_name)
+        self._update_plot()
+        self._update_tree_view()
 
 
 def _recursive_bundle(data_groups: Iterable[DataGroup]) -> List[QStandardItem]:
