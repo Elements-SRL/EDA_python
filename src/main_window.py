@@ -29,6 +29,7 @@ def show_empty_abfs_dialog(title, text, informative_text):
 
 class UiMainWindow(object):
     def __init__(self):
+        self.menu_fit = None
         self.action_create_range = None
         self.menu_roi = None
         self.lower_limit: List[Line2D] | None = []
@@ -128,6 +129,10 @@ class UiMainWindow(object):
         self.menu_analyze.addAction(self.action_open_filters)
         self.menu_analyze.addAction(self.action_spectral_analysis)
         self.menu_analyze.addAction(self.action_histogram)
+        # Menu FIT
+        self.menu_fit = QMenu(self.menu_analyze)
+        self.menu_fit.setObjectName("menu_fit")
+        self.menu_analyze.addAction(self.menu_fit.menuAction())
         # Menu ROI
         self.menu_roi = QMenu(self.menubar)
         self.menu_roi.setObjectName("menu_roi")
@@ -189,6 +194,9 @@ class UiMainWindow(object):
         self.menu_view.setTitle(QCoreApplication.translate("MainWindow", "View", None))
         self.menu_analyze.setTitle(
             QCoreApplication.translate("MainWindow", "Analyze", None)
+        )
+        self.menu_fit.setTitle(
+            QCoreApplication.translate("MainWindow", "Fit", None)
         )
         self.menu_roi.setTitle(
             QCoreApplication.translate("MainWindow", "Region of interest", None)
