@@ -7,9 +7,7 @@ from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import *
 from matplotlib.axes import Axes
 from matplotlib.lines import Line2D
-from matplotlib.backends.backend_qtagg import (
-    NavigationToolbar2QT as NavigationToolbar,
-)
+from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.widgets import RangeSlider
 
 import logics
@@ -21,7 +19,6 @@ matplotlib.use("Qt5Agg")
 
 
 def show_empty_abfs_dialog(title, text, informative_text):
-    # TODO show dialog to tell that file would be empty
     message_box = QMessageBox()
     message_box.setText(text)
     message_box.setIcon(QMessageBox.Information)
@@ -428,7 +425,6 @@ class UiMainWindow(object):
         self.mpl.fig.canvas.draw_idle()
 
     def _update_limit_lines(self, val):
-        # TODO move initialization in _update_plot
         for ll in self.lower_limit:
             ll.set_xdata(val[0])
         for ul in self.upper_limit:
