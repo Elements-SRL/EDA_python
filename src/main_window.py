@@ -29,6 +29,11 @@ def show_empty_abfs_dialog(title, text, informative_text):
 
 class UiMainWindow(object):
     def __init__(self):
+        self.action_gaussian_fitting = None
+        self.action_power_law_fitting = None
+        self.action_exponential_fitting = None
+        self.action_quadratic_fit = None
+        self.action_linear_fit = None
         self.menu_fit = None
         self.action_create_range = None
         self.menu_roi = None
@@ -133,6 +138,23 @@ class UiMainWindow(object):
         self.menu_fit = QMenu(self.menu_analyze)
         self.menu_fit.setObjectName("menu_fit")
         self.menu_analyze.addAction(self.menu_fit.menuAction())
+        # Actions for MENU FIT
+        self.action_linear_fit = QAction(main_window)
+        self.action_linear_fit.setObjectName("action_linear_fit")
+        self.action_quadratic_fit = QAction(main_window)
+        self.action_quadratic_fit.setObjectName("action_quadratic_fit")
+        self.action_exponential_fitting = QAction(main_window)
+        self.action_exponential_fitting.setObjectName("action_exponential_fitting")
+        self.action_power_law_fitting = QAction(main_window)
+        self.action_power_law_fitting.setObjectName("action_power_law_fitting")
+        self.action_gaussian_fitting = QAction(main_window)
+        self.action_gaussian_fitting.setObjectName("action_gaussian_fitting")
+        # Add actions to menu fit
+        self.menu_fit.addAction(self.action_linear_fit)
+        self.menu_fit.addAction(self.action_quadratic_fit)
+        self.menu_fit.addAction(self.action_exponential_fitting)
+        self.menu_fit.addAction(self.action_power_law_fitting)
+        self.menu_fit.addAction(self.action_gaussian_fitting)
         # Menu ROI
         self.menu_roi = QMenu(self.menubar)
         self.menu_roi.setObjectName("menu_roi")
@@ -171,6 +193,11 @@ class UiMainWindow(object):
         self.action_create_range.triggered.connect(
             lambda: self._create_range()
         )
+        self.action_gaussian_fitting.triggered.connect(lambda: self._perform_fit('gaussian'))
+        self.action_power_law_fitting.triggered.connect(lambda: self._perform_fit('power_law'))
+        self.action_exponential_fitting.triggered.connect(lambda: self._perform_fit('exponential'))
+        self.action_quadratic_fit.triggered.connect(lambda: self._perform_fit('quadratic'))
+        self.action_linear_fit.triggered.connect(lambda: self._perform_fit('linear'))
 
     # setupUi
 
@@ -221,6 +248,21 @@ class UiMainWindow(object):
         )
         self.action_create_range.setText(
             QCoreApplication.translate("MainWindow", "Create ROI", None)
+        )
+        self.action_gaussian_fitting.setText(
+            QCoreApplication.translate("MainWindow", "Gaussian", None)
+        )
+        self.action_power_law_fitting.setText(
+            QCoreApplication.translate("MainWindow", "Power Law", None)
+        )
+        self.action_exponential_fitting.setText(
+            QCoreApplication.translate("MainWindow", "Exponential", None)
+        )
+        self.action_quadratic_fit.setText(
+            QCoreApplication.translate("MainWindow", "Quadratic", None)
+        )
+        self.action_linear_fit.setText(
+            QCoreApplication.translate("MainWindow", "Linear", None)
         )
 
     # retranslateUi
@@ -444,6 +486,9 @@ class UiMainWindow(object):
         self.logics.create_new_range(x_min, x_max)
         self._update_plot()
         self._update_tree_view()
+
+    def _perform_fit(self, func_name: str):
+        print(func_name + " fitting")
 
 
 def _recursive_bundle(data_groups: Iterable[DataGroup]) -> List[QStandardItem]:
