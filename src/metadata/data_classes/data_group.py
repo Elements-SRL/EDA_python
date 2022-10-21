@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Set, List
+from typing import Set
 
 from numpy import ndarray
 from ordered_set import OrderedSet
