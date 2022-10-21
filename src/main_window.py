@@ -164,7 +164,7 @@ class UiMainWindow(object):
         )
         self.action_histogram.triggered.connect(lambda: self._perform_histogram())
         self.action_create_range.triggered.connect(
-            lambda: print("creating range, you stupid dumb fuck")
+            lambda: self._create_range()
         )
 
     # setupUi
@@ -430,6 +430,12 @@ class UiMainWindow(object):
         for ul in self.upper_limit:
             ul.set_xdata(val[1])
         self.mpl.fig.canvas.draw_idle()
+
+    def _create_range(self):
+        x_min, x_max = self.mpl.slider.val
+        self.logics.create_new_range(x_min, x_max)
+        self._update_plot()
+        self._update_tree_view()
 
 
 def _recursive_bundle(data_groups: Iterable[DataGroup]) -> List[QStandardItem]:

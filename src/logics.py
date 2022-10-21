@@ -2,6 +2,7 @@ import math
 from os.path import exists
 from typing import Iterable
 
+import numpy as np
 from ordered_set import OrderedSet
 from src.analysis.histogram import histogram
 from src.metadata.data_classes.data_group import DataGroup
@@ -116,3 +117,15 @@ class Logics:
                          sweep_count=odg.sweep_count, sweep_label_x=x_label, sweep_label_y=y_label,
                          sweep_label_c=c_label, basic_data=bd, id=new_id,
                          measuring_unit='Hz', name=name, sampling_rate=odg.sampling_rate, type="psd")
+
+    def create_new_range(self, x_min: float, x_max: float):
+        dg = data_group.make_copy(self.metadata.selected_data_group, self.metadata.get_and_increment_id())
+        dg.name = str(dg.id) + " " + self.metadata.selected_data_group.name.split(" ")[1][:4]
+        idx_of_min, idx_of_max = (np.abs(dg.x - x_min)).argmin(), (np.abs(dg.x - x_max)).argmin()
+        new_bd = [BasicData(ch=bd.ch, y=bd.y[idx_of_min: idx_of_max], sweep_number=bd.sweep_number,
+                            measuring_unit=bd.measuring_unit, file_path=bd.filepath, name=bd.name, axis=bd.axis)
+                  for bd in dg.basic_data]
+        dg.x = dg.x[idx_of_min:idx_of_max]
+        dg.basic_data = OrderedSet(new_bd)
+        self.metadata.selected_data_group.data_groups.add(dg)
+        self.metadata.selected_data_group = dg
