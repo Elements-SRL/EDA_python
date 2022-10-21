@@ -1,5 +1,4 @@
 import numpy as np
-from matplotlib import pyplot as plt
 from numpy import ndarray
 from scipy.optimize import curve_fit
 
@@ -21,7 +20,7 @@ def power_law_fitting(x: ndarray, y: ndarray) -> (ndarray, ndarray):
 
 
 def gaussian_fitting(x: ndarray, y: ndarray) -> (ndarray, ndarray):
-    return _compute_curve_fit(x, y, _power_law)
+    return _compute_curve_fit(x, y, _gaussian)
 
 
 def _linear(x: ndarray, a: float, b: float):
@@ -50,6 +49,6 @@ def _gaussian(x: ndarray, a: float, b: float, c: float):
     return a * np.exp(-np.power(x - b, 2) / (2 * np.power(c, 2)))
 
 
-def _compute_curve_fit(x: ndarray, y: ndarray, func) -> (ndarray,ndarray):
+def _compute_curve_fit(x: ndarray, y: ndarray, func) -> (ndarray, ndarray):
     popt, _ = curve_fit(f=func, xdata=x, ydata=y)
     return func(x, *popt), popt
