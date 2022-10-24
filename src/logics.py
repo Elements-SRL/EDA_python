@@ -144,6 +144,8 @@ class Logics:
             self._perform_fit(fitting.power_law_fitting)
         elif function_name.startswith("gaussian"):
             self._perform_fit(fitting.gaussian_fitting)
+        elif function_name.startswith("boltzmann"):
+            self._perform_fit(fitting.boltzmann_fitting)
         else:
             print(function_name)
 

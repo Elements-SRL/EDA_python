@@ -1,4 +1,7 @@
+from typing import List
+
 import numpy as np
+from matplotlib import pyplot as plt
 from numpy import ndarray
 from scipy.optimize import curve_fit
 
@@ -21,6 +24,10 @@ def power_law_fitting(x: ndarray, y: ndarray) -> (ndarray, ndarray):
 
 def gaussian_fitting(x: ndarray, y: ndarray) -> (ndarray, ndarray):
     return _compute_curve_fit(x, y, _gaussian)
+
+
+def boltzmann_fitting(x: ndarray, y: ndarray) -> (ndarray, ndarray):
+    return _compute_curve_fit(x, y, _boltzmann)
 
 
 def _linear(x: ndarray, a: float, b: float):
@@ -47,6 +54,11 @@ def _power_law(x: ndarray, a: float, b: float):
 def _gaussian(x: ndarray, a: float, b: float, c: float):
     """Function to calculate the gaussian with constants a, b and c"""
     return a * np.exp(-np.power(x - b, 2) / (2 * np.power(c, 2)))
+
+
+def _boltzmann(x: ndarray, t: float, b: float, s: float, m: float):
+    """Function to calculate the boltzmann sigmoid with constants t, b, s and m"""
+    return b + (t - b) / (1 + np.exp(4 * s * (m - x) / (t - b)))
 
 
 def _compute_curve_fit(x: ndarray, y: ndarray, func) -> (ndarray, ndarray):
