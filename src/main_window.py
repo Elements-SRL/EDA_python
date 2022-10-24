@@ -27,6 +27,15 @@ def show_empty_abfs_dialog(title, text, informative_text):
     message_box.exec()
 
 
+def show_warning(title, text, msg):
+    message_box = QMessageBox()
+    message_box.setText(text)
+    message_box.setIcon(QMessageBox.Warning)
+    message_box.setWindowTitle(title)
+    message_box.setInformativeText(msg)
+    message_box.exec()
+
+
 class UiMainWindow(object):
     def __init__(self):
         self.action_gaussian_fitting = None
@@ -446,6 +455,12 @@ class UiMainWindow(object):
 
     def _filter_preview(self):
         filter_arguments = self.filter_widget.get_filter_args()
+        if (filter_arguments.b_type == "bandpass" and
+                filter_arguments.cutoff_frequency > filter_arguments.other_cutoff_frequency):
+            show_warning("Incorrect frequencies",
+                         "Bandpass filters require two cutoff frequencies",
+                         "Incorrect filter: the second cutoff frequency is lower than the first one")
+            return
         b, a = self.logics.filter_preview(filter_arguments)
         self.filter_widget.draw_preview(b, a)
 
