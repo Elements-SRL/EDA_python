@@ -306,8 +306,8 @@ class UiMainWindow(object):
         )
         if is_histogram:
             self.mpl.set_one_plot()
+            w = x[1] - x[0]
             for d in data:
-                w = x[1] - x[0]
                 self.mpl.only_one_ax.bar(x, d.y, label=d.name, width=w)
             self.mpl.only_one_ax.set_ylabel(
                 self.logics.metadata.selected_data_group.sweep_label_y
