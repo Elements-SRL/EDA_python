@@ -296,7 +296,6 @@ class UiMainWindow(object):
         self.mpl.ax1.cla()
         self.mpl.ax2.cla()
         self.mpl.only_one_ax.cla()
-        self.mpl.fig.tight_layout()
         self.mpl.clean_slider()
         self.mpl.fig.subplots_adjust(bottom=0.15)
         if self.logics.is_all_data_hidden():
