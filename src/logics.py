@@ -1,11 +1,9 @@
 import math
 from os.path import exists
 from typing import Iterable
-
 import numpy as np
 from numpy import ndarray
 from ordered_set import OrderedSet
-
 from src.analysis.fitting import fitting
 from src.analysis.histogram import histogram
 from src.metadata.data_classes.data_group import DataGroup
@@ -82,11 +80,9 @@ class Logics:
                     return found_dg
 
     def spectral_analysis(self):
-        bd = self.metadata.selected_data_group.basic_data
-        bd_ch0 = [self._create_spectral_analysis_basic_data(d, 0) for d in bd if d.ch == 0]
-        bd_ch1 = [self._create_spectral_analysis_basic_data(d, 1) for d in bd if d.ch == 1]
-        bd = OrderedSet(bd_ch0 + bd_ch1)
-        dg = self._create_spectral_analysis_data_group(self.metadata.selected_data_group, bd)
+        basic_data = self.metadata.selected_data_group.basic_data
+        bds = OrderedSet([self._create_spectral_analysis_basic_data(d) for d in basic_data])
+        dg = self._create_spectral_analysis_data_group(self.metadata.selected_data_group, bds)
         self.metadata.selected_data_group.data_groups.add(dg)
         self.metadata.selected_data_group = dg
 
@@ -105,12 +101,12 @@ class Logics:
         dg.id = self.metadata.get_and_increment_id()
         dg.name = str(dg.id) + dg.name[dg.name.find(" "):]
 
-    def _create_spectral_analysis_basic_data(self, d: BasicData, ch: int) -> BasicData:
+    def _create_spectral_analysis_basic_data(self, d: BasicData) -> BasicData:
         fs = self.metadata.selected_data_group.sampling_rate
         x, Pxx = sa.spectral_analysis(x=d.y, fs=fs)
         m_unit = '[' + d.measuring_unit + '²/Hz]'
         name = d.name + " PSD"
-        return BasicData(ch=ch, y=Pxx, sweep_number=d.sweep_number, measuring_unit=m_unit, file_path=d.filepath,
+        return BasicData(ch=d.ch, y=Pxx, sweep_number=d.sweep_number, measuring_unit=m_unit, file_path=d.filepath,
                          name=name, axis=d.axis)
 
     def _create_spectral_analysis_data_group(self, odg: DataGroup, bd: OrderedSet[BasicData]) -> DataGroup:
