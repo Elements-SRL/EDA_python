@@ -28,7 +28,7 @@ class MetaData:
         return [d for d in self.selected_data_group.basic_data if d.visible]
 
     def is_empty(self):
-        return len(self.selected_data_group.basic_data) == 0 or self.selected_data_group is None
+        return self.selected_data_group is None or len(self.selected_data_group.basic_data) == 0
 
     def set_visibility(self, name: str, visibility: bool):
         for d in self.selected_data_group.basic_data:

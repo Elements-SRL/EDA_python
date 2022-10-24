@@ -1,5 +1,4 @@
 from typing import List, Iterable
-
 import matplotlib
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication, QModelIndex, Qt
@@ -9,31 +8,13 @@ from matplotlib.axes import Axes
 from matplotlib.lines import Line2D
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.widgets import RangeSlider
-
-import logics
+from logics import Logics
 from src.gui.filters_widget import FiltersWidget
 from src.gui.mpl_canvas import MplCanvas
 from src.metadata.data_classes.data_group import DataGroup
+import src.gui.dialogs as dialogs
 
 matplotlib.use("Qt5Agg")
-
-
-def show_empty_abfs_dialog(title, text, informative_text):
-    message_box = QMessageBox()
-    message_box.setText(text)
-    message_box.setIcon(QMessageBox.Information)
-    message_box.setWindowTitle(title)
-    message_box.setInformativeText(informative_text)
-    message_box.exec()
-
-
-def show_warning(title, text, msg):
-    message_box = QMessageBox()
-    message_box.setText(text)
-    message_box.setIcon(QMessageBox.Warning)
-    message_box.setWindowTitle(title)
-    message_box.setInformativeText(msg)
-    message_box.exec()
 
 
 def set_all_checked(checkboxes: List[QCheckBox], state: bool):
@@ -79,7 +60,7 @@ class UiMainWindow(object):
         self.menubar = None
         self.central_widget = None
         self.actionOpen = None
-        self.logics = logics.Logics()
+        self.logics = Logics()
 
     def setup_ui(self, main_window):
         if not main_window.objectName():
@@ -293,7 +274,7 @@ class UiMainWindow(object):
     def csv(self):
         # if list is empty
         if self.logics.metadata.is_empty():
-            show_empty_abfs_dialog(
+            dialogs.show_empty_abfs_dialog(
                 "Nothing to export.", "Export csv", "Open a file and try again."
             )
             return
@@ -383,10 +364,7 @@ class UiMainWindow(object):
         self.mpl.draw()
 
     def open_views_window(self):
-        if self.logics.metadata.selected_data_group is None:
-            show_empty_abfs_dialog(
-                "Empty window", "Nothing to display", "No data has been opened."
-            )
+        if self._manage_empty_metadata():
             return
         views_layout = QVBoxLayout()
         scroll_layout = QVBoxLayout()
@@ -426,10 +404,7 @@ class UiMainWindow(object):
         self.views_widget.close()
 
     def open_filters(self):
-        if self.logics.is_all_data_hidden():
-            show_empty_abfs_dialog(
-                "Empty window", "Nothing to display", "No data has been opened."
-            )
+        if self._manage_empty_metadata():
             return
         if self.filter_widget is None:
             self.filter_widget = FiltersWidget(
@@ -446,20 +421,14 @@ class UiMainWindow(object):
             self.filter_widget.show()
 
     def _open_spectral_analysis(self):
-        if self.logics.is_all_data_hidden():
-            show_empty_abfs_dialog(
-                "Empty window", "Nothing to display", "No data has been opened."
-            )
+        if self._manage_empty_metadata():
             return
         self.logics.spectral_analysis()
         self._update_plot()
         self._update_tree_view()
 
     def _perform_histogram(self):
-        if self.logics.is_all_data_hidden():
-            show_empty_abfs_dialog(
-                "Empty window", "Nothing to display", "No data has been opened."
-            )
+        if self._manage_empty_metadata():
             return
         self.logics.hist()
         self._update_plot()
@@ -469,9 +438,9 @@ class UiMainWindow(object):
         filter_arguments = self.filter_widget.get_filter_args()
         if (filter_arguments.b_type == "bandpass" and
                 filter_arguments.cutoff_frequency > filter_arguments.other_cutoff_frequency):
-            show_warning("Incorrect frequencies",
-                         "Bandpass filters require two cutoff frequencies",
-                         "Incorrect filter: the second cutoff frequency is lower than the first one")
+            dialogs.show_warning("Incorrect frequencies",
+                                 "Bandpass filters require two cutoff frequencies",
+                                 "Incorrect filter: the second cutoff frequency is lower than the first one")
             return
         b, a = self.logics.filter_preview(filter_arguments)
         self.filter_widget.draw_preview(b, a)
@@ -509,20 +478,27 @@ class UiMainWindow(object):
         self.mpl.fig.canvas.draw_idle()
 
     def _create_range(self):
+        if self._manage_empty_metadata():
+            return
         x_min, x_max = self.mpl.slider.val
         self.logics.create_new_range(x_min, x_max)
         self._update_plot()
         self._update_tree_view()
 
     def _perform_fit(self, func_name: str):
-        if self.logics.is_all_data_hidden():
-            show_empty_abfs_dialog(
-                "Empty window", "Nothing to display", "No data has been opened."
-            )
+        if self._manage_empty_metadata():
             return
         self.logics.fit(func_name)
         self._update_plot()
         self._update_tree_view()
+
+    def _manage_empty_metadata(self) -> bool:
+        if self.logics.metadata.is_empty():
+            dialogs.show_empty_abfs_dialog(
+                "Empty window", "Nothing to display", "No data has been opened."
+            )
+            return True
+        return False
 
 
 def _recursive_bundle(data_groups: Iterable[DataGroup]) -> List[QStandardItem]:
