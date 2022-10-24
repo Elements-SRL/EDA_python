@@ -14,6 +14,7 @@ from src.gui.filters_widget import FiltersWidget
 from src.gui.mpl_canvas import MplCanvas
 from src.metadata.data_classes.data_group import DataGroup
 import src.gui.dialogs as dialogs
+from src.gui.fitting_params_widget import FittingParamsWidget
 
 matplotlib.use("Qt5Agg")
 
@@ -464,6 +465,7 @@ class UiMainWindow(object):
         if self._manage_empty_metadata():
             return
         self.logics.fit(func_name)
+        self.fitting_params_widget = FittingParamsWidget("y = ax +b", [("a", 1), ("b", 2)])
         self._update_plot()
         self._update_tree_view()
 

@@ -1,5 +1,4 @@
 import numpy as np
-from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -17,7 +16,7 @@ class MplCanvas(FigureCanvasQTAgg):
         super(MplCanvas, self).__init__(fig)
 
 
-class FiltersWidget(QtWidgets.QWidget):
+class FiltersWidget(QWidget):
 
     def __init__(self, fs: float):
         super(FiltersWidget, self).__init__()

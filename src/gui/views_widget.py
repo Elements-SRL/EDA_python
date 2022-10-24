@@ -1,8 +1,6 @@
 from typing import Iterable, List
-
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QScrollArea, QCheckBox, QPushButton
-
 from src.metadata.data_classes.basic_data import BasicData
 
 

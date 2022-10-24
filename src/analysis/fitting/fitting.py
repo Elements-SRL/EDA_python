@@ -28,7 +28,7 @@ def boltzmann_fitting(x: ndarray, y: ndarray) -> (ndarray, ndarray):
 
 
 def _linear(x: ndarray, a: float, b: float):
-    """Function to calculate the quadratic with constants a, b and c"""
+    """Function to calculate the linear with constants a and b"""
     return a * x + b
 
 
