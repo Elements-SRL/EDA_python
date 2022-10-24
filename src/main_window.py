@@ -9,17 +9,13 @@ from matplotlib.lines import Line2D
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.widgets import RangeSlider
 from logics import Logics
+from src.gui import views_widget
 from src.gui.filters_widget import FiltersWidget
 from src.gui.mpl_canvas import MplCanvas
 from src.metadata.data_classes.data_group import DataGroup
 import src.gui.dialogs as dialogs
 
 matplotlib.use("Qt5Agg")
-
-
-def set_all_checked(checkboxes: List[QCheckBox], state: bool):
-    for cb in checkboxes:
-        cb.setChecked(state)
 
 
 class UiMainWindow(object):
@@ -366,40 +362,12 @@ class UiMainWindow(object):
     def open_views_window(self):
         if self._manage_empty_metadata():
             return
-        views_layout = QVBoxLayout()
-        scroll_layout = QVBoxLayout()
-        scroll_widget = QWidget()
-        scroll_widget.setMinimumSize(200, 300)
-        scroll_area = QScrollArea()
-        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.views_widget = QWidget()
-        self.views_widget.setWindowTitle("Views")
-        self.views_widget.setMinimumSize(200, 300)
-        self.views_widget.setLayout(views_layout)
-        checkboxes = []
-        views_layout.deleteLater()
-        for d in self.logics.metadata.selected_data_group.basic_data:
-            b = QCheckBox(d.name)
-            scroll_layout.addWidget(b)
-            b.setChecked(d.visible)
-            checkboxes.append(b)
-        scroll_widget.setLayout(scroll_layout)
-        scroll_area.setWidget(scroll_widget)
-        views_layout.addWidget(scroll_area)
-        apply_button = QPushButton("Show selected channels")
-        apply_button.clicked.connect(lambda: self.hide_sweeps(checkboxes))
-        check_all_button = QPushButton("Check all")
-        check_all_button.clicked.connect(lambda: set_all_checked(checkboxes, True))
-        uncheck_all_button = QPushButton("Uncheck all")
-        uncheck_all_button.clicked.connect(lambda: set_all_checked(checkboxes, False))
-        views_layout.addWidget(apply_button)
-        views_layout.addWidget(check_all_button)
-        views_layout.addWidget(uncheck_all_button)
-        self.views_widget.show()
+        self.views_widget = views_widget.show_views_widget(self.logics.metadata.selected_data_group.basic_data,
+                                                           self._hide_sweeps)
 
-    def hide_sweeps(self, buttons: List[QCheckBox]):
-        for b in buttons:
-            self.logics.metadata.set_visibility(b.text(), b.isChecked())
+    def _hide_sweeps(self, checkboxes: List[QCheckBox]):
+        for cb in checkboxes:
+            self.logics.metadata.set_visibility(cb.text(), cb.isChecked())
         self._update_plot()
         self.views_widget.close()
 
