@@ -20,11 +20,12 @@ matplotlib.use("Qt5Agg")
 
 class UiMainWindow(object):
     def __init__(self):
-        self.action_gaussian_fitting = None
-        self.action_power_law_fitting = None
-        self.action_exponential_fitting = None
-        self.action_quadratic_fit = None
-        self.action_linear_fit = None
+        self.action_boltzmann_fitting: QAction | None = None
+        self.action_gaussian_fitting: QAction | None = None
+        self.action_power_law_fitting: QAction | None = None
+        self.action_exponential_fitting: QAction | None = None
+        self.action_quadratic_fit: QAction | None = None
+        self.action_linear_fit: QAction | None = None
         self.menu_fit = None
         self.action_create_range = None
         self.menu_roi = None
@@ -140,12 +141,15 @@ class UiMainWindow(object):
         self.action_power_law_fitting.setObjectName("action_power_law_fitting")
         self.action_gaussian_fitting = QAction(main_window)
         self.action_gaussian_fitting.setObjectName("action_gaussian_fitting")
+        self.action_boltzmann_fitting = QAction(main_window)
+        self.action_boltzmann_fitting.setObjectName("action_boltzmann_fitting")
         # Add actions to menu fit
         self.menu_fit.addAction(self.action_linear_fit)
         self.menu_fit.addAction(self.action_quadratic_fit)
         self.menu_fit.addAction(self.action_exponential_fitting)
         self.menu_fit.addAction(self.action_power_law_fitting)
         self.menu_fit.addAction(self.action_gaussian_fitting)
+        self.menu_fit.addAction(self.action_boltzmann_fitting)
         # Menu ROI
         self.menu_roi = QMenu(self.menubar)
         self.menu_roi.setObjectName("menu_roi")
@@ -189,6 +193,7 @@ class UiMainWindow(object):
         self.action_exponential_fitting.triggered.connect(lambda: self._perform_fit('exponential'))
         self.action_quadratic_fit.triggered.connect(lambda: self._perform_fit('quadratic'))
         self.action_linear_fit.triggered.connect(lambda: self._perform_fit('linear'))
+        self.action_boltzmann_fitting.triggered.connect(lambda: self._perform_fit('boltzmann'))
 
     # setupUi
 
@@ -254,6 +259,9 @@ class UiMainWindow(object):
         )
         self.action_linear_fit.setText(
             QCoreApplication.translate("MainWindow", "Linear", None)
+        )
+        self.action_boltzmann_fitting.setText(
+            QCoreApplication.translate("MainWindow", "Boltzmann", None)
         )
 
     # retranslateUi
