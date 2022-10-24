@@ -94,14 +94,12 @@ class Logics:
         if n_bins == -1:
             n_bins = math.floor(math.sqrt(len(self.metadata.get_x())))
         # TODO Tell something to the user about the creation of 2 datagroups
-        dg0 = histogram.calc_data_group_hist(dg=self.metadata.selected_data_group, axis=0, n_bins=n_bins)
-        dg1 = histogram.calc_data_group_hist(dg=self.metadata.selected_data_group, axis=1, n_bins=n_bins)
-        self._common_hist_ops(dg0)
-        self._common_hist_ops(dg1)
-        # TODO this could be in a function in metadata
-        self.metadata.selected_data_group.data_groups.add(dg0)
-        self.metadata.selected_data_group.data_groups.add(dg1)
-        self.metadata.selected_data_group = dg0
+        axis = sorted(list({bd.axis for bd in self.metadata.selected_data_group.basic_data}))
+        dgs = [histogram.calc_data_group_hist(dg=self.metadata.selected_data_group, axis=ax, n_bins=n_bins) for ax in axis]
+        for dg in dgs:
+            self._common_hist_ops(dg)
+            self.metadata.selected_data_group.data_groups.add(dg)
+        self.metadata.selected_data_group = dgs[0]
 
     def _common_hist_ops(self, dg: DataGroup):
         dg.id = self.metadata.get_and_increment_id()
