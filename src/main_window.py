@@ -9,6 +9,7 @@ from matplotlib.lines import Line2D
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.widgets import RangeSlider
 from logics import Logics
+from src.analysis.fitting.FittingParams import FittingParams
 from src.gui import views_widget
 from src.gui.filters_widget import FiltersWidget
 from src.gui.mpl_canvas import MplCanvas
@@ -464,8 +465,8 @@ class UiMainWindow(object):
     def _perform_fit(self, func_name: str):
         if self._manage_empty_metadata():
             return
-        self.logics.fit(func_name)
-        self.fitting_params_widget = FittingParamsWidget("y = ax +b", [("a", 1), ("b", 2)])
+        eq, fitting_params = self.logics.fit(func_name)
+        self.fitting_params_widget = FittingParamsWidget(eq, fitting_params)
         self._update_plot()
         self._update_tree_view()
 

@@ -1,30 +1,33 @@
+from typing import Iterable, Tuple
+
 import numpy as np
 from numpy import ndarray
 from scipy.optimize import curve_fit
 
 
-def linear_fitting(x: ndarray, y: ndarray) -> (ndarray, ndarray):
-    return _compute_curve_fit(x, y, _linear)
+def linear_fitting(x: ndarray, y: ndarray) -> (ndarray, Iterable[Tuple[str, float]]):
+    return _compute_curve_fit(x, y, _linear, ["a", "b"])
 
 
-def quadratic_fitting(x: ndarray, y: ndarray) -> (ndarray, ndarray):
-    return _compute_curve_fit(x, y, _quadratic)
+def quadratic_fitting(x: ndarray, y: ndarray) -> (ndarray, Iterable[Tuple[str, float]]):
+    return _compute_curve_fit(x, y, _quadratic, ["a", "b", "c"])
 
 
-def exponential_fitting(x: ndarray, y: ndarray) -> (ndarray, ndarray):
-    return _compute_curve_fit(x, y, _exponential)
+def exponential_fitting(x: ndarray, y: ndarray) -> (ndarray, Iterable[Tuple[str, float]]):
+    return _compute_curve_fit(x, y, _exponential, ["a", "b"])
 
 
-def power_law_fitting(x: ndarray, y: ndarray) -> (ndarray, ndarray):
-    return _compute_curve_fit(x, y, _power_law)
+def power_law_fitting(x: ndarray, y: ndarray) -> (ndarray, Iterable[Tuple[str, float]]):
+    return _compute_curve_fit(x, y, _power_law, ["a", "b"])
 
 
-def gaussian_fitting(x: ndarray, y: ndarray) -> (ndarray, ndarray):
-    return _compute_curve_fit(x, y, _gaussian)
+def gaussian_fitting(x: ndarray, y: ndarray) -> (ndarray, Iterable[Tuple[str, float]]):
+    return _compute_curve_fit(x, y, _gaussian, ["a", "m", "s"])
 
 
-def boltzmann_fitting(x: ndarray, y: ndarray) -> (ndarray, ndarray):
-    return _compute_curve_fit(x, y, _boltzmann)
+def boltzmann_fitting(x: ndarray, y: ndarray) -> (ndarray, Iterable[Tuple[str, float]]):
+    new_y, popt = _compute_curve_fit(x, y, _boltzmann, ["t", "b", "s", "m"])
+    return new_y, [9]
 
 
 def _linear(x: ndarray, a: float, b: float):
@@ -58,6 +61,7 @@ def _boltzmann(x: ndarray, t: float, b: float, s: float, m: float):
     return b + (t - b) / (1 + np.exp(4 * s * (m - x) / (t - b)))
 
 
-def _compute_curve_fit(x: ndarray, y: ndarray, func) -> (ndarray, ndarray):
+def _compute_curve_fit(x: ndarray, y: ndarray, func, constants: Iterable[str]) -> (ndarray, Iterable[Tuple[str, float]]):
     popt, _ = curve_fit(f=func, xdata=x, ydata=y)
-    return func(x, *popt), popt
+    constants_to_values = zip(constants, popt)
+    return func(x, *popt), constants_to_values

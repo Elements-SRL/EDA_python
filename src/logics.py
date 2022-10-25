@@ -1,10 +1,11 @@
 import math
 from os.path import exists
-from typing import Iterable
+from typing import Iterable, Tuple
 import numpy as np
 from numpy import ndarray
 from ordered_set import OrderedSet
 from src.analysis.fitting import fitting
+from src.analysis.fitting.FittingParams import FittingParams
 from src.analysis.histogram import histogram
 from src.metadata.data_classes.data_group import DataGroup
 from src.metadata.data_classes import data_group
@@ -17,10 +18,12 @@ from src.metadata.meta_data import MetaData
 from src.analysis.spectral_analysis import spectral_analysis as sa
 
 
-def _create_fit_basic_data(x: ndarray, bd: BasicData, func) -> BasicData:
-    y, _ = func(x, bd.y)
-    return BasicData(ch=bd.ch, y=y, sweep_number=bd.sweep_number, measuring_unit=bd.measuring_unit,
-                     file_path=bd.filepath, name=bd.name + " fit", axis=bd.axis)
+def _create_fit_basic_data(x: ndarray, bd: BasicData, func) -> Tuple[BasicData, FittingParams]:
+    y, popt = func(x, bd.y)
+    new_bd = BasicData(ch=bd.ch, y=y, sweep_number=bd.sweep_number, measuring_unit=bd.measuring_unit,
+                       file_path=bd.filepath, name=bd.name + " fit", axis=bd.axis)
+    fp = FittingParams(ch=bd.ch, measuring_unit=bd.measuring_unit, popt=popt)
+    return new_bd, fp
 
 
 class Logics:
@@ -133,19 +136,25 @@ class Logics:
         self.metadata.selected_data_group.data_groups.add(dg)
         self.metadata.selected_data_group = dg
 
-    def fit(self, function_name: str):
+    def fit(self, function_name: str) -> Tuple[str, Iterable[FittingParams]]:
         if function_name.startswith("linear"):
-            self._perform_fit(fitting.linear_fitting)
+            eq = "y = ax + b"
+            return eq, self._perform_fit(fitting.linear_fitting)
         elif function_name.startswith("quadratic"):
-            self._perform_fit(fitting.quadratic_fitting)
+            eq = "y = ax^2 + bx + c"
+            return eq, self._perform_fit(fitting.quadratic_fitting)
         elif function_name.startswith("exponential"):
+            eq = "y = a * e^(bx)"
             self._perform_fit(fitting.exponential_fitting)
         elif function_name.startswith("power_law"):
-            self._perform_fit(fitting.power_law_fitting)
+            eq = "y = a * x^b"
+            return eq, self._perform_fit(fitting.power_law_fitting)
         elif function_name.startswith("gaussian"):
-            self._perform_fit(fitting.gaussian_fitting)
+            eq = "y = a * e ^{- [(x - m)^2] / 2 * s^2 }"
+            return eq, self._perform_fit(fitting.gaussian_fitting)
         elif function_name.startswith("boltzmann"):
-            self._perform_fit(fitting.boltzmann_fitting)
+            eq = "y = b + (t - b) / {1 + e^[4 * s * (m - x) / (t - b)]}"
+            return eq, self._perform_fit(fitting.boltzmann_fitting)
         else:
             print(function_name)
 
@@ -154,11 +163,15 @@ class Logics:
         new_bd = [BasicData(ch=bd.ch, y=bd.y, axis=bd.axis, file_path=bd.filepath, measuring_unit=bd.measuring_unit,
                             name=bd.name) for bd in dg.basic_data]
         oset = OrderedSet(new_bd)
-        fit_bd = [_create_fit_basic_data(dg.x, bd, func) for bd in dg.basic_data]
+        bd_and_fitting_params = [_create_fit_basic_data(dg.x, bd, func) for bd in dg.basic_data]
         dg.type = "fitting"
         dg.name = str(dg.id) + " " + self.metadata.selected_data_group.name.split(" ")[1][:4] + " fit"
-        for bd in fit_bd:
+        fitting_params = []
+        for bd_fp in bd_and_fitting_params:
+            bd, fp = bd_fp
+            fitting_params.append(fp)
             oset.add(bd)
         dg.basic_data = oset
         self.metadata.selected_data_group.data_groups.add(dg)
         self.metadata.selected_data_group = dg
+        return fitting_params
