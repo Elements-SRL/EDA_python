@@ -1,15 +1,15 @@
 from typing import List, Iterable
 import matplotlib
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication, QModelIndex, Qt
+from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication, QModelIndex
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import *
 from matplotlib.axes import Axes
 from matplotlib.lines import Line2D
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.widgets import RangeSlider
+from numpy import ndarray
 from logics import Logics
-from src.analysis.fitting.FittingParams import FittingParams
 from src.gui import views_widget
 from src.gui.filters_widget import FiltersWidget
 from src.gui.mpl_canvas import MplCanvas
@@ -328,7 +328,7 @@ class UiMainWindow(object):
         elif axis_number == 1:
             self.mpl.set_one_plot()
             for d in data:
-                self.mpl.only_one_ax.plot(x, d.y, label=d.name)
+                self.mpl.only_one_ax.plot(resample(x), resample(d.y), label=d.name)
             self.mpl.only_one_ax.set_ylabel(
                 self.logics.metadata.selected_data_group.sweep_label_y
             )
@@ -340,9 +340,9 @@ class UiMainWindow(object):
             self.mpl.set_two_plots()
             for d in data:
                 if d.axis == 0:
-                    self.mpl.ax1.plot(x, d.y, label=d.name, linewidth=1)
+                    self.mpl.ax1.plot(resample(x), resample(d.y), label=d.name, linewidth=1)
                 elif d.axis == 1:
-                    self.mpl.ax2.plot(x, d.y, label=d.name)
+                    self.mpl.ax2.plot(resample(x), resample(d.y), label=d.name)
                 self.mpl.ax1.set_ylabel(
                     self.logics.metadata.selected_data_group.sweep_label_y
                 )
@@ -465,7 +465,11 @@ class UiMainWindow(object):
     def _perform_fit(self, func_name: str):
         if self._manage_empty_metadata():
             return
-        eq, fitting_params = self.logics.fit(func_name)
+        res = self.logics.fit(func_name)
+        if res is None:
+            dialogs.show_warning("Error", "An error has occurred", "Something went wrong while fitting the data")
+            return
+        eq, fitting_params = res
         self.fitting_params_widget = FittingParamsWidget(eq, fitting_params)
         self._update_plot()
         self._update_tree_view()
@@ -477,6 +481,15 @@ class UiMainWindow(object):
             )
             return True
         return False
+
+
+def resample(x: ndarray, max_size: int = 7000) -> ndarray:
+    # if x.size < max_size:
+    #     return x
+    # step = x.size // max_size
+    # print(step)
+    # return x[0::step]
+    return x
 
 
 def _recursive_bundle(data_groups: Iterable[DataGroup]) -> List[QStandardItem]:

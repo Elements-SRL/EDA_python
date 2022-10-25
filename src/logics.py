@@ -140,28 +140,31 @@ class Logics:
         self.metadata.selected_data_group = dg
 
     def fit(self, function_name: str) -> Tuple[str, Iterable[FittingParams]]:
-        if function_name.startswith("linear"):
-            eq = "y = ax + b"
-            return eq, self._perform_fit(fitting.linear_fitting)
-        elif function_name.startswith("quadratic"):
-            eq = "y = ax^2 + bx + c"
-            return eq, self._perform_fit(fitting.quadratic_fitting)
-        elif function_name.startswith("exponential"):
-            eq = "y = a * e^(bx)"
-            return eq, self._perform_fit(fitting.exponential_fitting)
-        elif function_name.startswith("power_law"):
-            eq = "y = a * x^b"
-            return eq, self._perform_fit(fitting.power_law_fitting)
-        elif function_name.startswith("gaussian"):
-            eq = "y = a * e ^{- [(x - m)^2] / 2 * s^2 }"
-            return eq, self._perform_fit(fitting.gaussian_fitting)
-        elif function_name.startswith("boltzmann"):
-            eq = "y = b + (t - b) / {1 + e^[4 * s * (m - x) / (t - b)]}"
-            return eq, self._perform_fit(fitting.boltzmann_fitting)
-        else:
-            print(function_name)
+        try:
+            if function_name.startswith("linear"):
+                eq = "y = ax + b"
+                return eq, self._perform_fit(fitting.linear_fitting)
+            elif function_name.startswith("quadratic"):
+                eq = "y = ax^2 + bx + c"
+                return eq, self._perform_fit(fitting.quadratic_fitting)
+            elif function_name.startswith("exponential"):
+                eq = "y = a * e^(bx)"
+                return eq, self._perform_fit(fitting.exponential_fitting)
+            elif function_name.startswith("power_law"):
+                eq = "y = a * x^b"
+                return eq, self._perform_fit(fitting.power_law_fitting)
+            elif function_name.startswith("gaussian"):
+                eq = "y = a * e ^{- [(x - m)^2] / 2 * s^2 }"
+                return eq, self._perform_fit(fitting.gaussian_fitting)
+            elif function_name.startswith("boltzmann"):
+                eq = "y = b + (t - b) / {1 + e^[4 * s * (m - x) / (t - b)]}"
+                return eq, self._perform_fit(fitting.boltzmann_fitting)
+            else:
+                print(function_name)
+        except Exception:
+            return None
 
-    def _perform_fit(self, func):
+    def _perform_fit(self, func) -> Iterable[FittingParams]:
         dg = data_group.make_copy(self.metadata.selected_data_group, self.metadata.get_and_increment_id())
         new_bd = [BasicData(ch=bd.ch, y=bd.y, axis=bd.axis, file_path=bd.filepath, measuring_unit=bd.measuring_unit,
                             name=bd.name) for bd in dg.basic_data]

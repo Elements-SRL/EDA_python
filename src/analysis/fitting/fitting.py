@@ -68,6 +68,9 @@ def _boltzmann(x: ndarray, t: float, b: float, s: float, m: float):
 
 
 def _compute_curve_fit(x: ndarray, y: ndarray, func, constants: Iterable[str]) -> (ndarray, Iterable[Tuple[str, float]]):
-    popt, _ = curve_fit(f=func, xdata=x, ydata=y)
+    popt, pcov = curve_fit(f=func, xdata=x, ydata=y)
+    perr: ndarray = np.sqrt(np.diag(pcov))
+    if np.inf in perr:
+        raise Exception("Couldn't optimize this function")
     constants_to_values = zip(constants, popt)
     return func(x, *popt), constants_to_values
