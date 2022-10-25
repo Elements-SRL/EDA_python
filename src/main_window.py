@@ -343,20 +343,20 @@ class UiMainWindow(object):
                     self.mpl.ax1.plot(resample(x), resample(d.y), label=d.name, linewidth=1)
                 elif d.axis == 1:
                     self.mpl.ax2.plot(resample(x), resample(d.y), label=d.name)
-                self.mpl.ax1.set_ylabel(
-                    self.logics.metadata.selected_data_group.sweep_label_y
-                )
-                self.mpl.ax1.set_xlabel(
-                    self.logics.metadata.selected_data_group.sweep_label_x
-                )
-                self.mpl.ax2.set_ylabel(
-                    self.logics.metadata.selected_data_group.sweep_label_c
-                )
-                self.mpl.ax2.set_xlabel(
-                    self.logics.metadata.selected_data_group.sweep_label_x
-                )
-                self.mpl.ax1.legend(loc="upper right")
-                self.mpl.ax2.legend(loc="upper right")
+            self.mpl.ax1.set_ylabel(
+                self.logics.metadata.selected_data_group.sweep_label_y
+            )
+            self.mpl.ax1.set_xlabel(
+                self.logics.metadata.selected_data_group.sweep_label_x
+            )
+            self.mpl.ax2.set_ylabel(
+                self.logics.metadata.selected_data_group.sweep_label_c
+            )
+            self.mpl.ax2.set_xlabel(
+                self.logics.metadata.selected_data_group.sweep_label_x
+            )
+            self.mpl.ax1.legend(loc="upper right")
+            self.mpl.ax2.legend(loc="upper right")
         self.mpl.set_func(self._update_limit_lines)
         self._init_limit_lines(self.mpl.slider.val, self.mpl.get_active_axis())
         self.mpl.draw()
