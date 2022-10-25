@@ -10,6 +10,7 @@ from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as Navigation
 from matplotlib.widgets import RangeSlider
 from numpy import ndarray
 from logics import Logics
+from src.downsampler import DataDisplayDownsampler
 from src.gui import views_widget
 from src.gui.filters_widget import FiltersWidget
 from src.gui.mpl_canvas import MplCanvas
@@ -339,10 +340,20 @@ class UiMainWindow(object):
         else:
             self.mpl.set_two_plots()
             for d in data:
+                x_start = x[0]
+                x_end = x[x.size - 1]
+                ddd = DataDisplayDownsampler(x, d.y)
+                xd, yd = ddd.downsample(x_start, x_end)
                 if d.axis == 0:
-                    self.mpl.ax1.plot(resample(x), resample(d.y), label=d.name, linewidth=1)
+                    ddd.line, = self.mpl.ax1.plot(xd, yd, label=d.name, linewidth=1)
                 elif d.axis == 1:
-                    self.mpl.ax2.plot(resample(x), resample(d.y), label=d.name)
+                    ddd.line, = self.mpl.ax2.plot(xd, yd, label=d.name)
+            self.mpl.ax1.set_autoscale_on(False)  # Otherwise, infinite loop
+            self.mpl.ax2.set_autoscale_on(False)  # Otherwise, infinite loop
+            self.mpl.ax1.set_xlim(0, x[x.size - 1])
+            self.mpl.ax1.set_ylim(-200, 200)
+            self.mpl.ax2.set_ylim(-200, 200)
+            self.mpl.ax1.callbacks.connect('xlim_changed', ddd.update)
             self.mpl.ax1.set_ylabel(
                 self.logics.metadata.selected_data_group.sweep_label_y
             )
