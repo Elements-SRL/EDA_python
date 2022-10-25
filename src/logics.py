@@ -126,6 +126,8 @@ class Logics:
                          measuring_unit='Hz', name=name, sampling_rate=odg.sampling_rate, type="psd")
 
     def create_new_range(self, x_min: float, x_max: float):
+        if x_min < self.metadata.selected_data_group.x[0] or x_max > self.metadata.selected_data_group.x[len(self.metadata.selected_data_group.x)-1]:
+            return
         dg = data_group.make_copy(self.metadata.selected_data_group, self.metadata.get_and_increment_id())
         dg.name = str(dg.id) + " " + self.metadata.selected_data_group.name.split(" ")[1][:4]
         idx_of_min, idx_of_max = (np.abs(dg.x - x_min)).argmin(), (np.abs(dg.x - x_max)).argmin()
