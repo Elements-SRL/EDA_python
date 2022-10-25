@@ -18,8 +18,8 @@ from src.metadata.meta_data import MetaData
 from src.analysis.spectral_analysis import spectral_analysis as sa
 
 
-def _create_fit_basic_data(x: ndarray, bd: BasicData, func) -> Tuple[BasicData, FittingParams]:
-    y, popt = func(x, bd.y)
+def _create_fit_basic_data(x: ndarray, bd: BasicData, func, measuring_unit_y) -> Tuple[BasicData, FittingParams]:
+    y, popt = func(x, bd.y, bd.measuring_unit, measuring_unit_y)
     new_bd = BasicData(ch=bd.ch, y=y, sweep_number=bd.sweep_number, measuring_unit=bd.measuring_unit,
                        file_path=bd.filepath, name=bd.name + " fit", axis=bd.axis)
     fp = FittingParams(ch=bd.ch, measuring_unit=bd.measuring_unit, popt=popt)
@@ -94,7 +94,8 @@ class Logics:
             n_bins = math.floor(math.sqrt(len(self.metadata.get_x())))
         # TODO Tell something to the user about the creation of 2 datagroups
         axis = sorted(list({bd.axis for bd in self.metadata.selected_data_group.basic_data}))
-        dgs = [histogram.calc_data_group_hist(dg=self.metadata.selected_data_group, axis=ax, n_bins=n_bins) for ax in axis]
+        dgs = [histogram.calc_data_group_hist(dg=self.metadata.selected_data_group, axis=ax, n_bins=n_bins) for ax in
+               axis]
         for dg in dgs:
             self._common_hist_ops(dg)
             self.metadata.selected_data_group.data_groups.add(dg)
@@ -145,7 +146,7 @@ class Logics:
             return eq, self._perform_fit(fitting.quadratic_fitting)
         elif function_name.startswith("exponential"):
             eq = "y = a * e^(bx)"
-            self._perform_fit(fitting.exponential_fitting)
+            return eq, self._perform_fit(fitting.exponential_fitting)
         elif function_name.startswith("power_law"):
             eq = "y = a * x^b"
             return eq, self._perform_fit(fitting.power_law_fitting)
@@ -163,7 +164,7 @@ class Logics:
         new_bd = [BasicData(ch=bd.ch, y=bd.y, axis=bd.axis, file_path=bd.filepath, measuring_unit=bd.measuring_unit,
                             name=bd.name) for bd in dg.basic_data]
         oset = OrderedSet(new_bd)
-        bd_and_fitting_params = [_create_fit_basic_data(dg.x, bd, func) for bd in dg.basic_data]
+        bd_and_fitting_params = [_create_fit_basic_data(dg.x, bd, func, dg.measuring_unit) for bd in dg.basic_data]
         dg.type = "fitting"
         dg.name = str(dg.id) + " " + self.metadata.selected_data_group.name.split(" ")[1][:4] + " fit"
         fitting_params = []

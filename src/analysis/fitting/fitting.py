@@ -5,29 +5,35 @@ from numpy import ndarray
 from scipy.optimize import curve_fit
 
 
-def linear_fitting(x: ndarray, y: ndarray) -> (ndarray, Iterable[Tuple[str, float]]):
-    return _compute_curve_fit(x, y, _linear, ["a", "b"])
+def linear_fitting(x: ndarray, y: ndarray, measuring_unit_x: str, measuring_unit_y: str) -> (ndarray, Iterable[Tuple[str, float]]):
+    a = "a[" + measuring_unit_y + "/" + measuring_unit_x + "]"
+    return _compute_curve_fit(x, y, _linear, [a, "b[*]"])
 
 
-def quadratic_fitting(x: ndarray, y: ndarray) -> (ndarray, Iterable[Tuple[str, float]]):
-    return _compute_curve_fit(x, y, _quadratic, ["a", "b", "c"])
+def quadratic_fitting(x: ndarray, y: ndarray, measuring_unit_x: str, measuring_unit_y: str) -> (ndarray, Iterable[Tuple[str, float]]):
+    a = "a[" + measuring_unit_y + "/" + measuring_unit_x + "^2]"
+    b = "b[" + measuring_unit_y + "/" + measuring_unit_x + "]"
+    return _compute_curve_fit(x, y, _quadratic, [a, b, "c[*]"])
 
 
-def exponential_fitting(x: ndarray, y: ndarray) -> (ndarray, Iterable[Tuple[str, float]]):
-    return _compute_curve_fit(x, y, _exponential, ["a", "b"])
+def exponential_fitting(x: ndarray, y: ndarray, measuring_unit_x: str, measuring_unit_y: str) -> (ndarray, Iterable[Tuple[str, float]]):
+    b = "b[" + measuring_unit_x + "^-1]"
+    return _compute_curve_fit(x, y, _exponential, ["a[" + measuring_unit_y + "]", b])
 
 
-def power_law_fitting(x: ndarray, y: ndarray) -> (ndarray, Iterable[Tuple[str, float]]):
-    return _compute_curve_fit(x, y, _power_law, ["a", "b"])
+def power_law_fitting(x: ndarray, y: ndarray, measuring_unit_x: str, measuring_unit_y: str) -> (ndarray, Iterable[Tuple[str, float]]):
+    return _compute_curve_fit(x, y, _power_law, ["a[" + measuring_unit_y + "/" + measuring_unit_x + "^b]", "b[*]"])
 
 
-def gaussian_fitting(x: ndarray, y: ndarray) -> (ndarray, Iterable[Tuple[str, float]]):
-    return _compute_curve_fit(x, y, _gaussian, ["a", "m", "s"])
+def gaussian_fitting(x: ndarray, y: ndarray, measuring_unit_x: str, measuring_unit_y: str) -> (ndarray, Iterable[Tuple[str, float]]):
+    return _compute_curve_fit(x, y, _gaussian, ["a[" + measuring_unit_y + "]", "b[" + measuring_unit_x + "]",
+                                                "c[" + measuring_unit_x + "]"])
 
 
-def boltzmann_fitting(x: ndarray, y: ndarray) -> (ndarray, Iterable[Tuple[str, float]]):
-    new_y, popt = _compute_curve_fit(x, y, _boltzmann, ["t", "b", "s", "m"])
-    return new_y, [9]
+def boltzmann_fitting(x: ndarray, y: ndarray, measuring_unit_x: str, measuring_unit_y: str) -> (ndarray, Iterable[Tuple[str, float]]):
+    s = "s[" + measuring_unit_y + "/" + measuring_unit_x + "]"
+    return _compute_curve_fit(x, y, _boltzmann, ["t[" + measuring_unit_y + "]", "b[" + measuring_unit_y + "]",
+                                                 s, "m[" + measuring_unit_x + "]"])
 
 
 def _linear(x: ndarray, a: float, b: float):
