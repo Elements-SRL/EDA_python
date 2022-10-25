@@ -25,16 +25,24 @@ class FittingParamsWidget(QWidget):
         column_container.addLayout(name_col)
         column_container.addLayout(value_col)
         name_col.addWidget(QLabel("Equation:"))
-        value_col.addWidget(QLabel(self.equation))
+        qle = QLineEdit(self.equation)
+        qle.setReadOnly(True)
+        qle.setMinimumWidth(200)
+        value_col.addWidget(qle)
+
         for fp in fitting_params:
             name_col.addWidget(QLabel("channel"))
-            value_col.addWidget(QLabel(str(fp.ch)))
+            qle = QLineEdit(str(fp.ch))
+            qle.setReadOnly(True)
+            value_col.addWidget(qle)
             name_col.addWidget(QLabel("measuring unit"))
-            value_col.addWidget(QLabel(fp.measuring_unit))
+            value_col.addWidget(QLineEdit(fp.measuring_unit))
             for p in fp.popt:
                 name, value = p
                 name_col.addWidget(QLabel(name))
-                value_col.addWidget(QLabel(str(value)))
+                qle = QLineEdit(str(value))
+                qle.setReadOnly(True)
+                value_col.addWidget(qle)
         scroll_widget.setLayout(column_container)
         scroll_area.setWidget(scroll_widget)
         outer_layout.addWidget(scroll_area)
