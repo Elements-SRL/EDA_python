@@ -23,6 +23,7 @@ matplotlib.use("Qt5Agg")
 
 class UiMainWindow(object):
     def __init__(self):
+        self.simplyfiers = []
         self.action_boltzmann_fitting: QAction | None = None
         self.action_gaussian_fitting: QAction | None = None
         self.action_power_law_fitting: QAction | None = None
@@ -340,20 +341,23 @@ class UiMainWindow(object):
         else:
             self.mpl.set_two_plots()
             for d in data:
+                print(d.name)
                 x_start = x[0]
                 x_end = x[x.size - 1]
                 ddd = DataDisplayDownsampler(x, d.y)
-                xd, yd = ddd.downsample(x_start, x_end)
+                xd, yd = ddd.simplify(x_start, x_end)
                 if d.axis == 0:
                     ddd.line, = self.mpl.ax1.plot(xd, yd, label=d.name, linewidth=1)
+                    self.simplyfiers.append((ddd, self.mpl.ax1))
                 elif d.axis == 1:
                     ddd.line, = self.mpl.ax2.plot(xd, yd, label=d.name)
+                    self.simplyfiers.append((ddd, self.mpl.ax2))
+            print("done")
             self.mpl.ax1.set_autoscale_on(False)  # Otherwise, infinite loop
             self.mpl.ax2.set_autoscale_on(False)  # Otherwise, infinite loop
             self.mpl.ax1.set_xlim(0, x[x.size - 1])
             self.mpl.ax1.set_ylim(-200, 200)
             self.mpl.ax2.set_ylim(-200, 200)
-            self.mpl.ax1.callbacks.connect('xlim_changed', ddd.update)
             self.mpl.ax1.set_ylabel(
                 self.logics.metadata.selected_data_group.sweep_label_y
             )
@@ -371,6 +375,7 @@ class UiMainWindow(object):
         self.mpl.set_func(self._update_limit_lines)
         self._init_limit_lines(self.mpl.slider.val, self.mpl.get_active_axis())
         self.mpl.draw()
+        self.connect_simplyfiers()
 
     def clear(self):
         # TODO FIRST ASK FOR CONFIRMATION
@@ -492,6 +497,11 @@ class UiMainWindow(object):
             )
             return True
         return False
+
+    def connect_simplyfiers(self):
+        for t in self.simplyfiers:
+            s, ax = t
+            ax.callbacks.connect('xlim_changed', s.update)
 
 
 def resample(x: ndarray, max_size: int = 7000) -> ndarray:
