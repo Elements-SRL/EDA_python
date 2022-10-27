@@ -10,7 +10,6 @@ from matplotlib.widgets import RangeSlider
 from logics import Logics
 from src.plot_simplifier.line import Line
 from src.plot_simplifier.simplifier_brain import SimplifierBrain
-from src.simplifier import Simplifier
 from src.gui import views_widget
 from src.gui.filters_widget import FiltersWidget
 from src.gui.mpl_canvas import MplCanvas
@@ -21,7 +20,6 @@ from src.gui.fitting_params_widget import FittingParamsWidget
 
 class UiMainWindow(object):
     def __init__(self):
-        self.simplyfiers = []
         self.action_boltzmann_fitting: QAction | None = None
         self.action_gaussian_fitting: QAction | None = None
         self.action_power_law_fitting: QAction | None = None
