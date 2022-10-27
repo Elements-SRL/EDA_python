@@ -1,6 +1,7 @@
 import math
 import time
 import unittest
+from concurrent.futures import ProcessPoolExecutor
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -59,8 +60,8 @@ class LogicsTest(unittest.TestCase):
         x = orig_x[:factor * pixels: factor // 2]
         end = time.time()
         print(end - start)
-        ax.plot(x, y)
-        plt.show()
+        # ax.plot(x, y)
+        # plt.show()
 
     def test_no_ops(self):
         logics_test = Logics()
@@ -68,8 +69,8 @@ class LogicsTest(unittest.TestCase):
         fig, ax = plt.subplots()
         orig_y = logics_test.metadata.selected_data_group.basic_data.pop(0).y
         orig_x = logics_test.metadata.selected_data_group.x
-        ax.plot(orig_x, orig_y)
-        plt.show()
+        # ax.plot(orig_x, orig_y)
+        # plt.show()
 
     def test_process_data(self):
         y = np.array([1,2,3,4,5,6,7,8,9,1,2,3,4,5])
@@ -87,6 +88,17 @@ class LogicsTest(unittest.TestCase):
         y = np.reshape(y, pixels * 2)
         print("almost there")
         print(y.size)
+
+    def test_shit(self):
+        with ProcessPoolExecutor() as executor:
+            # for line in self.lines:
+            # line.line.set_data(*executor.map(self.simplify, idx_of_min, idx_of_max, line))
+            # line.ax.figure.canvas.draw_idle()
+            executor.map(say_hi, ["ciccia", "culo"])
+
+
+def say_hi(arg):
+    print("hello "+ arg)
 
 
 if __name__ == '__main__':

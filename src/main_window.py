@@ -1,5 +1,4 @@
 from typing import List, Iterable
-import matplotlib
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication, QModelIndex
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
@@ -8,17 +7,16 @@ from matplotlib.axes import Axes
 from matplotlib.lines import Line2D
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.widgets import RangeSlider
-from numpy import ndarray
 from logics import Logics
-from src.downsampler import DataDisplayDownsampler
+from src.plot_simplifier.line import Line
+from src.plot_simplifier.simplifier_brain import SimplifierBrain
+from src.simplifier import Simplifier
 from src.gui import views_widget
 from src.gui.filters_widget import FiltersWidget
 from src.gui.mpl_canvas import MplCanvas
 from src.metadata.data_classes.data_group import DataGroup
 import src.gui.dialogs as dialogs
 from src.gui.fitting_params_widget import FittingParamsWidget
-
-matplotlib.use("Qt5Agg")
 
 
 class UiMainWindow(object):
@@ -330,7 +328,7 @@ class UiMainWindow(object):
         elif axis_number == 1:
             self.mpl.set_one_plot()
             for d in data:
-                self.mpl.only_one_ax.plot(resample(x), resample(d.y), label=d.name)
+                self.mpl.only_one_ax.plot(x, d.y, label=d.name)
             self.mpl.only_one_ax.set_ylabel(
                 self.logics.metadata.selected_data_group.sweep_label_y
             )
@@ -340,24 +338,29 @@ class UiMainWindow(object):
             self.mpl.only_one_ax.legend(loc="upper right")
         else:
             self.mpl.set_two_plots()
+            lines = []
             for d in data:
-                print(d.name)
-                x_start = x[0]
-                x_end = x[x.size - 1]
-                ddd = DataDisplayDownsampler(x, d.y)
-                xd, yd = ddd.simplify(x_start, x_end)
+                # print(d.name)
+                # x_start = x[0]
+                # x_end = x[x.size - 1]
+                # simp = Simplifier(x, d.y)
+                # xd, yd = simp.simplify(x_start, x_end)
                 if d.axis == 0:
-                    ddd.line, = self.mpl.ax1.plot(xd, yd, label=d.name, linewidth=1)
-                    self.simplyfiers.append((ddd, self.mpl.ax1))
+                    l, = self.mpl.ax1.plot([1, 2, 3], [1, 2, 3], label=d.name, linewidth=1)
+                    lines.append(Line(d.y, l))
+                    # simp.line, = self.mpl.ax1.plot(xd, yd, label=d.name, linewidth=1)
+                    # self.simplyfiers.append((simp, self.mpl.ax1))
                 elif d.axis == 1:
-                    ddd.line, = self.mpl.ax2.plot(xd, yd, label=d.name)
-                    self.simplyfiers.append((ddd, self.mpl.ax2))
-            print("done")
-            self.mpl.ax1.set_autoscale_on(False)  # Otherwise, infinite loop
-            self.mpl.ax2.set_autoscale_on(False)  # Otherwise, infinite loop
+                    l, = self.mpl.ax2.plot([1, 2, 3], [1, 2, 3], label=d.name)
+                    lines.append(Line(d.y, l))
+                    # simp.line, = self.mpl.ax2.plot(xd, yd, label=d.name)
+                    # self.simplyfiers.append((simp, self.mpl.ax2))
+            # print("done")
             self.mpl.ax1.set_xlim(0, x[x.size - 1])
             self.mpl.ax1.set_ylim(-200, 200)
             self.mpl.ax2.set_ylim(-200, 200)
+            self.simplifier_brain = SimplifierBrain(x, lines)
+            self.simplifier_brain.setup()
             self.mpl.ax1.set_ylabel(
                 self.logics.metadata.selected_data_group.sweep_label_y
             )
@@ -372,10 +375,11 @@ class UiMainWindow(object):
             )
             self.mpl.ax1.legend(loc="upper right")
             self.mpl.ax2.legend(loc="upper right")
+            self.mpl.ax1.callbacks.connect('xlim_changed', self.simplifier_brain.update)
         self.mpl.set_func(self._update_limit_lines)
         self._init_limit_lines(self.mpl.slider.val, self.mpl.get_active_axis())
         self.mpl.draw()
-        self.connect_simplyfiers()
+        # self.connect_simplyfiers()
 
     def clear(self):
         # TODO FIRST ASK FOR CONFIRMATION
@@ -498,19 +502,10 @@ class UiMainWindow(object):
             return True
         return False
 
-    def connect_simplyfiers(self):
-        for t in self.simplyfiers:
-            s, ax = t
-            ax.callbacks.connect('xlim_changed', s.update)
-
-
-def resample(x: ndarray, max_size: int = 7000) -> ndarray:
-    # if x.size < max_size:
-    #     return x
-    # step = x.size // max_size
-    # print(step)
-    # return x[0::step]
-    return x
+    # def connect_simplyfiers(self):
+    #     for t in self.simplyfiers:
+    #         s, ax = t
+    #         ax.callbacks.connect('xlim_changed', s.update)
 
 
 def _recursive_bundle(data_groups: Iterable[DataGroup]) -> List[QStandardItem]:

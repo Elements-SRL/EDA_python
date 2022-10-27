@@ -1,6 +1,7 @@
 from typing import List
-
-from matplotlib import pyplot as plt
+import matplotlib
+matplotlib.use('Qt5Agg')
+import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -26,6 +27,8 @@ class MplCanvas(FigureCanvasQTAgg):
             self.fig.delaxes(self.ax1)
             self.fig.delaxes(self.ax2)
             self.only_one_ax = plt.subplot(111)
+            self.only_one_ax.set_autoscale_on(False)  # Otherwise, infinite loop
+            # TODO maybe this stuff is useless
             self.only_one_ax.callbacks.connect("xlim_changed", self.on_x_lims_change)
         self.active_axis = [self.only_one_ax]
 
@@ -37,6 +40,9 @@ class MplCanvas(FigureCanvasQTAgg):
             self.ax1.callbacks.connect("xlim_changed", self.on_x_lims_change)
             self.ax2.callbacks.connect("xlim_changed", self.on_x_lims_change)
             self.active_axis = [self.ax1, self.ax2]
+            self.ax1.set_autoscale_on(False)  # Otherwise, infinite loop
+            self.ax2.set_autoscale_on(False)  # Otherwise, infinite loop
+        # TODO maybe this stuff is useless
         if self.ax1 is not None and self.ax2 is not None:
             self.ax1.callbacks.connect("xlim_changed", self.on_x_lims_change)
             self.ax2.callbacks.connect("xlim_changed", self.on_x_lims_change)

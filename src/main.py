@@ -1,9 +1,6 @@
 import sys
-import matplotlib
 from PyQt5 import QtWidgets
 from main_window import UiMainWindow
-
-matplotlib.use('Qt5Agg')
 
 
 if __name__ == '__main__':
