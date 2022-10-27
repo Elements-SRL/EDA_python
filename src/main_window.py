@@ -313,6 +313,7 @@ class UiMainWindow(object):
         )
         if is_histogram:
             self.mpl.set_one_plot()
+            self.mpl.only_one_ax.set_autoscale_on(True)
             w = x[1] - x[0]
             for d in data:
                 self.mpl.only_one_ax.bar(x, d.y, label=d.name, width=w)
@@ -324,9 +325,15 @@ class UiMainWindow(object):
             )
             self.mpl.only_one_ax.legend(loc="upper right")
         elif axis_number == 1:
+            lines = []
             self.mpl.set_one_plot()
             for d in data:
-                self.mpl.only_one_ax.plot(x, d.y, label=d.name)
+                l, = self.mpl.only_one_ax.plot([1, 2, 3], [1, 2, 3], label=d.name, linewidth=1)
+                lines.append(Line(d.y, d.axis, l))
+            self.simplifier_brain = SimplifierBrain(x, lines)
+            x_range, y_ranges = self.simplifier_brain.setup()
+            self.mpl.only_one_ax.set_xlim(set_padding(x_range, 0.1))
+            self.mpl.only_one_ax.set_ylim(set_padding(y_ranges[0]))
             self.mpl.only_one_ax.set_ylabel(
                 self.logics.metadata.selected_data_group.sweep_label_y
             )
@@ -346,6 +353,7 @@ class UiMainWindow(object):
                     lines.append(Line(d.y, d.axis, l))
             self.simplifier_brain = SimplifierBrain(x, lines)
             x_range, y_ranges = self.simplifier_brain.setup()
+            # print(x_range, y_ranges)
             self.mpl.ax1.set_xlim(set_padding(x_range, 0.1))
             self.mpl.ax1.set_ylim(set_padding(y_ranges[0]))
             self.mpl.ax2.set_ylim(set_padding(y_ranges[1]))
@@ -491,15 +499,11 @@ class UiMainWindow(object):
             return True
         return False
 
-    # def connect_simplyfiers(self):
-    #     for t in self.simplyfiers:
-    #         s, ax = t
-    #         ax.callbacks.connect('xlim_changed', s.update)
-
 
 def set_padding(x_range: Tuple[float, float], padding: float = 0.2):
     x_min, x_max = x_range
     r = abs(x_max - x_min)
+    # print(r, x_min - (r * padding), x_max + (r * padding))
     if r == 0:
         return x_min - 5, x_max + 5
     return x_min - (r * padding), x_max + (r * padding)
