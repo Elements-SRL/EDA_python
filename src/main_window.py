@@ -1,4 +1,4 @@
-from typing import List, Iterable
+from typing import List, Iterable, Tuple
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication, QModelIndex
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
@@ -338,27 +338,18 @@ class UiMainWindow(object):
             self.mpl.set_two_plots()
             lines = []
             for d in data:
-                # print(d.name)
-                # x_start = x[0]
-                # x_end = x[x.size - 1]
-                # simp = Simplifier(x, d.y)
-                # xd, yd = simp.simplify(x_start, x_end)
                 if d.axis == 0:
                     l, = self.mpl.ax1.plot([1, 2, 3], [1, 2, 3], label=d.name, linewidth=1)
-                    lines.append(Line(d.y, l))
-                    # simp.line, = self.mpl.ax1.plot(xd, yd, label=d.name, linewidth=1)
-                    # self.simplyfiers.append((simp, self.mpl.ax1))
+                    lines.append(Line(d.y, d.axis, l))
                 elif d.axis == 1:
                     l, = self.mpl.ax2.plot([1, 2, 3], [1, 2, 3], label=d.name)
-                    lines.append(Line(d.y, l))
-                    # simp.line, = self.mpl.ax2.plot(xd, yd, label=d.name)
-                    # self.simplyfiers.append((simp, self.mpl.ax2))
-            # print("done")
-            self.mpl.ax1.set_xlim(0, x[x.size - 1])
-            self.mpl.ax1.set_ylim(-200, 200)
-            self.mpl.ax2.set_ylim(-200, 200)
+                    lines.append(Line(d.y, d.axis, l))
             self.simplifier_brain = SimplifierBrain(x, lines)
-            self.simplifier_brain.setup()
+            x_range, y_ranges = self.simplifier_brain.setup()
+            self.mpl.ax1.set_xlim(set_padding(x_range, 0.1))
+            self.mpl.ax1.set_ylim(set_padding(y_ranges[0]))
+            self.mpl.ax2.set_ylim(set_padding(y_ranges[1]))
+
             self.mpl.ax1.set_ylabel(
                 self.logics.metadata.selected_data_group.sweep_label_y
             )
@@ -504,6 +495,14 @@ class UiMainWindow(object):
     #     for t in self.simplyfiers:
     #         s, ax = t
     #         ax.callbacks.connect('xlim_changed', s.update)
+
+
+def set_padding(x_range: Tuple[float, float], padding: float = 0.2):
+    x_min, x_max = x_range
+    r = abs(x_max - x_min)
+    if r == 0:
+        return x_min - 5, x_max + 5
+    return x_min - (r * padding), x_max + (r * padding)
 
 
 def _recursive_bundle(data_groups: Iterable[DataGroup]) -> List[QStandardItem]:

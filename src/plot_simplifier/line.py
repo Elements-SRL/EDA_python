@@ -8,6 +8,7 @@ from numpy import ndarray
 class Line:
     """data that is common to a certain group of data"""
     y: ndarray
+    axis: int
     line: Line2D
 
     def __hash__(self):
