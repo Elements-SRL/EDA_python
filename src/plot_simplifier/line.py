@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from matplotlib.axes import Axes
 from matplotlib.lines import Line2D
 from numpy import ndarray
 

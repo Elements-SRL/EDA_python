@@ -36,29 +36,26 @@ class SimplifierBrain:
         return x_range, y_ranges_to_ret
 
     def simplify(self, line: Line):
-        # start = time.time()
-        x = self.x_data[self.idx_of_min: self.idx_of_max]
+        last_x = self.x_data[self.idx_of_max]
         y = line.y[self.idx_of_min: self.idx_of_max]
-        if x.size < self.pixels or math.floor(x.size / self.pixels) / 2 < 1:
-            return x, y
+        if y.size < self.pixels:
+            return np.linspace(0, last_x, y.size), y
         factor = math.floor(y.size / self.pixels)
-        y = y[:factor * self.pixels]
-        y = np.reshape(y, (self.pixels, factor))
+        y1 = y[:factor * self.pixels]
+        y2 = y[factor * self.pixels:]
+        y = np.reshape(y1, (self.pixels, factor))
         # find min and max
         # put min and max together
         # transpose matrix
         # reshape to one dimension
-        y = np.reshape(np.transpose(np.vstack((y.min(1), y.max(1)))), self.pixels * 2)
-        x = x[:: factor // 2]
+        y = np.append(np.reshape(np.transpose(np.vstack((y.min(1), y.max(1)))), self.pixels * 2), [y2.min(), y2.max()])
         # end = time.time()
         # print(end - start)
-        # print(x[self.pixels * 2])
-        return x[:self.pixels * 2], y
+        return np.linspace(0, last_x, y.size), y
 
     def update(self, ax):
         lims = ax.viewLim
         x_start, x_end = lims.intervalx
-        # print(x_end)
         if x_start < self.x_data[0]:
             x_start = self.x_data[0]
         if x_end > self.x_data[len(self.x_data) - 1]:
