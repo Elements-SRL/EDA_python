@@ -72,5 +72,5 @@ def _compute_curve_fit(x: ndarray, y: ndarray, func, constants: Iterable[str], p
     perr: ndarray = np.sqrt(np.diag(pcov))
     if np.inf in perr:
         raise Exception("Couldn't optimize this function")
-    constants_to_values = zip(constants, popt)
+    constants_to_values = list(zip(constants, popt))
     return func(x, *popt), constants_to_values

@@ -49,6 +49,3 @@ class FittingParamsWidget(QWidget):
         self.export_button = QPushButton("Export value to csv")
         outer_layout.addWidget(self.export_button)
         self.show()
-
-    def export_to_csv(self):
-        print("ciccia")

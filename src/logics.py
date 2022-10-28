@@ -39,8 +39,8 @@ class Logics:
         # else do nothing
 
     def is_all_data_hidden(self):
-        return True if self.metadata.selected_data_group is None \
-            else True not in {v.visible for v in self.metadata.selected_data_group.basic_data}
+        return True if self.metadata.selected_data_group is None else True not in {v.visible for v in
+                                                                                   self.metadata.selected_data_group.basic_data}
 
     def clear(self):
         self.metadata.clear()
@@ -139,7 +139,7 @@ class Logics:
         self.metadata.selected_data_group.data_groups.add(dg)
         self.metadata.selected_data_group = dg
 
-    def fit(self, function_name: str) -> Tuple[str, Iterable[FittingParams]]:
+    def fit(self, function_name: str) -> Tuple[str, Iterable[FittingParams]] | None:
         try:
             if function_name.startswith("linear"):
                 eq = "y = ax + b"
@@ -182,5 +182,10 @@ class Logics:
         self.metadata.selected_data_group = dg
         return fitting_params
 
-    def export_fitting_params_to_csv(self, path_to_file: str, equation: str, fitting_params: Iterable[FittingParams]):
+    @staticmethod
+    def export_fitting_params_to_csv(path_to_file: str, equation: str, fitting_params: Iterable[FittingParams]):
+        if path_to_file is None or path_to_file == "":
+            return
+        if not path_to_file.endswith(".csv"):
+            path_to_file += ".csv"
         exporter.export_fitting_params_to_csv(path_to_file, equation, fitting_params)

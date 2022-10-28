@@ -38,7 +38,7 @@ class UiMainWindow(object):
         self.tree_view: QTreeView | None = None
         self.outer_div: QHBoxLayout | None = None
         self.filter_widget: FiltersWidget | None = None
-        self.action_open_filters = None
+        self.action__open_filters = None
         self.menu_analyze = None
         self.action_open_visible_channels = None
         self.menu_view = None
@@ -72,8 +72,8 @@ class UiMainWindow(object):
         self.action_open_visible_channels.setObjectName("action_open_visible_channels")
         self.action_clear = QAction(main_window)
         self.action_clear.setObjectName("action_clear")
-        self.action_open_filters = QAction(main_window)
-        self.action_open_filters.setObjectName("action_open_filters")
+        self.action__open_filters = QAction(main_window)
+        self.action__open_filters.setObjectName("action__open_filters")
         self.action_spectral_analysis = QAction(main_window)
         self.action_spectral_analysis.setObjectName("action_spectral_analysis")
         self.action_histogram = QAction(main_window)
@@ -124,7 +124,7 @@ class UiMainWindow(object):
         self.menu_analyze = QMenu(self.menubar)
         self.menu_analyze.setObjectName("menu_analyze")
         self.menubar.addAction(self.menu_analyze.menuAction())
-        self.menu_analyze.addAction(self.action_open_filters)
+        self.menu_analyze.addAction(self.action__open_filters)
         self.menu_analyze.addAction(self.action_spectral_analysis)
         self.menu_analyze.addAction(self.action_histogram)
         # Menu FIT
@@ -178,10 +178,10 @@ class UiMainWindow(object):
         self.actionOpen.triggered.connect(lambda: self.open())
         self.action_csv.triggered.connect(lambda: self.csv())
         self.action_open_visible_channels.triggered.connect(
-            lambda: self.open_views_window()
+            lambda: self._open_views_window()
         )
         self.action_clear.triggered.connect(lambda: self.clear())
-        self.action_open_filters.triggered.connect(lambda: self.open_filters())
+        self.action__open_filters.triggered.connect(lambda: self._open_filters())
         self.action_spectral_analysis.triggered.connect(
             lambda: self._open_spectral_analysis()
         )
@@ -234,7 +234,7 @@ class UiMainWindow(object):
         self.menu_export_as.setTitle(
             QCoreApplication.translate("MainWindow", "Export as ...", None)
         )
-        self.action_open_filters.setText(
+        self.action__open_filters.setText(
             QCoreApplication.translate("MainWindow", "Filters", None)
         )
         self.action_spectral_analysis.setText(
@@ -386,7 +386,7 @@ class UiMainWindow(object):
         self.mpl.ax2.cla()
         self.mpl.draw()
 
-    def open_views_window(self):
+    def _open_views_window(self):
         if self._manage_empty_metadata():
             return
         self.views_widget = views_widget.show_views_widget(self.logics.metadata.selected_data_group.basic_data,
@@ -398,7 +398,7 @@ class UiMainWindow(object):
         self._update_plot()
         self.views_widget.close()
 
-    def open_filters(self):
+    def _open_filters(self):
         if self._manage_empty_metadata():
             return
         if self.filter_widget is None:
@@ -488,8 +488,10 @@ class UiMainWindow(object):
             dialogs.show_warning("Error", "An error has occurred", "Something went wrong while fitting the data")
             return
         eq, fitting_params = res
-        self.fitting_params_widget = FittingParamsWidget(eq, fitting_params)
-        self.fitting_params_widget.export_button.pressed.connect(lambda: self.export_fitting_params(eq, fitting_params))
+        self.fitting_params_widget = FittingParamsWidget(equation=eq, fitting_params=fitting_params)
+        self.fitting_params_widget.export_button.pressed.connect(
+            lambda: self._export_fitting_params(eq, fitting_params)
+        )
         self._update_plot()
         self._update_tree_view()
 
@@ -501,13 +503,11 @@ class UiMainWindow(object):
             return True
         return False
 
-    def export_fitting_params(self, eq: str, fitting_params: Iterable[FittingParams]):
+    def _export_fitting_params(self, eq: str, fitting_params: Iterable[FittingParams]):
         # TODO hint or choose a default name?
         path_to_file, _ = QFileDialog.getSaveFileName(
             None, "Save as", filter="Csv files(*.csv)"
         )
-        if not str(path_to_file).endswith(".csv"):
-            return self.logics.export_fitting_params_to_csv(path_to_file + ".csv", eq, fitting_params)
         return self.logics.export_fitting_params_to_csv(path_to_file, eq, fitting_params)
 
 
