@@ -6,7 +6,7 @@ from concurrent.futures import ProcessPoolExecutor
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.logics import Logics
+from src.logics.logics import Logics
 
 
 class LogicsTest(unittest.TestCase):

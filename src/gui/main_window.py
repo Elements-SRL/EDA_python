@@ -7,7 +7,7 @@ from matplotlib.axes import Axes
 from matplotlib.lines import Line2D
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.widgets import RangeSlider
-from logics import Logics
+from src.logics.logics import Logics
 from src.analysis.fitting.FittingParams import FittingParams
 from src.plot_simplifier.line import Line
 from src.plot_simplifier.simplifier_brain import SimplifierBrain

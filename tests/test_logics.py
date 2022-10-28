@@ -2,7 +2,7 @@ import unittest
 
 import src.analysis.filters.filter_handler
 from src.analysis.filters.filter_arguments import FilterArguments
-from src.logics import Logics
+from src.logics.logics import Logics
 
 
 class LogicsTest(unittest.TestCase):

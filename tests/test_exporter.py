@@ -1,7 +1,7 @@
 import os.path
 import unittest
 import src.exporters.exporter as exporter
-from src.logics import Logics
+from src.logics.logics import Logics
 
 
 class ExplorerTest(unittest.TestCase):
