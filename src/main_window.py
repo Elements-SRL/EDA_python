@@ -8,6 +8,7 @@ from matplotlib.lines import Line2D
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.widgets import RangeSlider
 from logics import Logics
+from src.analysis.fitting.FittingParams import FittingParams
 from src.plot_simplifier.line import Line
 from src.plot_simplifier.simplifier_brain import SimplifierBrain
 from src.gui import views_widget
@@ -488,6 +489,7 @@ class UiMainWindow(object):
             return
         eq, fitting_params = res
         self.fitting_params_widget = FittingParamsWidget(eq, fitting_params)
+        self.fitting_params_widget.export_button.pressed.connect(lambda: self.export_fitting_params(eq, fitting_params))
         self._update_plot()
         self._update_tree_view()
 
@@ -498,6 +500,15 @@ class UiMainWindow(object):
             )
             return True
         return False
+
+    def export_fitting_params(self, eq: str, fitting_params: Iterable[FittingParams]):
+        # TODO hint or choose a default name?
+        path_to_file, _ = QFileDialog.getSaveFileName(
+            None, "Save as", filter="Csv files(*.csv)"
+        )
+        if not str(path_to_file).endswith(".csv"):
+            return self.logics.export_fitting_params_to_csv(path_to_file + ".csv", eq, fitting_params)
+        return self.logics.export_fitting_params_to_csv(path_to_file, eq, fitting_params)
 
 
 def set_padding(x_range: Tuple[float, float], padding: float = 0.2):

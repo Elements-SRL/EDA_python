@@ -181,3 +181,6 @@ class Logics:
         self.metadata.selected_data_group.data_groups.add(dg)
         self.metadata.selected_data_group = dg
         return fitting_params
+
+    def export_fitting_params_to_csv(self, path_to_file: str, equation: str, fitting_params: Iterable[FittingParams]):
+        exporter.export_fitting_params_to_csv(path_to_file, equation, fitting_params)

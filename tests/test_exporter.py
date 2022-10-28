@@ -25,6 +25,8 @@ class ExplorerTest(unittest.TestCase):
     path_to_basic_edh_csv = "res/Data/test_export_basic_edh.csv"
     path_to_csv_of_hist = "res/Data/test_hist.csv"
 
+    fitting_params_csv = "res/Data/test_export_fitting_params.csv"
+
     def test_generate_header(self):
         test_logics = Logics()
         test_logics.open(self.path_to_episodic_abf)
@@ -52,12 +54,11 @@ class ExplorerTest(unittest.TestCase):
         test_logics = Logics()
         test_logics.open(self.path_to_basic_edh)
         measuring_units = exporter._generate_header(test_logics.metadata)
-        print(len(measuring_units))
         self.assertTrue(len(measuring_units) == 6)
         self.assertTrue("sec" in measuring_units[0])
         self.assertTrue("pA" in measuring_units[1])
-        self.assertTrue("pA" in measuring_units[2])
-        self.assertTrue("mV" in measuring_units[len(measuring_units) - 1])
+        self.assertTrue("mV" in measuring_units[2])
+        self.assertTrue("pA" in measuring_units[len(measuring_units) - 1])
 
     def test_generate_header_gap_free_from_edh_composed_contiguous_abf(self):
         test_logics = Logics()
@@ -66,8 +67,8 @@ class ExplorerTest(unittest.TestCase):
         self.assertTrue(len(measuring_units) == 6)
         self.assertTrue("sec" in measuring_units[0])
         self.assertTrue("pA" in measuring_units[1])
-        self.assertTrue("pA" in measuring_units[4])
-        self.assertTrue("mV" in measuring_units[len(measuring_units) - 1])
+        self.assertTrue("mV" in measuring_units[2])
+        self.assertTrue("pA" in measuring_units[len(measuring_units) - 1])
 
     def test_generate_data_episodic(self):
         test_logics = Logics()
@@ -118,6 +119,13 @@ class ExplorerTest(unittest.TestCase):
         test_logics.export(path_to_file=self.path_to_csv_of_hist)
         self.assertTrue(os.path.exists(self.path_to_csv_of_hist))
 
+    def test_export_fitting_params(self):
+        test_logics = Logics()
+        test_logics.open(self.path_to_basic_edh)
+        eq, fitting_params = test_logics.fit("linear")
+        exporter.export_fitting_params_to_csv(self.fitting_params_csv, eq, fitting_params)
+        self.assertTrue(os.path.exists(self.fitting_params_csv))
+
     def tearDown(self):
         if os.path.exists(self.path_to_csv_of_episodic_data):
             os.remove(self.path_to_csv_of_episodic_data)
@@ -129,6 +137,8 @@ class ExplorerTest(unittest.TestCase):
             os.remove(self.path_to_basic_edh_csv)
         if os.path.exists(self.path_to_csv_of_hist):
             os.remove(self.path_to_csv_of_hist)
+        if os.path.exists(self.fitting_params_csv):
+            os.remove(self.fitting_params_csv)
 
 
 if __name__ == "__main__":

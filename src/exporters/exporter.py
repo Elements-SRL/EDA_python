@@ -1,8 +1,10 @@
 import csv
-from typing import List
+from typing import List, Iterable
 
 from numpy import ndarray
 import numpy as np
+
+from src.analysis.fitting.FittingParams import FittingParams
 from src.metadata.meta_data import MetaData
 
 
@@ -48,3 +50,13 @@ def _generate_data_in_columnar_form(metadata: MetaData) -> ndarray:
                         y = np.vstack((y, d.y))
                 rows_data = np.vstack((rows_data, y))
     return np.transpose(rows_data)
+
+
+def export_fitting_params_to_csv(path_to_file: str, equation: str, fitting_params: Iterable[FittingParams]):
+    with open(path_to_file, 'w') as f:
+        # create the csv writer
+        writer = csv.writer(f)
+        # write a row to the csv file
+        writer.writerow(["Equation", equation])
+        for r in [[["ch", f.ch], ["measuring unit", f.measuring_unit], *[[p[0], p[1]] for p in f.popt]] for f in fitting_params]:
+            writer.writerows(r)

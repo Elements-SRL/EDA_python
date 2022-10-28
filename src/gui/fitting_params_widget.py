@@ -46,9 +46,8 @@ class FittingParamsWidget(QWidget):
         scroll_widget.setLayout(column_container)
         scroll_area.setWidget(scroll_widget)
         outer_layout.addWidget(scroll_area)
-        export_button = QPushButton("Export value to csv")
-        export_button.pressed.connect(lambda: self.export_to_csv())
-        outer_layout.addWidget(export_button)
+        self.export_button = QPushButton("Export value to csv")
+        outer_layout.addWidget(self.export_button)
         self.show()
 
     def export_to_csv(self):
