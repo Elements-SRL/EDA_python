@@ -158,6 +158,9 @@ class UiMainWindow(object):
         self.action_create_range = QAction(main_window)
         self.action_create_range.setObjectName("action_create_range")
         self.menu_roi.addAction(self.action_create_range)
+        self.action_create_range_advanced = QAction(main_window)
+        self.action_create_range_advanced.setObjectName("action_create_range_advanced")
+        self.menu_roi.addAction(self.action_create_range_advanced)
         # STATUS BAR
         self.status_bar = QStatusBar(main_window)
         self.status_bar.setObjectName("statusbar")
@@ -189,13 +192,13 @@ class UiMainWindow(object):
         self.action_create_range.triggered.connect(
             lambda: self._create_range()
         )
+        self.action_create_range_advanced.triggered.connect(lambda: print("advanced roi"))
         self.action_gaussian_fitting.triggered.connect(lambda: self._perform_fit('gaussian'))
         self.action_power_law_fitting.triggered.connect(lambda: self._perform_fit('power_law'))
         self.action_exponential_fitting.triggered.connect(lambda: self._perform_fit('exponential'))
         self.action_quadratic_fit.triggered.connect(lambda: self._perform_fit('quadratic'))
         self.action_linear_fit.triggered.connect(lambda: self._perform_fit('linear'))
         self.action_boltzmann_fitting.triggered.connect(lambda: self._perform_fit('boltzmann'))
-
     # setupUi
 
     def retranslate_ui(self, main_window):
@@ -245,6 +248,9 @@ class UiMainWindow(object):
         )
         self.action_create_range.setText(
             QCoreApplication.translate("MainWindow", "Create ROI", None)
+        )
+        self.action_create_range_advanced.setText(
+            QCoreApplication.translate("MainWindow", "Advanced", None)
         )
         self.action_gaussian_fitting.setText(
             QCoreApplication.translate("MainWindow", "Gaussian", None)
