@@ -517,12 +517,12 @@ class UiMainWindow(object):
         return self.logics.export_fitting_params_to_csv(path_to_file, eq, fitting_params)
     
     def _open_advanced_roi_widget(self):
-        # if self.logics.metadata.is_empty():
-        #     dialogs.show_empty_abfs_dialog(
-        #         "Empty window", "Nothing to display", "No data has been opened."
-        #     )
-        #     return
-        self._open_advanced_roi_widget = AdvancedRoiWidget()
+        if self.logics.metadata.is_empty():
+            dialogs.show_empty_abfs_dialog(
+                "Empty window", "Nothing to display", "No data has been opened."
+            )
+            return
+        self._open_advanced_roi_widget = AdvancedRoiWidget(self.logics.metadata.selected_data_group)
 
 def set_padding(x_range: Tuple[float, float], padding: float = 0.2):
     x_min, x_max = x_range
