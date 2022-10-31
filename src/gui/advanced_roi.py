@@ -8,6 +8,8 @@ class AdvancedRoiWidget(QWidget):
 
     def __init__(self, dg: DataGroup):
         super(AdvancedRoiWidget, self).__init__()
+        self.channels_checked = True
+        self.sweeps_checked = True
         outer_layout = QVBoxLayout()
         self.setLayout(outer_layout)
         self.setWindowTitle("Advanced ROI")
@@ -21,6 +23,8 @@ class AdvancedRoiWidget(QWidget):
             outer_layout.addWidget(ch)
             self.channels_checkbox.append(ch)
         self.sweep_checkbox: List[QCheckBox] = []
+        select_unselect_channels = QPushButton("Select/Unselect all channels")
+        outer_layout.addWidget(select_unselect_channels)
         sweep_label = QLabel("Select sweeps to keep")
         outer_layout.addWidget(sweep_label)
         for sweep_number in range(dg.sweep_count):
@@ -28,6 +32,8 @@ class AdvancedRoiWidget(QWidget):
             sweep.setChecked(True)
             outer_layout.addWidget(sweep)
             self.sweep_checkbox.append(sweep)
+        select_unselect_sweeps = QPushButton("Select/Unselect all sweeps")
+        outer_layout.addWidget(select_unselect_sweeps)
         self.create_roi_button = QPushButton("Create ROI")
         # TODO add button select/unselect all channels and sweeps
         outer_layout.addWidget(self.create_roi_button)
