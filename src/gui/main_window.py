@@ -17,7 +17,7 @@ from src.gui.mpl_canvas import MplCanvas
 from src.metadata.data_classes.data_group import DataGroup
 import src.gui.dialogs as dialogs
 from src.gui.fitting_params_widget import FittingParamsWidget
-
+from src.gui.advanced_roi import AdvancedRoiWidget
 
 class UiMainWindow(object):
     def __init__(self):
@@ -192,7 +192,7 @@ class UiMainWindow(object):
         self.action_create_range.triggered.connect(
             lambda: self._create_range()
         )
-        self.action_create_range_advanced.triggered.connect(lambda: print("advanced roi"))
+        self.action_create_range_advanced.triggered.connect(lambda: self._open_advanced_roi_widget())
         self.action_gaussian_fitting.triggered.connect(lambda: self._perform_fit('gaussian'))
         self.action_power_law_fitting.triggered.connect(lambda: self._perform_fit('power_law'))
         self.action_exponential_fitting.triggered.connect(lambda: self._perform_fit('exponential'))
@@ -515,7 +515,14 @@ class UiMainWindow(object):
             None, "Save as", filter="Csv files(*.csv)"
         )
         return self.logics.export_fitting_params_to_csv(path_to_file, eq, fitting_params)
-
+    
+    def _open_advanced_roi_widget(self):
+        # if self.logics.metadata.is_empty():
+        #     dialogs.show_empty_abfs_dialog(
+        #         "Empty window", "Nothing to display", "No data has been opened."
+        #     )
+        #     return
+        self._open_advanced_roi_widget = AdvancedRoiWidget()
 
 def set_padding(x_range: Tuple[float, float], padding: float = 0.2):
     x_min, x_max = x_range
