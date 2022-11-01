@@ -339,8 +339,8 @@ class UiMainWindow(object):
                 lines.append(Line(d.y, d.axis, l))
             self.simplifier_brain = SimplifierBrain(x, lines)
             x_range, y_ranges = self.simplifier_brain.setup()
-            self.mpl.only_one_ax.set_xlim(set_padding(x_range, 0.1))
-            self.mpl.only_one_ax.set_ylim(set_padding(y_ranges[0]))
+            self.mpl.only_one_ax.set_xlim(_set_padding(x_range, 0.1))
+            self.mpl.only_one_ax.set_ylim(_set_padding(y_ranges[0]))
             self.mpl.only_one_ax.set_ylabel(
                 self.logics.metadata.selected_data_group.sweep_label_y
             )
@@ -361,9 +361,9 @@ class UiMainWindow(object):
             self.simplifier_brain = SimplifierBrain(x, lines)
             x_range, y_ranges = self.simplifier_brain.setup()
             # print(x_range, y_ranges)
-            self.mpl.ax1.set_xlim(set_padding(x_range, 0.1))
-            self.mpl.ax1.set_ylim(set_padding(y_ranges[0]))
-            self.mpl.ax2.set_ylim(set_padding(y_ranges[1]))
+            self.mpl.ax1.set_xlim(_set_padding(x_range, 0.1))
+            self.mpl.ax1.set_ylim(_set_padding(y_ranges[0]))
+            self.mpl.ax2.set_ylim(_set_padding(y_ranges[1]))
 
             self.mpl.ax1.set_ylabel(
                 self.logics.metadata.selected_data_group.sweep_label_y
@@ -524,7 +524,7 @@ class UiMainWindow(object):
             return
         self._open_advanced_roi_widget = AdvancedRoiWidget(self.logics.metadata.selected_data_group)
 
-def set_padding(x_range: Tuple[float, float], padding: float = 0.2):
+def _set_padding(x_range: Tuple[float, float], padding: float = 0.2):
     x_min, x_max = x_range
     r = abs(x_max - x_min)
     # print(r, x_min - (r * padding), x_max + (r * padding))
