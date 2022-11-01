@@ -10,35 +10,41 @@ class AdvancedRoiWidget(QWidget):
         super(AdvancedRoiWidget, self).__init__()
         self.channels_checked = True
         self.sweeps_checked = True
-        outer_layout = QVBoxLayout()
-        self.setLayout(outer_layout)
+        outer_div = QVBoxLayout()
+        cols_div = QHBoxLayout()
+        outer_div.addLayout(cols_div)
+        first_col = QVBoxLayout()
+        second_col = QVBoxLayout()
+        cols_div.addLayout(first_col)
+        cols_div.addLayout(second_col)
+        self.setLayout(outer_div)
         self.setWindowTitle("Advanced ROI")
         self.setMinimumSize(200, 300)
         self.channels_checkbox: List[QCheckBox] = []
         channels_label = QLabel("Select channels to keep")
-        outer_layout.addWidget(channels_label)
+        first_col.addWidget(channels_label)
         for ch_number in [bd.ch for bd in dg.basic_data ]:
             ch = QCheckBox("channel: " + str(ch_number))
             ch.setChecked(True)
-            outer_layout.addWidget(ch)
+            first_col.addWidget(ch)
             self.channels_checkbox.append(ch)
         self.sweeps_checkbox: List[QCheckBox] = []
         select_unselect_channels_button = QPushButton("Select/Unselect all channels")
         select_unselect_channels_button.pressed.connect(lambda: self.select_unselect_all_channels())
-        outer_layout.addWidget(select_unselect_channels_button)
+        first_col.addWidget(select_unselect_channels_button)
         sweep_label = QLabel("Select sweeps to keep")
-        outer_layout.addWidget(sweep_label)
+        first_col.addWidget(sweep_label)
         for sweep_number in range(dg.sweep_count):
             sweep = QCheckBox("sweep: " + str(sweep_number))
             sweep.setChecked(True)
-            outer_layout.addWidget(sweep)
+            first_col.addWidget(sweep)
             self.sweeps_checkbox.append(sweep)
         select_unselect_sweeps_button = QPushButton("Select/Unselect all sweeps")
         select_unselect_sweeps_button.pressed.connect(lambda: self.select_unselect_all_sweeps())
-        outer_layout.addWidget(select_unselect_sweeps_button)
+        first_col.addWidget(select_unselect_sweeps_button)
         self.create_roi_button = QPushButton("Create ROI")
         # TODO add button select/unselect all channels and sweeps
-        outer_layout.addWidget(self.create_roi_button)
+        outer_div.addWidget(self.create_roi_button)
         self.show()
 
     def select_unselect_all_channels(self):

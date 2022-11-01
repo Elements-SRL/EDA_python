@@ -522,7 +522,9 @@ class UiMainWindow(object):
                 "Empty window", "Nothing to display", "No data has been opened."
             )
             return
-        self._open_advanced_roi_widget = AdvancedRoiWidget(self.logics.metadata.selected_data_group)
+        advanced_roi_widget: AdvancedRoiWidget = AdvancedRoiWidget(self.logics.metadata.selected_data_group)
+        advanced_roi_widget.create_roi_button.pressed.connect(lambda: print("creating advanced roi"))
+        
 
 def _set_padding(x_range: Tuple[float, float], padding: float = 0.2):
     x_min, x_max = x_range
