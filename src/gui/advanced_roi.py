@@ -25,7 +25,7 @@ class AdvancedRoiWidget(QWidget):
         self.channels_checkbox: List[QCheckBox] = []
         channels_label = QLabel("Select channels to keep")
         first_col.addWidget(channels_label)
-        for ch_number in [bd.ch for bd in dg.basic_data ]:
+        for ch_number in list({bd.ch for bd in dg.basic_data}):
             ch = QCheckBox("channel: " + str(ch_number))
             ch.setChecked(True)
             first_col.addWidget(ch)
