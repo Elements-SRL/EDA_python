@@ -37,9 +37,10 @@ class SimplifierBrain:
 
     def simplify(self, line: Line):
         last_x = self.x_data[self.idx_of_max]
+        first_x = self.x_data[self.idx_of_min]
         y = line.y[self.idx_of_min: self.idx_of_max]
         if y.size < self.pixels:
-            return np.linspace(0, last_x, y.size), y
+            return np.linspace(first_x, last_x, y.size), y
         factor = math.floor(y.size / self.pixels)
         y1 = y[:factor * self.pixels]
         y2 = y[factor * self.pixels:]
@@ -51,7 +52,7 @@ class SimplifierBrain:
         y = np.append(np.reshape(np.transpose(np.vstack((y.min(1), y.max(1)))), self.pixels * 2), [y2.min(), y2.max()])
         # end = time.time()
         # print(end - start)
-        return np.linspace(0, last_x, y.size), y
+        return np.linspace(first_x, last_x, y.size), y
 
     def update(self, ax):
         lims = ax.viewLim

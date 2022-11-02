@@ -1,5 +1,4 @@
 from typing import List, Iterable, Tuple
-from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication, QModelIndex
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import *
@@ -92,7 +91,7 @@ class UiMainWindow(object):
 
         self.mpl = MplCanvas()
         self.mpl.set_two_plots()
-        plot_layout = QtWidgets.QVBoxLayout()
+        plot_layout = QVBoxLayout()
         self.gridLayout.addLayout(plot_layout, 0, 0, 0, 0)
         toolbar = NavigationToolbar(self.mpl, main_window)
         plot_layout.addWidget(toolbar)
