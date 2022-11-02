@@ -8,6 +8,7 @@ class AdvancedRoiWidget(QWidget):
 
     def __init__(self, dg: DataGroup):
         super(AdvancedRoiWidget, self).__init__()
+        self.dg = dg
         self.channels_checked = True
         self.sweeps_checked = True
         outer_div = QVBoxLayout()
@@ -87,7 +88,7 @@ class AdvancedRoiWidget(QWidget):
         return self.x_min_spin_box.value(), self.x_max_spin_box.value()
     
     def get_sweeps_to_keep(self) -> List[int]:
-        return [self.sweeps_checkbox.index(cb) for cb in self.sweeps_checkbox if cb.isChecked()]
+        return [int(cb.text().split(" ").pop()) for cb in self.sweeps_checkbox if cb.isChecked()]
     
     def get_channels_to_keep(self) -> List[int]:
-        return [self.channels_checkbox.index(cb) for cb in self.channels_checkbox if cb.isChecked()]
+        return [int(cb.text().split(" ").pop()) for cb in self.channels_checkbox if cb.isChecked()]
