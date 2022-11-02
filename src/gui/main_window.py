@@ -268,7 +268,7 @@ class UiMainWindow(object):
             QCoreApplication.translate("MainWindow", "Linear", None)
         )
         self.action_boltzmann_fitting.setText(
-            QCoreApplication.translate("MainWindow", "Boltzmann", None)
+            QCoreApplication.translate("MainWindow", "Boltzmann sigmoid", None)
         )
 
     # retranslateUi
