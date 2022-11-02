@@ -162,7 +162,7 @@ class Logics:
                 eq = "y = a * x^b"
                 return eq, self._perform_fit(fitting.power_law_fitting)
             elif function_name.startswith("gaussian"):
-                eq = "y = a * e ^{- [(x - m)^2] / 2 * s^2 }"
+                eq = "y = a * e ^ { - [(x - m)^2] / (2 * s^2) }"
                 return eq, self._perform_fit(fitting.gaussian_fitting)
             elif function_name.startswith("boltzmann"):
                 eq = "y = b + (t - b) / {1 + e^[4 * s * (m - x) / (t - b)]}"

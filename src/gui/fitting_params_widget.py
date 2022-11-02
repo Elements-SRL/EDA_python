@@ -13,10 +13,10 @@ class FittingParamsWidget(QWidget):
         self.fitting_params: Iterable[FittingParams] = fitting_params
         outer_layout = QVBoxLayout()
         self.setWindowTitle("Fitting Params")
-        self.setMinimumSize(200, 300)
+        self.setMinimumSize(300, 300)
         self.setLayout(outer_layout)
         scroll_widget = QWidget()
-        scroll_widget.setMinimumSize(200, 300)
+        scroll_widget.setMinimumSize(300, 300)
         scroll_area = QScrollArea()
         scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         name_col = QVBoxLayout()
@@ -27,7 +27,7 @@ class FittingParamsWidget(QWidget):
         name_col.addWidget(QLabel("Equation:"))
         qle = QLineEdit(self.equation)
         qle.setReadOnly(True)
-        qle.setMinimumWidth(200)
+        qle.setMinimumWidth(len(self.equation)*8)
         value_col.addWidget(qle)
 
         for fp in fitting_params:

@@ -27,13 +27,15 @@ def power_law_fitting(x: ndarray, y: ndarray, measuring_unit_x: str = "*", measu
 
 def gaussian_fitting(x: ndarray, y: ndarray, measuring_unit_x: str = "*", measuring_unit_y: str = "*") -> (ndarray, Iterable[Tuple[str, float]]):
     return _compute_curve_fit(x, y, _gaussian, ["a[" + measuring_unit_y + "]", "b[" + measuring_unit_x + "]",
-                                                "c[" + measuring_unit_x + "]"], [y.max(), x[x.size // 2], 1])
+                                                "c[" + measuring_unit_x + "]"], [y.max(), x[x.size // 2], (x[-1]-x[0]) / 4])
 
 
 def boltzmann_fitting(x: ndarray, y: ndarray, measuring_unit_x: str = "*", measuring_unit_y: str = "*") -> (ndarray, Iterable[Tuple[str, float]]):
-    s = "s[" + measuring_unit_y + "/" + measuring_unit_x + "]"
+    s_mu = "s[" + measuring_unit_y + "/" + measuring_unit_x + "]"
+    t, b = y.max(), y.min()
+    s = (t - b) / (x[-1] - x[0])
     return _compute_curve_fit(x, y, _boltzmann, ["t[" + measuring_unit_y + "]", "b[" + measuring_unit_y + "]",
-                                                 s, "m[" + measuring_unit_x + "]"])
+                                                 s_mu, "m[" + measuring_unit_x + "]"],  [ t, b, s, x[x.size // 2] ])
 
 
 def _linear(x: ndarray, a: float, b: float):
