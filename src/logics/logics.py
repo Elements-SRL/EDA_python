@@ -1,6 +1,6 @@
 import math
 from os.path import exists
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, List
 import numpy as np
 from numpy import ndarray
 from ordered_set import OrderedSet
@@ -124,16 +124,24 @@ class Logics:
                          sweep_count=odg.sweep_count, sweep_label_x=x_label, sweep_label_y=y_label,
                          sweep_label_c=c_label, basic_data=bd, id=new_id,
                          measuring_unit='Hz', name=name, sampling_rate=odg.sampling_rate, type="psd")
-
-    def create_new_range(self, x_min: float, x_max: float):
-        if x_min < self.metadata.selected_data_group.x[0] or x_max > self.metadata.selected_data_group.x[len(self.metadata.selected_data_group.x)-1]:
-            return
+    
+    def create_roi(self, x_min: float, x_max: float, sweeps_to_keep: List[int] = None, channels_to_keep: List[int] = None):
+        idx_of_max = len(self.metadata.selected_data_group.x)-1
+        x_min = x_min if x_min > self.metadata.selected_data_group.x[0] else self.metadata.selected_data_group.x[0]
+        x_max = x_max if x_max < self.metadata.selected_data_group.x[idx_of_max] else self.metadata.selected_data_group.x[idx_of_max]
         dg = data_group.make_copy(self.metadata.selected_data_group, self.metadata.get_and_increment_id())
         dg.name = str(dg.id) + " " + self.metadata.selected_data_group.name.split(" ")[1][:4]
         idx_of_min, idx_of_max = (np.abs(dg.x - x_min)).argmin(), (np.abs(dg.x - x_max)).argmin()
+        # keep all the sweeps by default
+        if sweeps_to_keep is None:
+            sweeps_to_keep = [bd.sweep_number for bd in dg.basic_data]
+        # keep all the channels by default
+        if channels_to_keep is None:
+            channels_to_keep = [bd.ch for bd in dg.basic_data]
+        filtered_bd = list(filter(lambda bd: bd.ch in channels_to_keep and bd.sweep_number in sweeps_to_keep, dg.basic_data))
         new_bd = [BasicData(ch=bd.ch, y=bd.y[idx_of_min: idx_of_max], sweep_number=bd.sweep_number,
                             measuring_unit=bd.measuring_unit, file_path=bd.filepath, name=bd.name, axis=bd.axis)
-                  for bd in dg.basic_data]
+                  for bd in filtered_bd]
         dg.x = dg.x[idx_of_min:idx_of_max]
         dg.basic_data = OrderedSet(new_bd)
         self.metadata.selected_data_group.data_groups.add(dg)

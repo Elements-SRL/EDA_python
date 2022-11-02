@@ -341,9 +341,8 @@ class UiMainWindow(object):
             x_range, y_ranges = self.simplifier_brain.setup()
             self.mpl.only_one_ax.set_xlim(_set_padding(x_range, 0.1))
             self.mpl.only_one_ax.set_ylim(_set_padding(y_ranges[0]))
-            self.mpl.only_one_ax.set_ylabel(
-                self.logics.metadata.selected_data_group.sweep_label_y
-            )
+            label = self.logics.metadata.selected_data_group.sweep_label_y if d.axis == 0 else self.logics.metadata.selected_data_group.sweep_label_c
+            self.mpl.only_one_ax.set_ylabel(label)
             self.mpl.only_one_ax.set_xlabel(
                 self.logics.metadata.selected_data_group.sweep_label_x
             )
@@ -482,7 +481,7 @@ class UiMainWindow(object):
         if self._manage_empty_metadata():
             return
         x_min, x_max = self.mpl.slider.val
-        self.logics.create_new_range(x_min, x_max)
+        self.logics.create_roi(x_min, x_max)
         self._update_plot()
         self._update_tree_view()
 
@@ -522,14 +521,23 @@ class UiMainWindow(object):
                 "Empty window", "Nothing to display", "No data has been opened."
             )
             return
-        advanced_roi_widget: AdvancedRoiWidget = AdvancedRoiWidget(self.logics.metadata.selected_data_group)
-        advanced_roi_widget.create_roi_button.pressed.connect(lambda: print("creating advanced roi"))
+        self.advanced_roi_widget: AdvancedRoiWidget = AdvancedRoiWidget(self.logics.metadata.selected_data_group)
+        self.advanced_roi_widget.create_roi_button.pressed.connect(lambda: self._create_advanced_roi())
         
+    def _create_advanced_roi(self):
+        # TODO add some input checks
+        sweeps_to_keep = self.advanced_roi_widget.get_sweeps_to_keep()
+        channels_to_keep = self.advanced_roi_widget.get_channels_to_keep()
+        x_min, x_max = self.advanced_roi_widget.get_x_values()
+        print(sweeps_to_keep, channels_to_keep,  x_min, x_max)
+        self.logics.create_roi(x_min, x_max, sweeps_to_keep=sweeps_to_keep, channels_to_keep=channels_to_keep)
+        self.advanced_roi_widget.close()
+        self._update_plot()
+        self._update_tree_view()
 
 def _set_padding(x_range: Tuple[float, float], padding: float = 0.2):
     x_min, x_max = x_range
     r = abs(x_max - x_min)
-    # print(r, x_min - (r * padding), x_max + (r * padding))
     if r == 0:
         return x_min - 5, x_max + 5
     return x_min - (r * padding), x_max + (r * padding)
