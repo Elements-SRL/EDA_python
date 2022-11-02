@@ -528,7 +528,6 @@ class UiMainWindow(object):
         sweeps_to_keep = self.advanced_roi_widget.get_sweeps_to_keep()
         channels_to_keep = self.advanced_roi_widget.get_channels_to_keep()
         x_min, x_max = self.advanced_roi_widget.get_x_values()
-        print(sweeps_to_keep, channels_to_keep,  x_min, x_max)
         self.logics.create_roi(x_min, x_max, sweeps_to_keep=sweeps_to_keep, channels_to_keep=channels_to_keep)
         self.advanced_roi_widget.close()
         self._update_plot()

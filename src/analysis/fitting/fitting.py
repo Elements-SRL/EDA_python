@@ -27,7 +27,7 @@ def power_law_fitting(x: ndarray, y: ndarray, measuring_unit_x: str = "*", measu
 
 def gaussian_fitting(x: ndarray, y: ndarray, measuring_unit_x: str = "*", measuring_unit_y: str = "*") -> (ndarray, Iterable[Tuple[str, float]]):
     return _compute_curve_fit(x, y, _gaussian, ["a[" + measuring_unit_y + "]", "b[" + measuring_unit_x + "]",
-                                                "c[" + measuring_unit_x + "]"], [y.max(), x[x.size // 2], x.size / 4])
+                                                "c[" + measuring_unit_x + "]"], [y.max(), x[x.size // 2], 1])
 
 
 def boltzmann_fitting(x: ndarray, y: ndarray, measuring_unit_x: str = "*", measuring_unit_y: str = "*") -> (ndarray, Iterable[Tuple[str, float]]):
