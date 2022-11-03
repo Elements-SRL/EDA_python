@@ -27,6 +27,9 @@ class ExplorerTest(unittest.TestCase):
 
     fitting_params_csv = "res/Data/test_export_fitting_params.csv"
 
+    episodic_abf_bugged = "res/EpisodicData/22919002.abf"
+    episodic_abf_bugged_csv = "res/EpisodicData/22919002.csv"
+
     def test_generate_header(self):
         test_logics = Logics()
         test_logics.open(self.path_to_episodic_abf)
@@ -126,6 +129,14 @@ class ExplorerTest(unittest.TestCase):
         exporter.export_fitting_params_to_csv(self.fitting_params_csv, eq, fitting_params)
         self.assertTrue(os.path.exists(self.fitting_params_csv))
 
+    def test_export_episodic_abf(self):
+        test_logics = Logics()
+        test_logics.open(self.episodic_abf_bugged)
+        test_logics.create_roi(0.03, 0.2, sweeps_to_keep=[0], channels_to_keep = [0])
+        test_logics.export(self.episodic_abf_bugged_csv)
+        self.assertTrue(os.path.exists(self.episodic_abf_bugged_csv))
+
+
     def tearDown(self):
         if os.path.exists(self.path_to_csv_of_episodic_data):
             os.remove(self.path_to_csv_of_episodic_data)
@@ -139,6 +150,8 @@ class ExplorerTest(unittest.TestCase):
             os.remove(self.path_to_csv_of_hist)
         if os.path.exists(self.fitting_params_csv):
             os.remove(self.fitting_params_csv)
+        if os.path.exists(self.episodic_abf_bugged_csv):
+            os.remove(self.episodic_abf_bugged_csv)
 
 
 if __name__ == "__main__":

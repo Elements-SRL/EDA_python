@@ -19,35 +19,19 @@ def export(path_to_file: str, metadata: MetaData):
 
 
 def _generate_header(metadata: MetaData) -> List[str]:
-    # header starts with measuring unit of x values
-    header = [metadata.selected_data_group.measuring_unit]
-    for ch in range(metadata.selected_data_group.channel_count * 2):
-        if metadata.selected_data_group.sweep_count > 1:
-            measuring_unit = {d.measuring_unit for d in metadata.selected_data_group.basic_data if d.ch == ch}
-        else:
-            measuring_unit = [d.measuring_unit for d in metadata.selected_data_group.basic_data if d.ch == ch]
-        header.extend(measuring_unit)
-    return header
+    return  [metadata.selected_data_group.measuring_unit] + [bd.measuring_unit for bd in metadata.selected_data_group.basic_data if bd.sweep_number == 0]
 
 
 def _generate_data_in_columnar_form(metadata: MetaData) -> ndarray:
     different_file_paths = {d.filepath for d in metadata.selected_data_group.basic_data}
-    if metadata.selected_data_group.sweep_count > 1:
-        rows_data = np.tile(metadata.get_x(), metadata.selected_data_group.sweep_count)
-    else:
-        rows_data = metadata.get_x()
-    for ch in range(metadata.selected_data_group.channel_count * 2):
+    rows_data = metadata.get_x() if metadata.selected_data_group.sweep_count == 1 else np.tile(metadata.get_x(), metadata.selected_data_group.sweep_count)
+    for ch in {bd.ch for bd in metadata.selected_data_group.basic_data}:
         for file_path in different_file_paths:
-            data_with_same_file_path = [d for d in metadata.selected_data_group.basic_data if d.filepath == file_path]
-            data_with_same_channel = [d for d in data_with_same_file_path if d.ch == ch]
-            sorted_data = sorted(data_with_same_channel, key=lambda data: data.sweep_number)
+            same_file_path_and_channel = [d for d in metadata.selected_data_group.basic_data if d.filepath == file_path and d.ch == ch]
+            sorted_data = sorted(same_file_path_and_channel, key=lambda data: data.sweep_number)
             if len(sorted_data) > 0:
-                y = sorted_data.pop(0).y
-                for d in sorted_data:
-                    if metadata.selected_data_group.sweep_count > 1:
-                        y = np.concatenate((y, d.y), axis=None)
-                    else:
-                        y = np.vstack((y, d.y))
+                # flatten list of y data
+                y = [item for sublist in [d.y for d in sorted_data] for item in sublist]
                 rows_data = np.vstack((rows_data, y))
     return np.transpose(rows_data)
 

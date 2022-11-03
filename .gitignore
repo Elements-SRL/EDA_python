@@ -5,3 +5,4 @@
 main.spec
 .fleet
 tests/test_memory.py
+.vscode/
