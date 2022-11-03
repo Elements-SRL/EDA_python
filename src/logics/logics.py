@@ -144,6 +144,8 @@ class Logics:
                   for bd in filtered_bd]
         dg.x = dg.x[idx_of_min:idx_of_max]
         dg.basic_data = OrderedSet(new_bd)
+        dg.channel_count = len([d.ch for d in new_bd])
+        dg.sweep_count = len({d.sweep_number for d in new_bd})
         self.metadata.selected_data_group.data_groups.add(dg)
         self.metadata.selected_data_group = dg
 
