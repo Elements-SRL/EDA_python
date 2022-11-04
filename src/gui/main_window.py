@@ -346,6 +346,7 @@ class UiMainWindow(object):
                 self.logics.metadata.selected_data_group.sweep_label_x
             )
             self.mpl.only_one_ax.legend(loc="upper right")
+            self.mpl.only_one_ax.callbacks.connect('xlim_changed', self.simplifier_brain.update)
         else:
             self.mpl.set_two_plots()
             lines = []
