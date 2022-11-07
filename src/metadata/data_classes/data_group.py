@@ -21,7 +21,7 @@ class DataGroup:
     name: str
     type: str
     data_groups: Set = field(default_factory=set)
-    basic_data: OrderedSet[BasicData] = OrderedSet()
+    basic_data: OrderedSet[BasicData] = field(default_factory=OrderedSet)
     id: int = -1
 
     def __hash__(self):
