@@ -274,7 +274,7 @@ class UiMainWindow(object):
 
     def open(self):
         f_name, _ = QFileDialog.getOpenFileName(
-            None, "Open file", filter="Edh files(*.edh);;Abf files (*.abf)"
+            None, "Open file", filter="Edh files(*.edh);;Abf files (*.abf);;Dat files(*.dat)"
         )
         if f_name:
             self.logics.open(f_name)
