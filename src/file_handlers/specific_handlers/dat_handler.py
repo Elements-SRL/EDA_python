@@ -13,8 +13,7 @@ def extract_metadata_from_dat(path_to_dat: str, metadata: MetaData):
     raw = struct.unpack("d" * (len(f_cont) // 8), f_cont)
     y = np.array(raw)
     # print("raw calculated")
-    t_s = 15 * 60
-    x = np.linspace(0, t_s, len(raw))
+    x = np.linspace(0, len(y), len(y))
     # print("x calculated")
     bd_os: OrderedSet[BasicData] = OrderedSet()
     name = path_to_dat.split(os.sep).pop()
