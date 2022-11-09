@@ -39,17 +39,17 @@ class SimplifierBrain:
         last_x = self.x_data[self.idx_of_max]
         first_x = self.x_data[self.idx_of_min]
         y = line.y[self.idx_of_min: self.idx_of_max]
-        if y.size < self.pixels:
-            return np.linspace(first_x, last_x, y.size), y
         factor = math.floor(y.size / self.pixels)
+        if y.size < self.pixels or factor < 2:
+            return np.linspace(first_x, last_x, y.size), y
         y1 = y[:factor * self.pixels]
         y2 = y[factor * self.pixels:]
-        y = np.reshape(y1, (self.pixels, factor))
+        y = np.reshape(y1, (self.pixels // 2, factor * 2))
         # find min and max
         # put min and max together
         # transpose matrix
         # reshape to one dimension
-        y = np.append(np.reshape(np.transpose(np.vstack((y.min(1), y.max(1)))), self.pixels * 2), [y2.min(), y2.max()])
+        y = np.append(np.reshape(np.transpose(np.vstack((y.min(1), y.max(1)))), self.pixels), [y2.min(), y2.max()])
         # end = time.time()
         # print(end - start)
         return np.linspace(first_x, last_x, y.size), y
