@@ -10,7 +10,7 @@ from src.metadata.meta_data import MetaData
 
 def export(path_to_file: str, metadata: MetaData):
     # exporting csv files
-    with open(path_to_file, 'w') as f:
+    with open(path_to_file, 'w', newline="") as f:
         # create the csv writer
         writer = csv.writer(f)
         # write a row to the csv file
