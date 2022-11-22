@@ -1,6 +1,6 @@
 name: Python package
 
-on: [push]
+on: [ push ]
 
 jobs:
   build:
@@ -64,9 +64,7 @@ jobs:
           py -m pip install -r requirements.txt
           cd \EDA_python
           set PYTHONPATH=%cd%
-          cd ..
-          echo %PYTHONPATH%
-          py -m pyinstaller --onefile --windowed src\main.py -n eda_win.exe
+          py -m PyInstaller --onefile --windowed src\main.py -n eda_win.exe
         shell: cmd
 
       # - name: create windows bundle
