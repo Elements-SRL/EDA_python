@@ -11,14 +11,16 @@ Download the latest release compatible with your system, give it permission to e
 ```
 python >= 3.10
 pip >= 22
+git
 ```
 #### Procedure
-Download this repo, jump into it and run:
+Download or clone this repo, jump into it and run:
+##### Linux
 ```
-pip install -r src/requirements.txt 
+cd EDA_python
+pip install -r src/requirements.txt
 ```
 Once installed export env variable:
-##### Linux
 ```
 export PYTHONPATH="$PYTHONPATH:path/to/your/project/EDA_python"
 ```
@@ -26,23 +28,25 @@ for example if you download this project in `/home/usr/something/ ` the command 
 ```
  export PYTHONPATH="$PYTHONPATH:/home/usr/something/EDA_python"
 ```
+Launch it
+```
+python src/main.py
+```
 ##### Windows
 Open cmd prompt
 Move into EDA_python
 ```
 cd path\to\EDA_python"
 ```
+Install the dependencies
+```
+py -m pip install -r src\requirements.txt 
+```
 Set environment variable
 ```
 set PYTHONPATH=%cd%
 ```
-#### Launch it
-Move into EDA_python and run
-##### Linux
-```
-python src/main.py
-```
-##### Windows
+Launch it
 ```
 py src\main.py
 ```
