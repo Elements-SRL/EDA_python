@@ -2,6 +2,8 @@
 Implementation in python of the already existing software EDA.
 
 ## Installation
+### Install release
+Download the latest release compatible with your system, give it permission to execute and launch it by simply double clicking on it.
 
 ### Manual installation
 
@@ -44,6 +46,3 @@ python src/main.py
 ```
 py src\main.py
 ```
-
-### Install release
-Download the latest release, give it permission to execute and launch it.
