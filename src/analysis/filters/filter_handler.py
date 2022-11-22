@@ -1,17 +1,15 @@
+from typing import Tuple
 from numpy import ndarray
 from scipy import signal
-
 from src.analysis.filters.filter_arguments import FilterArguments
 
 
-def calc_filter(filter_arguments: FilterArguments) -> (ndarray, ndarray):
+def calc_filter(filter_arguments: FilterArguments) -> Tuple[ndarray, ndarray]:
     """
     Caclulate IIR filter
 
-    :param filter_arguments: FilterArguments
-        The arguments which will be passed to the filter function.
-    :return (ndarray, ndarray)
-        Numerator (b) and denominator (a) polynomials of the IIR filter.
+    :param filter_arguments: the arguments which will be passed to the filter function.
+    :return numerator (b) and denominator (a) polynomials of the IIR filter.
     """
 
     cutoff = [filter_arguments.cutoff_frequency,
@@ -35,12 +33,9 @@ def filter_signal(filter_arguments: FilterArguments, y: ndarray) -> ndarray:
     """
     Filter array of data with
 
-    :param filter_arguments: FilterArguments
-        The arguments which will be passed to the filter function.
-    :param y: ndarray
-        Array of data to be filtered
-    :return: ndarray
-        Filtered array of data
+    :param filter_arguments: the arguments which will be passed to the filter function.
+    :param y: data to be filtered
+    :return: filtered array of data
     """
     b, a = calc_filter(filter_arguments)
     return signal.lfilter(b, a, y)
