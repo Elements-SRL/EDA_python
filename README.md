@@ -25,13 +25,24 @@ for example if you download this project in `/home/usr/something/ ` the command 
  export PYTHONPATH="$PYTHONPATH:/home/usr/something/EDA_python"
 ```
 ##### Windows
+Open cmd prompt
+Move into EDA_python
 ```
-set PYTHONPATH="${PYTHONPATH}:/path/to/your/project/EDA_python"
+cd path\to\EDA_python"
+```
+Set environment variable
+```
+set PYTHONPATH=%cd%
 ```
 #### Launch it
 Move into EDA_python and run
+##### Linux
 ```
 python src/main.py
+```
+##### Windows
+```
+py src\main.py
 ```
 
 ### Install release
