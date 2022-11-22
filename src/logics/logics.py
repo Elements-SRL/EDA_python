@@ -19,7 +19,7 @@ from src.analysis.spectral_analysis import spectral_analysis as sa
 
 
 def _create_fit_basic_data(x: ndarray, bd: BasicData, func, measuring_unit_y) -> Tuple[BasicData, FittingParams]:
-    y, popt = func(x, bd.y, bd.measuring_unit, measuring_unit_y)
+    y, popt = func(x, bd.y, (bd.measuring_unit, measuring_unit_y))
     new_bd = BasicData(ch=bd.ch, y=y, sweep_number=bd.sweep_number, measuring_unit=bd.measuring_unit,
                        file_path=bd.filepath, name=bd.name + " fit", axis=bd.axis)
     fp = FittingParams(ch=bd.ch, measuring_unit=bd.measuring_unit, popt=popt)
@@ -124,9 +124,9 @@ class Logics:
                          sweep_count=odg.sweep_count, sweep_label_x=x_label, sweep_label_y=y_label,
                          sweep_label_c=c_label, basic_data=bd, id=new_id,
                          measuring_unit='Hz', name=name, sampling_rate=odg.sampling_rate, type="psd")
-    
+
     def create_roi(self, x_min: float, x_max: float, sweeps_to_keep: List[int] = None, channels_to_keep: List[int] = None):
-        idx_of_max = len(self.metadata.selected_data_group.x)-1
+        idx_of_max = len(self.metadata.selected_data_group.x) - 1
         x_min = x_min if x_min > self.metadata.selected_data_group.x[0] else self.metadata.selected_data_group.x[0]
         x_max = x_max if x_max < self.metadata.selected_data_group.x[idx_of_max] else self.metadata.selected_data_group.x[idx_of_max]
         dg = data_group.make_copy(self.metadata.selected_data_group, self.metadata.get_and_increment_id())
