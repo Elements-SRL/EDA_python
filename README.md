@@ -2,7 +2,7 @@
 Implementation in python of the already existing software EDA.
 
 ## Installation
-### Install release
+### Install from release (Recommended)
 Download the latest release compatible with your system, give it permission to execute and launch it by simply double clicking on it.
 
 ### Manual installation
