@@ -7,6 +7,12 @@ from src.metadata.data_classes.data_group import DataGroup
 
 
 def _name_strategy(name: str) -> str:
+    """
+    Function that defines a strategy to give new names
+
+    :param name: original name
+    :return: new updated descriptive name
+    """
     if name.endswith("hist"):
         return name + " 1"
     if name[-1].isdigit():
@@ -21,6 +27,14 @@ def _name_strategy(name: str) -> str:
 
 
 def calc_data_group_hist(dg: DataGroup, axis: int, n_bins: int = 10) -> DataGroup:
+    """
+    Calculate the histogram for a DataGroup in a certain axis
+
+    :param dg: the DataGroup of which the histogram must be calculated
+    :param axis: the axis upon which the histogram must be calculated
+    :param n_bins:
+    :return:
+    """
     # TODO calc hist only on y values?
     bins = _calc_bins(next(bd.y for bd in dg.basic_data if bd.axis == axis), n_bins)
     bds = OrderedSet([_calc_bd_hist(bd, n_bins) for bd in dg.basic_data if bd.axis == axis])
