@@ -4,7 +4,7 @@ from src.analysis.dwell import dwell
 
 
 class DwellAnalysisTest(unittest.TestCase):
-    path_to_abf = "../res/ContiguousData/temp.edh"
+    path_to_abf = "../res/EventsDetection/Flowcell 19_external electrodes_PS200 and 350_CH001_000.abf"
 
     def test_something(self):
         logics = Logics()

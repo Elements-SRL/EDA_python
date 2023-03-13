@@ -14,7 +14,9 @@ b = [1 / 3, 1 / 3, 1 / 3]
 a = 1
 MOV_AVG_LENGTH_MONO_SCALE_FACTOR = 20
 
+
 # TODO Add checks on input
+# TODO min_event_length, max_event_length dovrebbero prendere delle duration
 def detect_events_from_data_group(data_group: DataGroup, sampling_rate: float, min_event_length,
                                   max_event_length) -> List[BasicData]:
     events = [detect_events_from_basic_data(bd, sampling_rate, min_event_length, max_event_length)
@@ -23,7 +25,7 @@ def detect_events_from_data_group(data_group: DataGroup, sampling_rate: float, m
 
 
 def detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, min_event_length, max_event_length) -> \
-List[BasicData]:
+        List[BasicData]:
     mov_avg_length_mono = max_event_length * MOV_AVG_LENGTH_MONO_SCALE_FACTOR
     mov_avg_length = mov_avg_length_mono * 2 + 1
     max_event_length_mono = math.floor(max_event_length / 2)
