@@ -3,7 +3,7 @@ from src.logics.logics import Logics
 
 
 class DwellAnalysisTest(unittest.TestCase):
-    path_to_abf = "../res/EventsDetection/Flowcell 19_external electrodes_PS200 and 350_CH001_000.abf"
+    path_to_abf = "res/EventsDetection/Flowcell 19_external electrodes_PS200 and 350_CH001_000.abf"
 
     def test_something(self):
         logics = Logics()
