@@ -16,7 +16,7 @@ from src.file_handlers import file_handler
 from src.metadata.data_classes.basic_data import BasicData
 from src.metadata.meta_data import MetaData
 from src.analysis.spectral_analysis import spectral_analysis as sa
-
+from src.analysis.dwell import dwell
 
 def _create_fit_basic_data(x: ndarray, bd: BasicData, func, measuring_unit_y) -> Tuple[BasicData, FittingParams]:
     y, popt = func(x, bd.y, (bd.measuring_unit, measuring_unit_y))
@@ -191,6 +191,13 @@ class Logics:
         self.metadata.selected_data_group.data_groups.add(dg)
         self.metadata.selected_data_group = dg
         return fitting_params
+
+    def dwell_analysis(self, min_event_length, max_event_length):
+        dg = data_group.make_copy(self.metadata.selected_data_group, self.metadata.get_and_increment_id())
+        dg.basic_data = OrderedSet(dwell.detect_events(dg, min_event_length, max_event_length))
+        if len(dg.basic_data) > 0:
+            self.metadata.selected_data_group.data_groups.add(dg)
+            self.metadata.selected_data_group = dg
 
     @staticmethod
     def export_fitting_params_to_csv(path_to_file: str, equation: str, fitting_params: Iterable[FittingParams]):

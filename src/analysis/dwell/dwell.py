@@ -17,13 +17,13 @@ MOV_AVG_LENGTH_MONO_SCALE_FACTOR = 20
 
 # TODO Add checks on input
 # TODO min_event_length, max_event_length dovrebbero prendere delle duration
-def detect_events_from_data_group(data_group: DataGroup, min_event_length, max_event_length) -> List[BasicData]:
-    events = [detect_events_from_basic_data(bd, data_group.sampling_rate, min_event_length, max_event_length)
+def detect_events(data_group: DataGroup, min_event_length, max_event_length) -> List[BasicData]:
+    events = [_detect_events_from_basic_data(bd, data_group.sampling_rate, min_event_length, max_event_length)
               for bd in data_group.basic_data]
     return list(itertools.chain(*[e for e in events if len(e) != 0]))
 
 
-def detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, min_event_length, max_event_length) -> \
+def _detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, min_event_length, max_event_length) -> \
         List[BasicData]:
     mov_avg_length_mono = max_event_length * MOV_AVG_LENGTH_MONO_SCALE_FACTOR
     mov_avg_length = mov_avg_length_mono * 2 + 1
@@ -38,18 +38,20 @@ def detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, m
         return []
 
     smoothed = signal.filtfilt(b, a, raw)
-    smoothed = smoothed[mov_avg_length_mono + 1:len(smoothed) - mov_avg_length_mono]
+    smoothed = smoothed[round(mov_avg_length_mono + 1): round(len(smoothed) - mov_avg_length_mono)]
     cs = np.cumsum(raw)
     cs2 = np.cumsum(np.power(raw, 2))
 
-    center = np.array(range(mov_avg_length_mono + 1, len(raw) - mov_avg_length_mono))
+    center = np.array(range(round(mov_avg_length_mono + 1), round(len(raw) - mov_avg_length_mono)), dtype=int)
     if len(center) == 0:
         return []
-    m = (cs[center + mov_avg_length_mono] - cs[center + max_event_length_mono] + cs[
-        center - 1 - max_event_length_mono] - cs[center - 1 - mov_avg_length_mono]) / mov_avg_den
+    first_part = np.array(center + mov_avg_length_mono, dtype=int)
+    second_part = np.array(center + max_event_length_mono, dtype=int)
+    third_part = np.array(center - 1 - max_event_length_mono, dtype=int)
+    fourth_part = np.array(center - 1 - mov_avg_length_mono, dtype=int)
+    m = (cs[first_part] - cs[second_part] + cs[third_part] - cs[fourth_part]) / mov_avg_den
 
-    s = np.sqrt((cs2[center + mov_avg_length_mono] - cs2[center + max_event_length_mono] + cs2[
-        center - 1 - max_event_length_mono] - cs2[center - 1 - mov_avg_length_mono]) / mov_avg_den - np.power(m, 2))
+    s = np.sqrt((cs2[first_part] - cs2[second_part] + cs2[third_part] - cs2[fourth_part]) / mov_avg_den - np.power(m, 2))
     # TODO this 3 could be taken from input
     th = m + 3 * s
 

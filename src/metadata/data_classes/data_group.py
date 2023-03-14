@@ -31,5 +31,5 @@ class DataGroup:
 
 def make_copy(dg: DataGroup, new_id: int) -> DataGroup:
     copied = copy.deepcopy(dg)
-    dg.id = new_id
+    copied.id = new_id
     return copied

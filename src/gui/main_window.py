@@ -17,7 +17,7 @@ from src.metadata.data_classes.data_group import DataGroup
 import src.gui.dialogs as dialogs
 from src.gui.fitting_params_widget import FittingParamsWidget
 from src.gui.advanced_roi import AdvancedRoiWidget
-
+from src.gui.dwell_analysis_widget import show_dwell_analysis_widget
 
 class UiMainWindow(object):
     def __init__(self):
@@ -39,6 +39,7 @@ class UiMainWindow(object):
         self.tree_view: QTreeView | None = None
         self.outer_div: QHBoxLayout | None = None
         self.filter_widget: FiltersWidget | None = None
+        self.dwell_analysis_widget: QWidget | None = None
         self.action_open_filters = None
         self.menu_analyze = None
         self.action_open_visible_channels = None
@@ -527,10 +528,7 @@ class UiMainWindow(object):
         return self.logics.export_fitting_params_to_csv(path_to_file, eq, fitting_params)
 
     def _open_advanced_roi_widget(self):
-        if self.logics.metadata.is_empty():
-            dialogs.show_empty_abfs_dialog(
-                "Empty window", "Nothing to display", "No data has been opened."
-            )
+        if self._manage_empty_metadata():
             return
         self.advanced_roi_widget: AdvancedRoiWidget = AdvancedRoiWidget(self.logics.metadata.selected_data_group)
         self.advanced_roi_widget.create_roi_button.pressed.connect(lambda: self._create_advanced_roi())
@@ -546,7 +544,11 @@ class UiMainWindow(object):
         self._update_tree_view()
 
     def _dwell_analysis(self):
-        print("dwell analyzing ...")
+        if self._manage_empty_metadata():
+            return
+        self.dwell_analysis_widget = show_dwell_analysis_widget(self.logics.dwell_analysis)
+        self._update_plot()
+        self._update_tree_view()
 
 
 def _set_padding(x_range: Tuple[float, float], padding: float = 0.2):
