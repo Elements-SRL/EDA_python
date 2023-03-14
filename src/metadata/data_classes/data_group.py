@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Set
-
+import copy
 from numpy import ndarray
 from ordered_set import OrderedSet
 
@@ -30,17 +30,6 @@ class DataGroup:
 
 
 def make_copy(dg: DataGroup, new_id: int) -> DataGroup:
-    return DataGroup(x=dg.x,
-                     sampling_rate=dg.sampling_rate,
-                     channel_count=dg.channel_count,
-                     sweep_count=dg.sweep_count,
-                     measuring_unit=dg.measuring_unit,
-                     sweep_label_x=dg.sweep_label_x,
-                     sweep_label_y=dg.sweep_label_y,
-                     sweep_label_c=dg.sweep_label_c,
-                     data_groups=set(),
-                     basic_data=dg.basic_data,
-                     id=new_id,
-                     name=dg.name,
-                     type=dg.type,
-                     )
+    copied = copy.deepcopy(dg)
+    dg.id = new_id
+    return copied
