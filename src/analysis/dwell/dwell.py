@@ -17,9 +17,8 @@ MOV_AVG_LENGTH_MONO_SCALE_FACTOR = 20
 
 # TODO Add checks on input
 # TODO min_event_length, max_event_length dovrebbero prendere delle duration
-def detect_events_from_data_group(data_group: DataGroup, sampling_rate: float, min_event_length,
-                                  max_event_length) -> List[BasicData]:
-    events = [detect_events_from_basic_data(bd, sampling_rate, min_event_length, max_event_length)
+def detect_events_from_data_group(data_group: DataGroup, min_event_length, max_event_length) -> List[BasicData]:
+    events = [detect_events_from_basic_data(bd, data_group.sampling_rate, min_event_length, max_event_length)
               for bd in data_group.basic_data]
     return list(itertools.chain(*[e for e in events if len(e) != 0]))
 
