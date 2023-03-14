@@ -18,8 +18,10 @@ import src.gui.dialogs as dialogs
 from src.gui.fitting_params_widget import FittingParamsWidget
 from src.gui.advanced_roi import AdvancedRoiWidget
 
+
 class UiMainWindow(object):
     def __init__(self):
+        self.action_dwell_analysis: QAction | None = None
         self.action_boltzmann_fitting: QAction | None = None
         self.action_gaussian_fitting: QAction | None = None
         self.action_power_law_fitting: QAction | None = None
@@ -37,7 +39,7 @@ class UiMainWindow(object):
         self.tree_view: QTreeView | None = None
         self.outer_div: QHBoxLayout | None = None
         self.filter_widget: FiltersWidget | None = None
-        self.action__open_filters = None
+        self.action_open_filters = None
         self.menu_analyze = None
         self.action_open_visible_channels = None
         self.menu_view = None
@@ -71,8 +73,8 @@ class UiMainWindow(object):
         self.action_open_visible_channels.setObjectName("action_open_visible_channels")
         self.action_clear = QAction(main_window)
         self.action_clear.setObjectName("action_clear")
-        self.action__open_filters = QAction(main_window)
-        self.action__open_filters.setObjectName("action__open_filters")
+        self.action_open_filters = QAction(main_window)
+        self.action_open_filters.setObjectName("action_open_filters")
         self.action_spectral_analysis = QAction(main_window)
         self.action_spectral_analysis.setObjectName("action_spectral_analysis")
         self.action_histogram = QAction(main_window)
@@ -86,6 +88,8 @@ class UiMainWindow(object):
         self.frame_2.setObjectName("frame_2")
         self.frame_2.setFrameShape(QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QFrame.Raised)
+        self.action_dwell_analysis = QAction(main_window)
+        self.action_dwell_analysis.setObjectName("action_dwell_analysis")
 
         self.gridLayout.addWidget(self.frame_2, 1, 0, 1, 1)
 
@@ -123,9 +127,10 @@ class UiMainWindow(object):
         self.menu_analyze = QMenu(self.menubar)
         self.menu_analyze.setObjectName("menu_analyze")
         self.menubar.addAction(self.menu_analyze.menuAction())
-        self.menu_analyze.addAction(self.action__open_filters)
+        self.menu_analyze.addAction(self.action_open_filters)
         self.menu_analyze.addAction(self.action_spectral_analysis)
         self.menu_analyze.addAction(self.action_histogram)
+        self.menu_analyze.addAction(self.action_dwell_analysis)
         # Menu FIT
         self.menu_fit = QMenu(self.menu_analyze)
         self.menu_fit.setObjectName("menu_fit")
@@ -183,7 +188,7 @@ class UiMainWindow(object):
             lambda: self._open_views_window()
         )
         self.action_clear.triggered.connect(lambda: self.clear())
-        self.action__open_filters.triggered.connect(lambda: self._open_filters())
+        self.action_open_filters.triggered.connect(lambda: self._open_filters())
         self.action_spectral_analysis.triggered.connect(
             lambda: self._open_spectral_analysis()
         )
@@ -198,6 +203,9 @@ class UiMainWindow(object):
         self.action_quadratic_fit.triggered.connect(lambda: self._perform_fit('quadratic'))
         self.action_linear_fit.triggered.connect(lambda: self._perform_fit('linear'))
         self.action_boltzmann_fitting.triggered.connect(lambda: self._perform_fit('boltzmann'))
+
+        self.action_dwell_analysis.triggered.connect(lambda: self._dwell_analysis())
+
     # setupUi
 
     def retranslate_ui(self, main_window):
@@ -236,7 +244,7 @@ class UiMainWindow(object):
         self.menu_export_as.setTitle(
             QCoreApplication.translate("MainWindow", "Export as ...", None)
         )
-        self.action__open_filters.setText(
+        self.action_open_filters.setText(
             QCoreApplication.translate("MainWindow", "Filters", None)
         )
         self.action_spectral_analysis.setText(
@@ -268,6 +276,9 @@ class UiMainWindow(object):
         )
         self.action_boltzmann_fitting.setText(
             QCoreApplication.translate("MainWindow", "Boltzmann sigmoid", None)
+        )
+        self.action_dwell_analysis.setText(
+            QCoreApplication.translate("MainWindow", "Dwell Analysis", None)
         )
 
     # retranslateUi
@@ -514,7 +525,7 @@ class UiMainWindow(object):
             None, "Save as", filter="Csv files(*.csv)"
         )
         return self.logics.export_fitting_params_to_csv(path_to_file, eq, fitting_params)
-    
+
     def _open_advanced_roi_widget(self):
         if self.logics.metadata.is_empty():
             dialogs.show_empty_abfs_dialog(
@@ -523,7 +534,7 @@ class UiMainWindow(object):
             return
         self.advanced_roi_widget: AdvancedRoiWidget = AdvancedRoiWidget(self.logics.metadata.selected_data_group)
         self.advanced_roi_widget.create_roi_button.pressed.connect(lambda: self._create_advanced_roi())
-        
+
     def _create_advanced_roi(self):
         # TODO add some input checks
         sweeps_to_keep = self.advanced_roi_widget.get_sweeps_to_keep()
@@ -533,6 +544,10 @@ class UiMainWindow(object):
         self.advanced_roi_widget.close()
         self._update_plot()
         self._update_tree_view()
+
+    def _dwell_analysis(self):
+        print("dwell analyzing ...")
+
 
 def _set_padding(x_range: Tuple[float, float], padding: float = 0.2):
     x_min, x_max = x_range
