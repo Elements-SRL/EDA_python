@@ -192,12 +192,14 @@ class Logics:
         self.metadata.selected_data_group = dg
         return fitting_params
 
-    def dwell_analysis(self, min_event_length, max_event_length):
+    def dwell_analysis(self, min_event_length, max_event_length) -> bool:
         dg = data_group.make_copy(self.metadata.selected_data_group, self.metadata.get_and_increment_id())
         dg.basic_data = OrderedSet(dwell.detect_events(dg, min_event_length, max_event_length))
         if len(dg.basic_data) > 0:
             self.metadata.selected_data_group.data_groups.add(dg)
             self.metadata.selected_data_group = dg
+            return True
+        return False
 
     @staticmethod
     def export_fitting_params_to_csv(path_to_file: str, equation: str, fitting_params: Iterable[FittingParams]):

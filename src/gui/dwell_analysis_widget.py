@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QPushButton, QDoubleSpinBox, QLabel
+from PyQt5.QtWidgets import QVBoxLayout, QWidget, QPushButton, QDoubleSpinBox, QLabel, QMessageBox
 
 MIN_VALUE = 1
 MAX_VALUE = 500
@@ -38,5 +38,12 @@ def show_dwell_analysis_widget(_dwell_analysis) -> QWidget:
 
 
 def _push_button_handler(dwell_analysis_func, min_event_length, max_event_length, widget):
-    dwell_analysis_func(min_event_length, max_event_length)
     widget.close()
+    if not dwell_analysis_func(min_event_length, max_event_length):
+        message_box = QMessageBox()
+        message_box.setText("The analysis did not yield any result")
+        message_box.setIcon(QMessageBox.Warning)
+        message_box.setWindowTitle("Unsuccessful analysis")
+        message_box.setInformativeText("With these parameters no event has been found, try to change some values and rerun the analysis")
+        message_box.exec()
+
