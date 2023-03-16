@@ -1,11 +1,9 @@
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
 from src.metadata.data_classes.data_group import DataGroup
-from src.analysis.fitting.FittingParams import FittingParams
 from typing import Tuple, List
 
-class AdvancedRoiWidget(QWidget):
 
+class AdvancedRoiWidget(QWidget):
     def __init__(self, dg: DataGroup):
         super(AdvancedRoiWidget, self).__init__()
         self.dg = dg
@@ -66,7 +64,6 @@ class AdvancedRoiWidget(QWidget):
         self.x_max_spin_box.setValue(x_max)
         second_col.addWidget(self.x_max_label)
         second_col.addWidget(self.x_max_spin_box)
-
 
         # Outer div
         self.create_roi_button = QPushButton("Create ROI")

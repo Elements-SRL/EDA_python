@@ -18,6 +18,7 @@ from src.metadata.meta_data import MetaData
 from src.analysis.spectral_analysis import spectral_analysis as sa
 from src.analysis.dwell import dwell
 
+
 def _create_fit_basic_data(x: ndarray, bd: BasicData, func, measuring_unit_y) -> Tuple[BasicData, FittingParams]:
     y, popt = func(x, bd.y, (bd.measuring_unit, measuring_unit_y))
     new_bd = BasicData(ch=bd.ch, y=y, sweep_number=bd.sweep_number, measuring_unit=bd.measuring_unit,
@@ -107,10 +108,10 @@ class Logics:
 
     def _create_spectral_analysis_basic_data(self, d: BasicData) -> BasicData:
         fs = self.metadata.selected_data_group.sampling_rate
-        x, Pxx = sa.spectral_analysis(x=d.y, fs=fs)
+        x, pxx = sa.spectral_analysis(x=d.y, fs=fs)
         m_unit = '[' + d.measuring_unit + '²/Hz]'
         name = d.name + " PSD"
-        return BasicData(ch=d.ch, y=Pxx, sweep_number=d.sweep_number, measuring_unit=m_unit, file_path=d.filepath,
+        return BasicData(ch=d.ch, y=pxx, sweep_number=d.sweep_number, measuring_unit=m_unit, file_path=d.filepath,
                          name=name, axis=d.axis)
 
     def _create_spectral_analysis_data_group(self, odg: DataGroup, bd: OrderedSet[BasicData]) -> DataGroup:
@@ -192,9 +193,15 @@ class Logics:
         self.metadata.selected_data_group = dg
         return fitting_params
 
+    # TODO IDEA, METTERE DEI CONTROLLI AGGIUNTIVI SULLA PARTE DI VIEW/MENU? SE IL DATA GROUP E' DI EVENTI POSSO FARCI
+    #  LO SCATTER PLOT E L'ISTOGRAMMA. FORSE BISOGNA AGGIUNGERE QUALCHE UTILITY PER CICLARE SUGLI EVENTI/SUI BASIC DATA
     def dwell_analysis(self, min_event_length, max_event_length) -> bool:
         dg = data_group.make_copy(self.metadata.selected_data_group, self.metadata.get_and_increment_id())
-        dg.basic_data = OrderedSet(dwell.detect_events(dg, min_event_length, max_event_length))
+        detected_events = dwell.detect_events(dg, min_event_length, max_event_length)
+        if len(detected_events) == 0:
+            return False
+        dg.basic_data = OrderedSet(detected_events)
+        dg.type = "dwell_analysis"
         if len(dg.basic_data) > 0:
             self.metadata.selected_data_group.data_groups.add(dg)
             self.metadata.selected_data_group = dg

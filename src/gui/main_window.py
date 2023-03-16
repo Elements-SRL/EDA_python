@@ -17,7 +17,7 @@ from src.metadata.data_classes.data_group import DataGroup
 import src.gui.dialogs as dialogs
 from src.gui.fitting_params_widget import FittingParamsWidget
 from src.gui.advanced_roi import AdvancedRoiWidget
-from src.gui.dwell_analysis_widget import show_dwell_analysis_widget
+from src.gui.dwell_analysis_widget import DwellAnalysisWidget
 
 class UiMainWindow(object):
     def __init__(self):
@@ -39,7 +39,7 @@ class UiMainWindow(object):
         self.tree_view: QTreeView | None = None
         self.outer_div: QHBoxLayout | None = None
         self.filter_widget: FiltersWidget | None = None
-        self.dwell_analysis_widget: QWidget | None = None
+        self.dwell_analysis_widget: DwellAnalysisWidget | None = None
         self.action_open_filters = None
         self.menu_analyze = None
         self.action_open_visible_channels = None
@@ -546,7 +546,16 @@ class UiMainWindow(object):
     def _dwell_analysis(self):
         if self._manage_empty_metadata():
             return
-        self.dwell_analysis_widget = show_dwell_analysis_widget(self.logics.dwell_analysis)
+        self.dwell_analysis_widget = DwellAnalysisWidget()
+        self.dwell_analysis_widget.get_push_button().pressed.connect(lambda: self._make_dwell_analysis())
+
+    def _make_dwell_analysis(self):
+        min_len, max_len = self.dwell_analysis_widget.get_values()
+        if not self.logics.dwell_analysis(min_len, max_len):
+            dialogs.show_warning("Unsuccessful analysis", "The analysis did not yield any result",
+                                 "With these parameters no event has been found, try to change some values and rerun "
+                                 "the analysis")
+        self.dwell_analysis_widget.close()
         self._update_plot()
         self._update_tree_view()
 
