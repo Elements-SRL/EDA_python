@@ -55,14 +55,14 @@ def _detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, 
         dtype="float64")
     s = np.sqrt(pluto)
     # TODO this 3 could be taken from input
-    th = m + 0.5
+    th = m + 0.3
 
     status = NO_EVENT
     count = 0
     events = []
     begin_of_event = 0
     end_of_event = 0
-    print("analyzing")
+    # print("analyzing")
     for i in range(len(center)):
         if status == NO_EVENT:
             if smoothed[i] > th[i]:
@@ -87,7 +87,7 @@ def _detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, 
             if smoothed[i] < m[i] and end_of_event > begin_of_event and count > min_event_length:
                 events.append([begin_of_event, end_of_event])
                 status = NO_EVENT
-    print("done, found events are: ", len(events))
+    # print("done, found events are: ", len(events))
     return [_create_basic_data_from_events(raw, basic_data, e, mov_avg_length_mono) for e in events]
 
 

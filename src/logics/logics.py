@@ -198,12 +198,16 @@ class Logics:
     def dwell_analysis(self, min_event_length, max_event_length) -> bool:
         dg = data_group.make_copy(self.metadata.selected_data_group, self.metadata.get_and_increment_id())
         detected_events = dwell.detect_events(dg, min_event_length, max_event_length)
+        # print(len(self.metadata.selected_data_group.data_groups))
         if len(detected_events) == 0:
             return False
+        # TODO name is a ID?????
+        dg.name = str(dg.id) + " dwell"
         dg.basic_data = OrderedSet(detected_events)
         dg.type = "dwell_analysis"
         if len(dg.basic_data) > 0:
             self.metadata.selected_data_group.data_groups.add(dg)
+            # print(len(self.metadata.selected_data_group.data_groups))
             self.metadata.selected_data_group = dg
             return True
         return False
