@@ -99,14 +99,14 @@ def _detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, 
             if smoothed[i] > th[i]:
                 end_of_event = i
             if smoothed[i] < m[i] and end_of_event > begin_of_event and count > min_event_length:
-                events.append([begin_of_event, end_of_event])
+                events.append((begin_of_event, end_of_event))
                 status = NO_EVENT
     # print("done, found events are: ", len(events))
     return [_create_list_of_events(raw, e, mov_avg_length_mono) for e in events], []
     # return [_create_basic_data_from_events(raw, basic_data, e, mov_avg_length_mono) for e in events]
 
 
-def _create_list_of_events(raw: ndarray, event: List[int], mov_avg_length_mono: int) -> ndarray:
+def _create_list_of_events(raw: ndarray, event: Tuple[int, int], mov_avg_length_mono: int) -> ndarray:
     start, end = event
     start += mov_avg_length_mono
     end += mov_avg_length_mono
