@@ -208,9 +208,10 @@ class Logics:
             return False
         dg_amplitudes = self._create_amplitudes_data_group(detected_events)
 
-        # dg_duration = self._create_durations_data_group(detected_events)
+        dg_durations = self._create_durations_data_group(detected_events)
 
         self.metadata.selected_data_group.data_groups.add(dg_amplitudes)
+        self.metadata.selected_data_group.data_groups.add(dg_durations)
         self.metadata.selected_data_group = dg_amplitudes
         return True
 
@@ -224,21 +225,28 @@ class Logics:
         #     return True
         # return False
 
-    # def _create_durations_data_group(self, raws: List[ndarray]) -> DataGroup:
-    #     durations = dwell.extract_durations(raws)
-        
+    def _create_durations_data_group(self, raws: List[ndarray]) -> DataGroup:
+        durations = dwell.extract_durations(raws)
+        bd = BasicData(ch=-1, name="durations", y=durations, measuring_unit="none", file_path="none", axis=0)
+        bds = OrderedSet([bd])
+        dg_id = self.metadata.get_and_increment_id()
+        return DataGroup(x=np.arange(len(durations)), sampling_rate=-1, channel_count=1, sweep_count=-1,
+                         measuring_unit="s", sweep_label_x="count", basic_data=bds,
+                         sweep_label_y=self.metadata.selected_data_group.sweep_label_y, sweep_label_c="none",
+                         name=str(dg_id)+" durations", type=constants.DG_TYPE_AMPLITUDE, id=dg_id)
+
     def _create_amplitudes_data_group(self, raws: List[ndarray]) -> DataGroup:
         # dg = data_group.make_copy(self.metadata.selected_data_group, self.metadata.get_and_increment_id())
         amplitudes = dwell.extract_amplitudes(raws)
-
         # TODO cambiare measuring unit, ch, name
         bd = BasicData(ch=-1, name="amplitudes", y=amplitudes, measuring_unit="none", file_path="none", axis=0)
         bds = OrderedSet([bd])
+        dg_id = self.metadata.get_and_increment_id()
         # TODO questo mi fa un po' schifo
         return DataGroup(x=np.arange(len(amplitudes)), sampling_rate=-1, channel_count=1, sweep_count=-1,
                          measuring_unit="s", sweep_label_x="count", basic_data=bds,
                          sweep_label_y=self.metadata.selected_data_group.sweep_label_y, sweep_label_c="none",
-                         name="amplitudes", type=constants.DG_TYPE_AMPLITUDE, id=self.metadata.get_and_increment_id())
+                         name=str(dg_id)+" amplitudes", type=constants.DG_TYPE_AMPLITUDE, id=dg_id)
 
     @staticmethod
     def export_fitting_params_to_csv(path_to_file: str, equation: str, fitting_params: Iterable[FittingParams]):

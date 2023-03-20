@@ -31,10 +31,10 @@ def extract_amplitudes(raws: List[ndarray]) -> ndarray | None:
     return np.array([abs(raw.max() - raw.min()) for raw in raws])
 
 
-def extract_durations(raws: List[ndarray]) -> List[float] | None:
+def extract_durations(raws: List[ndarray]) -> ndarray | None:
     if len(raws) == 0:
         return None
-    return [len(raw) for raw in raws]
+    return np.array([len(raw) for raw in raws])
 
 
 def _detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, min_event_length, max_event_length) -> \
