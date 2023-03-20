@@ -199,23 +199,25 @@ class Logics:
 
     # TODO IDEA, METTERE DEI CONTROLLI AGGIUNTIVI SULLA PARTE DI VIEW/MENU? SE IL DATA GROUP E' DI EVENTI POSSO FARCI
     #  LO SCATTER PLOT E L'ISTOGRAMMA. FORSE BISOGNA AGGIUNGERE QUALCHE UTILITY PER CICLARE SUGLI EVENTI/SUI BASIC DATA
-    def dwell_analysis(self, min_event_length, max_event_length) -> bool:
+    def dwell_analysis(self, min_event_length, max_event_length) -> List[Tuple[float, int, int, int]]:
         detected_events, begins_and_ends = dwell.detect_events(self.metadata.selected_data_group, min_event_length,
                                                                max_event_length)
         if len(detected_events) == 0:
-            return False
+            return []
         dg = data_group.empty_dg_from(self.metadata.selected_data_group, self.metadata.get_and_increment_id())
         dg.type = constants.DG_TYPE_DWELL_ANALYSIS
         dg.name = str(dg.id) + " dwell analysis"
         dg.x = np.arange(len(detected_events))
-        bd_durations = BasicData(ch=-1, name="durations", y=dwell.extract_durations(detected_events),
-                                 measuring_unit="none", file_path="none", axis=0)
-        bd_amplitudes = BasicData(ch=-1, name="amplitudes", y=dwell.extract_amplitudes(detected_events),
-                                  measuring_unit="none", file_path="none", axis=1)
+        durations = dwell.extract_durations(detected_events)
+        amplitudes = dwell.extract_amplitudes(detected_events)
+        # TODO probably this one should be changed in future
+        bd_durations = BasicData(ch=-1, name="durations", y=durations, measuring_unit="none", file_path="none", axis=0)
+        bd_amplitudes = BasicData(ch=-1, name="amplitudes", y=amplitudes, measuring_unit="none", file_path="none",
+                                  axis=1)
         dg.basic_data = OrderedSet([bd_amplitudes, bd_durations])
         self.metadata.selected_data_group.data_groups.add(dg)
         self.metadata.selected_data_group = dg
-        return True
+        return list(zip(amplitudes, durations, begins_and_ends))
 
         # # TODO name is a ID?????
         # dg.name = str(dg.id) + " dwell"

@@ -551,10 +551,15 @@ class UiMainWindow(object):
 
     def _make_dwell_analysis(self):
         min_len, max_len = self.dwell_analysis_widget.get_values()
-        if not self.logics.dwell_analysis(min_len, max_len):
+        results = self.logics.dwell_analysis(min_len, max_len)
+        # amplitudes, durations, begins_ends = zip(*results)
+        # we can test either the length of amplitudes, durations or begins_ends
+        if len(list(results)) == 0:
             dialogs.show_warning("Unsuccessful analysis", "The analysis did not yield any result",
                                  "With these parameters no event has been found, try to change some values and rerun "
                                  "the analysis")
+
+
         self.dwell_analysis_widget.close()
         self._update_plot()
         self._update_tree_view()
