@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QPushButton, QDoubleSpinBox, QLabel, QMessageBox
+from PyQt5.QtWidgets import QVBoxLayout, QWidget, QPushButton, QDoubleSpinBox, QLabel, QRadioButton
 
 MIN_VALUE = 1
 MAX_VALUE = 1000
@@ -29,7 +29,14 @@ class DwellAnalysisWidget(QWidget):
 
         views_layout.addWidget(self.max_event_length_spin_box)
 
+        views_layout.addWidget(QLabel("Set threshold:"))
+        self.absolute_value_radio_button = QRadioButton("Absolute")
+        self.std_dev_radio_button = QRadioButton("Standard dev based")
+        self.absolute_value_radio_button.setChecked(True)
+        views_layout.addWidget(self.absolute_value_radio_button)
+        views_layout.addWidget(self.std_dev_radio_button)
         self.extract_event_push_button = QPushButton("Extract events")
+        # TODO add threshold input
         views_layout.addWidget(self.extract_event_push_button)
         self.show()
 
