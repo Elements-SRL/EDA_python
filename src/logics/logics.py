@@ -217,7 +217,8 @@ class Logics:
         dg.basic_data = OrderedSet([bd_amplitudes, bd_durations])
         self.metadata.selected_data_group.data_groups.add(dg)
         self.metadata.selected_data_group = dg
-        return list(zip(amplitudes, durations, begins_and_ends))
+        begins, ends = zip(*begins_and_ends)
+        return list(zip(amplitudes, durations, begins, ends))
 
         # # TODO name is a ID?????
         # dg.name = str(dg.id) + " dwell"

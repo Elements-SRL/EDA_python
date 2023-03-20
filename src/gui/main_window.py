@@ -18,7 +18,7 @@ import src.gui.dialogs as dialogs
 from src.gui.fitting_params_widget import FittingParamsWidget
 from src.gui.advanced_roi import AdvancedRoiWidget
 from src.gui.dwell_analysis_widget import DwellAnalysisWidget
-
+from src.gui.event_extraction_widget import EventExtractionWidget
 class UiMainWindow(object):
     def __init__(self):
         self.action_dwell_analysis: QAction | None = None
@@ -554,13 +554,12 @@ class UiMainWindow(object):
         results = self.logics.dwell_analysis(min_len, max_len)
         # amplitudes, durations, begins_ends = zip(*results)
         # we can test either the length of amplitudes, durations or begins_ends
-        if len(list(results)) == 0:
+        if len(results) == 0:
             dialogs.show_warning("Unsuccessful analysis", "The analysis did not yield any result",
                                  "With these parameters no event has been found, try to change some values and rerun "
                                  "the analysis")
-
-
         self.dwell_analysis_widget.close()
+        self.event_extraction_widget = EventExtractionWidget(results)
         self._update_plot()
         self._update_tree_view()
 
