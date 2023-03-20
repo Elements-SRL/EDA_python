@@ -1,5 +1,5 @@
 import math
-from typing import List
+from typing import List, Tuple
 
 import numpy as np
 from numpy import ndarray
@@ -7,7 +7,6 @@ from scipy import signal
 from src.metadata.data_classes.basic_data import BasicData
 from src.metadata.data_classes.data_group import DataGroup
 import itertools
-from src.constants import constants
 
 NO_EVENT = 0
 COUNTING = 1
@@ -19,10 +18,12 @@ MOV_AVG_LENGTH_MONO_SCALE_FACTOR = 15
 
 # TODO Add checks on input
 # TODO min_event_length, max_event_length dovrebbero prendere delle durate
-def detect_events(data_group: DataGroup, min_event_length, max_event_length) -> List[ndarray]:
-    events = [_detect_events_from_basic_data(bd, data_group.sampling_rate, min_event_length, max_event_length)
-              for bd in data_group.basic_data]
-    return list(itertools.chain(*[e for e in events if len(e) != 0]))
+def detect_events(data_group: DataGroup, min_event_length, max_event_length) -> \
+        Tuple[List[ndarray], List[Tuple[int, int]]]:
+    events, starts_and_ends = [_detect_events_from_basic_data(bd, data_group.sampling_rate, min_event_length,
+                                                              max_event_length) for bd in data_group.basic_data]
+    return list(itertools.chain(*[e for e in events if len(e) != 0])), \
+        list(itertools.chain(*[s_e for s_e in starts_and_ends if len(s_e) != 0]))
 
 
 def extract_amplitudes(raws: List[ndarray]) -> ndarray | None:
@@ -38,7 +39,7 @@ def extract_durations(raws: List[ndarray]) -> ndarray | None:
 
 
 def _detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, min_event_length, max_event_length) -> \
-        List[ndarray]:
+        Tuple[List[ndarray], List[Tuple[int, int]]]:
     mov_avg_length_mono = max_event_length * MOV_AVG_LENGTH_MONO_SCALE_FACTOR
     mov_avg_length = mov_avg_length_mono * 2 + 1
     max_event_length_mono = math.floor(max_event_length / 2)
@@ -48,7 +49,7 @@ def _detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, 
     if mov_avg_length > len(raw):
         # todo Handle this one better
         print("mov_avg troppo grossa")
-        return []
+        return [], []
 
     smoothed = signal.filtfilt(b, a, raw)
     smoothed = smoothed[round(mov_avg_length_mono + 1): round(len(smoothed) - mov_avg_length_mono)]
@@ -57,7 +58,7 @@ def _detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, 
 
     center = np.array(range(round(mov_avg_length_mono + 1), round(len(raw) - mov_avg_length_mono)), dtype=int)
     if len(center) == 0:
-        return []
+        return [], []
     first_part = np.array(center + mov_avg_length_mono, dtype=int)
     second_part = np.array(center + max_event_length_mono, dtype=int)
     third_part = np.array(center - 1 - max_event_length_mono, dtype=int)
@@ -101,7 +102,7 @@ def _detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, 
                 events.append([begin_of_event, end_of_event])
                 status = NO_EVENT
     # print("done, found events are: ", len(events))
-    return [_create_list_of_events(raw, e, mov_avg_length_mono) for e in events]
+    return [_create_list_of_events(raw, e, mov_avg_length_mono) for e in events], []
     # return [_create_basic_data_from_events(raw, basic_data, e, mov_avg_length_mono) for e in events]
 
 

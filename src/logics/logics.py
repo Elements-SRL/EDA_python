@@ -201,7 +201,8 @@ class Logics:
     #  LO SCATTER PLOT E L'ISTOGRAMMA. FORSE BISOGNA AGGIUNGERE QUALCHE UTILITY PER CICLARE SUGLI EVENTI/SUI BASIC DATA
     def dwell_analysis(self, min_event_length, max_event_length) -> bool:
         # detected_events = dwell.detect_events(dg, min_event_length, max_event_length)
-        detected_events = dwell.detect_events(self.metadata.selected_data_group, min_event_length, max_event_length)
+        detected_events, begins_and_ends = dwell.detect_events(self.metadata.selected_data_group, min_event_length,
+                                                               max_event_length)
         if len(detected_events) == 0:
             return False
         dg = data_group.empty_dg_from(self.metadata.selected_data_group, self.metadata.get_and_increment_id())
