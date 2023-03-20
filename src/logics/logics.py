@@ -17,6 +17,7 @@ from src.metadata.data_classes.basic_data import BasicData
 from src.metadata.meta_data import MetaData
 from src.analysis.spectral_analysis import spectral_analysis as sa
 from src.analysis.dwell import dwell
+from src.constants import constants
 
 
 def _create_fit_basic_data(x: ndarray, bd: BasicData, func, measuring_unit_y) -> Tuple[BasicData, FittingParams]:
@@ -126,10 +127,12 @@ class Logics:
                          sweep_label_c=c_label, basic_data=bd, id=new_id,
                          measuring_unit='Hz', name=name, sampling_rate=odg.sampling_rate, type="psd")
 
-    def create_roi(self, x_min: float, x_max: float, sweeps_to_keep: List[int] = None, channels_to_keep: List[int] = None):
+    def create_roi(self, x_min: float, x_max: float, sweeps_to_keep: List[int] = None,
+                   channels_to_keep: List[int] = None):
         idx_of_max = len(self.metadata.selected_data_group.x) - 1
         x_min = x_min if x_min > self.metadata.selected_data_group.x[0] else self.metadata.selected_data_group.x[0]
-        x_max = x_max if x_max < self.metadata.selected_data_group.x[idx_of_max] else self.metadata.selected_data_group.x[idx_of_max]
+        x_max = x_max if x_max < self.metadata.selected_data_group.x[idx_of_max] else \
+        self.metadata.selected_data_group.x[idx_of_max]
         dg = data_group.make_copy(self.metadata.selected_data_group, self.metadata.get_and_increment_id())
         dg.name = str(dg.id) + " " + self.metadata.selected_data_group.name.split(" ")[1][:4]
         idx_of_min, idx_of_max = (np.abs(dg.x - x_min)).argmin(), (np.abs(dg.x - x_max)).argmin()
@@ -139,7 +142,8 @@ class Logics:
         # keep all the channels by default
         if channels_to_keep is None:
             channels_to_keep = [bd.ch for bd in dg.basic_data]
-        filtered_bd = list(filter(lambda bd: bd.ch in channels_to_keep and bd.sweep_number in sweeps_to_keep, dg.basic_data))
+        filtered_bd = list(
+            filter(lambda bd: bd.ch in channels_to_keep and bd.sweep_number in sweeps_to_keep, dg.basic_data))
         new_bd = [BasicData(ch=bd.ch, y=bd.y[idx_of_min: idx_of_max], sweep_number=bd.sweep_number,
                             measuring_unit=bd.measuring_unit, file_path=bd.filepath, name=bd.name, axis=bd.axis)
                   for bd in filtered_bd]
@@ -181,7 +185,7 @@ class Logics:
                             name=bd.name) for bd in dg.basic_data]
         oset = OrderedSet(new_bd)
         bd_and_fitting_params = [_create_fit_basic_data(dg.x, bd, func, dg.measuring_unit) for bd in dg.basic_data]
-        dg.type = "fitting"
+        dg.type = constants.DG_TYPE_FTTING
         dg.name = str(dg.id) + " " + self.metadata.selected_data_group.name.split(" ")[1][:4] + " fit"
         fitting_params = []
         for bd_fp in bd_and_fitting_params:
@@ -196,21 +200,45 @@ class Logics:
     # TODO IDEA, METTERE DEI CONTROLLI AGGIUNTIVI SULLA PARTE DI VIEW/MENU? SE IL DATA GROUP E' DI EVENTI POSSO FARCI
     #  LO SCATTER PLOT E L'ISTOGRAMMA. FORSE BISOGNA AGGIUNGERE QUALCHE UTILITY PER CICLARE SUGLI EVENTI/SUI BASIC DATA
     def dwell_analysis(self, min_event_length, max_event_length) -> bool:
-        dg = data_group.make_copy(self.metadata.selected_data_group, self.metadata.get_and_increment_id())
-        detected_events = dwell.detect_events(dg, min_event_length, max_event_length)
-        # print(len(self.metadata.selected_data_group.data_groups))
+        # dg = data_group.make_copy(self.metadata.selected_data_group, self.metadata.get_and_increment_id())
+        # detected_events = dwell.detect_events(dg, min_event_length, max_event_length)
+
+        detected_events = dwell.detect_events(self.metadata.selected_data_group, min_event_length, max_event_length)
         if len(detected_events) == 0:
             return False
-        # TODO name is a ID?????
-        dg.name = str(dg.id) + " dwell"
-        dg.basic_data = OrderedSet(detected_events)
-        dg.type = "dwell_analysis"
-        if len(dg.basic_data) > 0:
-            self.metadata.selected_data_group.data_groups.add(dg)
-            # print(len(self.metadata.selected_data_group.data_groups))
-            self.metadata.selected_data_group = dg
-            return True
-        return False
+        dg_amplitudes = self._create_amplitudes_data_group(detected_events)
+
+        # dg_duration = self._create_durations_data_group(detected_events)
+
+        self.metadata.selected_data_group.data_groups.add(dg_amplitudes)
+        self.metadata.selected_data_group = dg_amplitudes
+        return True
+
+        # # TODO name is a ID?????
+        # dg.name = str(dg.id) + " dwell"
+        # dg.basic_data = OrderedSet(detected_events)
+        # dg.type = constants.DG_TYPE_DWELL_ANALYSIS
+        # if len(dg.basic_data) > 0:
+        #     self.metadata.selected_data_group.data_groups.add(dg)
+        #     self.metadata.selected_data_group = dg
+        #     return True
+        # return False
+
+    # def _create_durations_data_group(self, raws: List[ndarray]) -> DataGroup:
+    #     durations = dwell.extract_durations(raws)
+        
+    def _create_amplitudes_data_group(self, raws: List[ndarray]) -> DataGroup:
+        # dg = data_group.make_copy(self.metadata.selected_data_group, self.metadata.get_and_increment_id())
+        amplitudes = dwell.extract_amplitudes(raws)
+
+        # TODO cambiare measuring unit, ch, name
+        bd = BasicData(ch=-1, name="amplitudes", y=amplitudes, measuring_unit="none", file_path="none", axis=0)
+        bds = OrderedSet([bd])
+        # TODO questo mi fa un po' schifo
+        return DataGroup(x=np.arange(len(amplitudes)), sampling_rate=-1, channel_count=1, sweep_count=-1,
+                         measuring_unit="s", sweep_label_x="count", basic_data=bds,
+                         sweep_label_y=self.metadata.selected_data_group.sweep_label_y, sweep_label_c="none",
+                         name="amplitudes", type=constants.DG_TYPE_AMPLITUDE, id=self.metadata.get_and_increment_id())
 
     @staticmethod
     def export_fitting_params_to_csv(path_to_file: str, equation: str, fitting_params: Iterable[FittingParams]):
