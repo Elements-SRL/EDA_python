@@ -1,6 +1,7 @@
 from typing import Tuple, List
 
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QLabel, QLineEdit, QPushButton, QScrollArea
+from src.constants.strings import *
 
 
 class EventExtractionWidget(QWidget):
@@ -16,11 +17,11 @@ class EventExtractionWidget(QWidget):
         begins_layout = QVBoxLayout()
         ends_layout = QVBoxLayout()
 
-        amplitudes_layout.addWidget(QLabel("Amplitudes"))
-        durations_layout.addWidget(QLabel("Durations"))
-        begins_layout.addWidget(QLabel("Start of event"))
-        ends_layout.addWidget(QLabel("End of event"))
-        self.setWindowTitle("Extracted events")
+        amplitudes_layout.addWidget(QLabel(AMPLITUDE_LABEL))
+        durations_layout.addWidget(QLabel(DURATION_LABEL))
+        begins_layout.addWidget(QLabel(START_OF_EVENT_LABEL))
+        ends_layout.addWidget(QLabel(END_OF_EVENT_LABEL))
+        self.setWindowTitle(EXTRACTED_EVENTS_LABEL)
         for a, d, b, e in events:
             amplitudes_layout.addWidget(_create_disabled_line_edit(a))
             durations_layout.addWidget(_create_disabled_line_edit(d))

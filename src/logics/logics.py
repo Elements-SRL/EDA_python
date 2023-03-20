@@ -237,3 +237,11 @@ class Logics:
         if not path_to_file.endswith(".csv"):
             path_to_file += ".csv"
         exporter.export_fitting_params_to_csv(path_to_file, equation, fitting_params)
+
+    @staticmethod
+    def export_events_to_csv(path_to_file: str, events: List[Tuple[float, int, int, int]]):
+        if path_to_file is None or path_to_file == "":
+            return
+        if not path_to_file.endswith(".csv"):
+            path_to_file += ".csv"
+        exporter.export_events_to_csv(path_to_file, events)

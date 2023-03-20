@@ -25,6 +25,8 @@ class ExplorerTest(unittest.TestCase):
     path_to_basic_edh_csv = "res/Data/test_export_basic_edh.csv"
     path_to_csv_of_hist = "res/Data/test_hist.csv"
 
+    path_to_extracted_events_csv = "res/Data/test_export_events.csv"
+
     fitting_params_csv = "res/Data/test_export_fitting_params.csv"
 
     episodic_abf_bugged = "res/EpisodicData/22919002.abf"
@@ -136,6 +138,9 @@ class ExplorerTest(unittest.TestCase):
         test_logics.export(self.episodic_abf_bugged_csv)
         self.assertTrue(os.path.exists(self.episodic_abf_bugged_csv))
 
+    def test_export_events(self):
+        list_of_stuff = [(1.2, 3, 4, 5), (1.2, 3, 4, 5)]
+        exporter.export_events_to_csv(self.path_to_extracted_events_csv, list_of_stuff)
 
     def tearDown(self):
         if os.path.exists(self.path_to_csv_of_episodic_data):
@@ -152,6 +157,8 @@ class ExplorerTest(unittest.TestCase):
             os.remove(self.fitting_params_csv)
         if os.path.exists(self.episodic_abf_bugged_csv):
             os.remove(self.episodic_abf_bugged_csv)
+        if os.path.exists(self.path_to_extracted_events_csv):
+            os.remove(self.path_to_extracted_events_csv)
 
 
 if __name__ == "__main__":

@@ -558,10 +558,20 @@ class UiMainWindow(object):
             dialogs.show_warning("Unsuccessful analysis", "The analysis did not yield any result",
                                  "With these parameters no event has been found, try to change some values and rerun "
                                  "the analysis")
+            return
         self.dwell_analysis_widget.close()
         self.event_extraction_widget = EventExtractionWidget(results)
+        self.event_extraction_widget.get_push_button().pressed.connect(lambda: self._export_events_to_csv())
         self._update_plot()
         self._update_tree_view()
+
+    def _export_events_to_csv(self):
+        path_to_file, _ = QFileDialog.getSaveFileName(
+            None, "Save as", filter="Csv files(*.csv)"
+        )
+        self.logics.export_events_to_csv(path_to_file, self.event_extraction_widget.get_events())
+        # TODO prompt a dialog?
+        self.event_extraction_widget.close()
 
 
 def _set_padding(x_range: Tuple[float, float], padding: float = 0.2):
