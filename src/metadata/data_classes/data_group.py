@@ -33,3 +33,10 @@ def make_copy(dg: DataGroup, new_id: int) -> DataGroup:
     copied = copy.deepcopy(dg)
     copied.id = new_id
     return copied
+
+
+def empty_dg_from(dg: DataGroup, new_id: int) -> DataGroup:
+    copied = copy.deepcopy(dg)
+    copied.id = new_id
+    copied.basic_data = OrderedSet()
+    return copied
