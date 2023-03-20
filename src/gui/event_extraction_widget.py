@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget, QLabel, QLineEdit
 class EventExtractionWidget(QWidget):
     def __init__(self, events: List[Tuple[float, int, int, int]]):
         super(EventExtractionWidget, self).__init__()
+        self.events = events
         outer_layout = QVBoxLayout()
         scrollable_widget = QWidget()
         scroll_area = QScrollArea()
@@ -33,10 +34,16 @@ class EventExtractionWidget(QWidget):
         scroll_area.setWidget(scrollable_widget)
         outer_layout.addWidget(scroll_area)
 
-        export_to_csv_button = QPushButton("Export to csv")
-        outer_layout.addWidget(export_to_csv_button)
+        self.export_to_csv_button = QPushButton("Export to csv")
+        outer_layout.addWidget(self.export_to_csv_button)
         self.setLayout(outer_layout)
         self.show()
+
+    def get_push_button(self) -> QPushButton:
+        return self.export_to_csv_button
+
+    def get_events(self) -> List[Tuple[float, int, int, int]]:
+        return self.events
 
 
 def _create_disabled_line_edit(p) -> QLineEdit:
