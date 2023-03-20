@@ -22,9 +22,8 @@ def detect_events(data_group: DataGroup, min_event_length, max_event_length) -> 
         Tuple[List[ndarray], List[Tuple[int, int]]]:
     tuples = [_detect_events_from_basic_data(bd, data_group.sampling_rate, min_event_length,
                                              max_event_length) for bd in data_group.basic_data]
-    events = list(itertools.chain(*[t[0] for t in tuples if len(t[0]) != 0]))
-    starts_and_ends = list(itertools.chain(*[t[1] for t in tuples if len(t[1]) != 0]))
-    return events, starts_and_ends
+    tuples = list(itertools.chain(*[t for t in tuples if len(t) != 0]))
+    return [t[0] for t in tuples], [t[1] for t in tuples]
 
 
 def extract_amplitudes(raws: List[ndarray]) -> ndarray | None:
@@ -40,7 +39,7 @@ def extract_durations(raws: List[ndarray]) -> ndarray | None:
 
 
 def _detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, min_event_length, max_event_length) -> \
-        Tuple[List[ndarray], List[Tuple[int, int]]]:
+        List[Tuple[ndarray, Tuple[int, int]]]:
     mov_avg_length_mono = max_event_length * MOV_AVG_LENGTH_MONO_SCALE_FACTOR
     mov_avg_length = mov_avg_length_mono * 2 + 1
     max_event_length_mono = math.floor(max_event_length / 2)
@@ -50,7 +49,7 @@ def _detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, 
     if mov_avg_length > len(raw):
         # todo Handle this one better
         print("mov_avg troppo grossa")
-        return [], []
+        return []
 
     smoothed = signal.filtfilt(b, a, raw)
     smoothed = smoothed[round(mov_avg_length_mono + 1): round(len(smoothed) - mov_avg_length_mono)]
@@ -59,7 +58,7 @@ def _detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, 
 
     center = np.array(range(round(mov_avg_length_mono + 1), round(len(raw) - mov_avg_length_mono)), dtype=int)
     if len(center) == 0:
-        return [], []
+        return []
     first_part = np.array(center + mov_avg_length_mono, dtype=int)
     second_part = np.array(center + max_event_length_mono, dtype=int)
     third_part = np.array(center - 1 - max_event_length_mono, dtype=int)
@@ -103,29 +102,20 @@ def _detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, 
                 events.append((begin_of_event, end_of_event))
                 status = NO_EVENT
     # print("done, found events are: ", len(events))
-    return [_create_list_of_events(raw, e, mov_avg_length_mono) for e in events], \
-        [_create_list_of_starts_and_ends(raw, e, mov_avg_length_mono) for e in events]
+    return [_create_list_of_events(raw, e, mov_avg_length_mono) for e in events]
+
     # return [_create_basic_data_from_events(raw, basic_data, e, mov_avg_length_mono) for e in events]
 
 
-def _create_list_of_events(raw: ndarray, event: Tuple[int, int], mov_avg_length_mono: int) -> ndarray:
+def _create_list_of_events(raw: ndarray, event: Tuple[int, int], mov_avg_length_mono: int) -> \
+        Tuple[ndarray, Tuple[int, int]]:
     start, end = event
     start += mov_avg_length_mono
     end += mov_avg_length_mono
     ev_range = (end - start) * 2
     start = start - ev_range if start - ev_range > 0 else 0
     end = end + ev_range if end + ev_range < len(raw) - 1 else len(raw) - 1
-    return np.array(raw[int(start):int(end)])
-
-
-def _create_list_of_starts_and_ends(raw: ndarray, event: Tuple[int, int], mov_avg_length_mono: int) -> Tuple[int, int]:
-    start, end = event
-    start += mov_avg_length_mono
-    end += mov_avg_length_mono
-    ev_range = (end - start) * 2
-    start = start - ev_range if start - ev_range > 0 else 0
-    end = end + ev_range if end + ev_range < len(raw) - 1 else len(raw) - 1
-    return int(start), int(end)
+    return np.array(raw[int(start):int(end)]), (int(start), int(end))
 
 
 def _create_basic_data_from_events(raw: ndarray, basic_data: BasicData, event: List[int],
