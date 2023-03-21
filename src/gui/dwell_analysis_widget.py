@@ -3,8 +3,8 @@ from typing import Tuple
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QPushButton, QDoubleSpinBox, QLabel, QRadioButton
 from src.analysis.dwell.dwell import ThresholdModality
 
-MIN_VALUE = 1
-MAX_VALUE = 1000
+MIN_VALUE = 0.00001
+MAX_VALUE = 1
 
 
 MIN_TH_VALUE = 0
@@ -18,19 +18,21 @@ class DwellAnalysisWidget(QWidget):
         self.setWindowTitle("Dwell Analysis")
         self.setLayout(views_layout)
 
-        views_layout.addWidget(QLabel("Minimum event duration"))
+        views_layout.addWidget(QLabel("Minimum event duration (s)"))
         # TODO set min and max values for qdoublespinbox
         self.min_event_duration_spin_box = QDoubleSpinBox()
         self.min_event_duration_spin_box.setMinimum(MIN_VALUE)
         self.min_event_duration_spin_box.setMaximum(MAX_VALUE)
-        self.min_event_duration_spin_box.setValue(10)
+        self.min_event_duration_spin_box.setDecimals(5)
+        self.min_event_duration_spin_box.setValue(0.001)
         views_layout.addWidget(self.min_event_duration_spin_box)
 
-        views_layout.addWidget(QLabel("Maximum event duration"))
+        views_layout.addWidget(QLabel("Maximum event duration (s)"))
         self.max_event_length_spin_box = QDoubleSpinBox()
         self.max_event_length_spin_box.setMinimum(MIN_VALUE)
         self.max_event_length_spin_box.setMaximum(MAX_VALUE)
-        self.max_event_length_spin_box.setValue(100)
+        self.max_event_length_spin_box.setDecimals(5)
+        self.max_event_length_spin_box.setValue(0.1)
 
         views_layout.addWidget(self.max_event_length_spin_box)
 

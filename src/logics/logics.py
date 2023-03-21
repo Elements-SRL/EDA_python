@@ -211,12 +211,12 @@ class Logics:
         dg.type = constants.DG_TYPE_DWELL_ANALYSIS
         dg.name = str(dg.id) + " dwell analysis"
         dg.x = np.arange(len(detected_events))
-        durations = dwell.extract_durations(detected_events)
+        durations = dwell.extract_durations(detected_events, dg.sampling_rate)
         amplitudes = dwell.extract_amplitudes(detected_events)
         # TODO probably this one should be changed in future
-        bd_durations = BasicData(ch=-1, name="durations", y=durations, measuring_unit="none", file_path="none", axis=0)
+        bd_durations = BasicData(ch=-1, name="durations", y=durations, measuring_unit="none", file_path="none", axis=1)
         bd_amplitudes = BasicData(ch=-1, name="amplitudes", y=amplitudes, measuring_unit="none", file_path="none",
-                                  axis=1)
+                                  axis=0)
         dg.basic_data = OrderedSet([bd_amplitudes, bd_durations])
         self.metadata.selected_data_group.data_groups.add(dg)
         self.metadata.selected_data_group = dg

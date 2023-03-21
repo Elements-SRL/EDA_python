@@ -35,15 +35,18 @@ def extract_amplitudes(raws: List[ndarray]) -> ndarray | None:
     return np.array([abs(raw.max() - raw.min()) for raw in raws])
 
 
-def extract_durations(raws: List[ndarray]) -> ndarray | None:
+def extract_durations(raws: List[ndarray], sr: float) -> ndarray | None:
     if len(raws) == 0:
         return None
-    return np.array([len(raw) for raw in raws])
+    return np.array([len(raw) / sr for raw in raws])
 
 
 def _detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, min_event_length, max_event_length,
                                    threshold: float, threshold_modality: ThresholdModality) -> \
         List[Tuple[ndarray, Tuple[int, int]]]:
+    # passing from time to samples
+    min_event_length = round(sampling_rate * min_event_length)
+    max_event_length = round(sampling_rate * max_event_length)
     mov_avg_length_mono = max_event_length * MOV_AVG_LENGTH_MONO_SCALE_FACTOR
     mov_avg_length = mov_avg_length_mono * 2 + 1
     max_event_length_mono = math.floor(max_event_length / 2)
