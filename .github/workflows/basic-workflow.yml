@@ -74,10 +74,7 @@ jobs:
           certificate: '${{ secrets.CERTIFICATE }}'
           cert-password: '${{ secrets.PASSWORD }}'
           cert-sha1: '${{ secrets.CERTHASH }}'
-          cert-description: 'foo'
           folder: 'dist'
-          recursive: true
-          timestamp-server: 'http://timestamp.digicert.com'
 
       # - name: create windows bundle
       #   if: matrix.os == 'windows-latest'
