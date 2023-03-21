@@ -19,7 +19,7 @@ class DwellAnalysisTest(unittest.TestCase):
         logics = Logics()
         logics.open(self.path_to_abf)
         dg = logics.metadata.selected_data_group
-        logics.dwell_analysis(10, 100)
+        logics.dwell_analysis(10, 100, 0.3, ThresholdModality.STD_DEV_BASED)
         # TODO is there a better way to test it?
         assert (len(dg.data_groups) == 1)
 
