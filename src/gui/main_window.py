@@ -550,8 +550,7 @@ class UiMainWindow(object):
         self.dwell_analysis_widget.get_push_button().pressed.connect(lambda: self._make_dwell_analysis())
 
     def _make_dwell_analysis(self):
-        min_len, max_len = self.dwell_analysis_widget.get_values()
-        results = self.logics.dwell_analysis(min_len, max_len)
+        results = self.logics.dwell_analysis(*self.dwell_analysis_widget.get_values())
         # amplitudes, durations, begins_ends = zip(*results)
         # we can test either the length of amplitudes, durations or begins_ends
         if len(results) == 0:

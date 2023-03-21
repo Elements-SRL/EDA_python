@@ -4,6 +4,8 @@ from typing import Iterable, Tuple, List
 import numpy as np
 from numpy import ndarray
 from ordered_set import OrderedSet
+
+from src.analysis.dwell.dwell import ThresholdModality
 from src.analysis.fitting import fitting
 from src.analysis.fitting.FittingParams import FittingParams
 from src.analysis.histogram import histogram
@@ -199,9 +201,10 @@ class Logics:
 
     # TODO IDEA, METTERE DEI CONTROLLI AGGIUNTIVI SULLA PARTE DI VIEW/MENU? SE IL DATA GROUP E' DI EVENTI POSSO FARCI
     #  LO SCATTER PLOT E L'ISTOGRAMMA. FORSE BISOGNA AGGIUNGERE QUALCHE UTILITY PER CICLARE SUGLI EVENTI/SUI BASIC DATA
-    def dwell_analysis(self, min_event_length, max_event_length) -> List[Tuple[float, int, int, int]]:
+    def dwell_analysis(self, min_event_length, max_event_length, threshold: float,
+                       threshold_modality: ThresholdModality) -> List[Tuple[float, int, int, int]]:
         detected_events, begins_and_ends = dwell.detect_events(self.metadata.selected_data_group, min_event_length,
-                                                               max_event_length)
+                                                               max_event_length, threshold, threshold_modality)
         if len(detected_events) == 0:
             return []
         dg = data_group.empty_dg_from(self.metadata.selected_data_group, self.metadata.get_and_increment_id())

@@ -1,5 +1,6 @@
 import unittest
 from src.logics.logics import Logics
+from src.analysis.dwell.dwell import ThresholdModality
 
 
 class DwellAnalysisTest(unittest.TestCase):
@@ -8,7 +9,7 @@ class DwellAnalysisTest(unittest.TestCase):
     def test_zipped_result(self):
         logics = Logics()
         logics.open(self.path_to_abf)
-        results = logics.dwell_analysis(10, 100)
+        results = logics.dwell_analysis(10, 100, 0.3, ThresholdModality.ABSOLUTE)
         a, d, b, e = zip(*results)
         assert (len(a) == len(d))
         assert (len(a) == len(b))
