@@ -66,6 +66,18 @@ jobs:
           set PYTHONPATH=%cd%
           py -m PyInstaller --onefile --windowed src\main.py --icon=res\icon\logo.ico -n eda_win.exe
         shell: cmd
+        
+      - name: sign windows app
+        if: matrix.os == 'windows-latest'
+        uses: GabrielAcostaEngler/signtool-code-sign@main
+        with:
+          certificate: '${{ secrets.CERTIFICATE }}'
+          cert-password: '${{ secrets.PASSWORD }}'
+          cert-sha1: '${{ secrets.CERTHASH }}'
+          cert-description: 'foo'
+          folder: 'dist/'
+          recursive: true
+          timestamp-server: 'http://timestamp.digicert.com'
 
       # - name: create windows bundle
       #   if: matrix.os == 'windows-latest'
@@ -83,6 +95,7 @@ jobs:
 #          export PYTHONPATH="$PYTHONPATH:$HOME/EDA_python"
 #          pyinstaller --onefile --windowed src/main.py -n eda_macos
 #
+      
       - name: create linux bundle
         if: matrix.os == 'ubuntu-latest'
         run: |
