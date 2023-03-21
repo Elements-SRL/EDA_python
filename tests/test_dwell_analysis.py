@@ -9,7 +9,7 @@ class DwellAnalysisTest(unittest.TestCase):
     def test_zipped_result(self):
         logics = Logics()
         logics.open(self.path_to_abf)
-        results = logics.dwell_analysis(10, 100, 0.3, ThresholdModality.ABSOLUTE)
+        results = logics.dwell_analysis(0.001, 0.100, 0.3, ThresholdModality.ABSOLUTE)
         a, d, b, e = zip(*results)
         assert (len(a) == len(d))
         assert (len(a) == len(b))
@@ -19,9 +19,9 @@ class DwellAnalysisTest(unittest.TestCase):
         logics = Logics()
         logics.open(self.path_to_abf)
         dg = logics.metadata.selected_data_group
-        logics.dwell_analysis(10, 100, 0.3, ThresholdModality.STD_DEV_BASED)
+        logics.dwell_analysis(0.001, 0.100, 1.3, ThresholdModality.STD_DEV_BASED)
         # TODO is there a better way to test it?
-        assert (len(dg.data_groups) == 1)
+        assert (len(dg.data_groups) == 0)
 
 
 if __name__ == '__main__':
