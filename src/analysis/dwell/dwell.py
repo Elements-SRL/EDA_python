@@ -9,7 +9,7 @@ from src.metadata.data_classes.data_group import DataGroup
 import itertools
 from enum import Enum
 
-ThresholdModality = Enum('ThresholdModality', ['ABSOLUTE', 'STD_DEV_BASED'])
+ThresholdModality = Enum('ThresholdModality', ['ABSOLUTE', 'RELATIVE', 'STD_DEV_BASED'])
 
 NO_EVENT = 0
 COUNTING = 1
@@ -73,8 +73,11 @@ def _detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, 
     m = np.array((cs[first_part] - cs[second_part] + cs[third_part] - cs[fourth_part]) / mov_avg_den, dtype="float64")
     s = np.sqrt(np.array((cs2[first_part] - cs2[second_part] + cs2[third_part] - cs2[fourth_part]) / mov_avg_den -
                          np.power(m, 2), dtype="float64"))
-    # TODO this 3 could be taken from input
-    th = m + threshold if threshold_modality == ThresholdModality.ABSOLUTE else m + threshold * s
+    th = np.repeat(threshold, len(m))
+    if threshold_modality == ThresholdModality.RELATIVE:
+        th = m + threshold
+    elif threshold_modality == ThresholdModality.STD_DEV_BASED:
+        th = m + threshold * s
 
     status = NO_EVENT
     count = 0

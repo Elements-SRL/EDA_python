@@ -69,12 +69,16 @@ jobs:
         
       - name: sign windows app
         if: matrix.os == 'windows-latest'
-        uses: GabrielAcostaEngler/signtool-code-sign@main
-        with:
-          certificate: '${{ secrets.CERTIFICATE }}'
-          cert-password: '${{ secrets.PASSWORD }}'
-          cert-sha1: '${{ secrets.CERTHASH }}'
-          folder: 'dist'
+        run: |
+          echo 
+          certutil -decode  data.txt cert.pfx
+          py -m pip install --upgrade pip
+          py -m pip install pyinstaller
+          py -m pip install -r requirements.txt
+          cd \EDA_python
+          set PYTHONPATH=%cd%
+          py -m PyInstaller --onefile --windowed src\main.py --icon=res\icon\logo.ico -n eda_win.exe
+        shell: cmd
 
       # - name: create windows bundle
       #   if: matrix.os == 'windows-latest'
