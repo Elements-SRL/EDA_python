@@ -140,7 +140,7 @@ class ExplorerTest(unittest.TestCase):
 
     def test_export_events(self):
         list_of_stuff = [(1.2, 3, 4, 5), (1.2, 3, 4, 5)]
-        exporter.export_events_to_csv(self.path_to_extracted_events_csv, list_of_stuff)
+        exporter.export_events_to_csv(self.path_to_extracted_events_csv, list_of_stuff, "u")
 
     def tearDown(self):
         if os.path.exists(self.path_to_csv_of_episodic_data):
