@@ -202,7 +202,7 @@ class Logics:
     # TODO IDEA, METTERE DEI CONTROLLI AGGIUNTIVI SULLA PARTE DI VIEW/MENU? SE IL DATA GROUP E' DI EVENTI POSSO FARCI
     #  LO SCATTER PLOT E L'ISTOGRAMMA. FORSE BISOGNA AGGIUNGERE QUALCHE UTILITY PER CICLARE SUGLI EVENTI/SUI BASIC DATA
     def dwell_analysis(self, min_event_length, max_event_length, threshold: float,
-                       threshold_modality: ThresholdModality) -> List[Tuple[float, int, int, int]]:
+                       threshold_modality: ThresholdModality) -> List[Tuple[float, float, int, int]]:
         detected_events, begins_and_ends = dwell.detect_events(self.metadata.selected_data_group, min_event_length,
                                                                max_event_length, threshold, threshold_modality)
         if len(detected_events) == 0:

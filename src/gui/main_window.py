@@ -577,7 +577,7 @@ class UiMainWindow(object):
                                  "the analysis")
             return
         self.dwell_analysis_widget.close()
-        self.event_extraction_widget = EventExtractionWidget(results)
+        self.event_extraction_widget = EventExtractionWidget(results, self.logics.metadata.selected_data_group.sweep_label_y)
         self.event_extraction_widget.get_push_button().pressed.connect(lambda: self._export_events_to_csv())
         self._update_plot()
         self._update_tree_view()
