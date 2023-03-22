@@ -243,10 +243,11 @@ class Logics:
             path_to_file += ".csv"
         exporter.export_fitting_params_to_csv(path_to_file, equation, fitting_params)
 
-    @staticmethod
-    def export_events_to_csv(path_to_file: str, events: List[Tuple[float, int, int, int]]):
+    def export_events_to_csv(self, path_to_file: str, events: List[Tuple[float, int, int, int]]):
         if path_to_file is None or path_to_file == "":
             return
         if not path_to_file.endswith(".csv"):
             path_to_file += ".csv"
-        exporter.export_events_to_csv(path_to_file, events)
+        # usually the measuring unit is the last word in the sweep label
+        measuring_unit = self.metadata.selected_data_group.sweep_label_y.split(" ").pop()
+        exporter.export_events_to_csv(path_to_file, events, measuring_unit)

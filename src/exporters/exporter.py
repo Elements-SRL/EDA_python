@@ -52,10 +52,10 @@ def export_fitting_params_to_csv(path_to_file: str, equation: str, fitting_param
             writer.writerows(r)
 
 
-def export_events_to_csv(path_to_file: str, events: List[Tuple[float, int, int, int]]):
+def export_events_to_csv(path_to_file: str, events: List[Tuple[float, int, int, int]], measuring_unit: str):
     with open(path_to_file, 'w', newline="") as f:
         # create the csv writer
         writer = csv.writer(f)
         # write a row to the csv file
-        writer.writerow([AMPLITUDE_LABEL, DURATION_LABEL, START_OF_EVENT_LABEL, END_OF_EVENT_LABEL])
+        writer.writerow([AMPLITUDE_LABEL + " " + measuring_unit, DURATION_LABEL, START_OF_EVENT_LABEL, END_OF_EVENT_LABEL])
         writer.writerows([[e[0], e[1], e[2], e[3]] for e in events])
