@@ -19,6 +19,9 @@ from src.gui.fitting_params_widget import FittingParamsWidget
 from src.gui.advanced_roi import AdvancedRoiWidget
 from src.gui.dwell_analysis_widget import DwellAnalysisWidget
 from src.gui.event_extraction_widget import EventExtractionWidget
+from src.constants import constants
+
+
 class UiMainWindow(object):
     def __init__(self):
         self.action_dwell_analysis: QAction | None = None
@@ -342,6 +345,24 @@ class UiMainWindow(object):
                 self.logics.metadata.selected_data_group.sweep_label_x
             )
             self.mpl.only_one_ax.legend(loc="upper right")
+        elif self.logics.metadata.selected_data_group.type.startswith(constants.DG_TYPE_DWELL_ANALYSIS):
+            w = x[1] - x[0]
+            for d in data:
+                if d.axis == 0:
+                    self.mpl.ax1.bar(x, d.y, label=d.name, width=w)
+                elif d.axis == 1:
+                    self.mpl.ax2.bar(x, d.y, label=d.name, width=w)
+            self.mpl.ax1.set_ylabel(
+                self.logics.metadata.selected_data_group.sweep_label_y
+            )
+            self.mpl.ax2.set_ylabel(
+                self.logics.metadata.selected_data_group.sweep_label_c
+            )
+            self.mpl.ax2.set_xlabel(
+                self.logics.metadata.selected_data_group.sweep_label_x
+            )
+            self.mpl.ax1.legend(loc="upper right")
+            self.mpl.ax2.legend(loc="upper right")
         elif axis_number == 1:
             lines = []
             self.mpl.set_one_plot()
@@ -378,9 +399,6 @@ class UiMainWindow(object):
 
             self.mpl.ax1.set_ylabel(
                 self.logics.metadata.selected_data_group.sweep_label_y
-            )
-            self.mpl.ax1.set_xlabel(
-                self.logics.metadata.selected_data_group.sweep_label_x
             )
             self.mpl.ax2.set_ylabel(
                 self.logics.metadata.selected_data_group.sweep_label_c
