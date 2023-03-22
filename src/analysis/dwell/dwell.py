@@ -38,7 +38,13 @@ def extract_amplitudes(raws: List[ndarray]) -> ndarray | None:
 def extract_durations(raws: List[ndarray], sr: float) -> ndarray | None:
     if len(raws) == 0:
         return None
-    return np.array([len(raw) / sr for raw in raws])
+    return np.array([_get_duration_at_50_percent_amplitude(raw, sr) for raw in raws])
+
+
+def _get_duration_at_50_percent_amplitude(raw: ndarray, sr: float) -> float:
+    a50 = (raw.max() - raw.min())/2
+    event_50 = np.nonzero(raw >= raw.min() + a50)[0]
+    return len(event_50) / sr
 
 
 def _detect_events_from_basic_data(basic_data: BasicData, sampling_rate: float, min_event_length, max_event_length,
