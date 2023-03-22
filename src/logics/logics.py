@@ -20,6 +20,7 @@ from src.metadata.meta_data import MetaData
 from src.analysis.spectral_analysis import spectral_analysis as sa
 from src.analysis.dwell import dwell
 from src.constants import constants
+from src.metadata.data_classes.basic_data import copy_basic_data
 
 
 def _create_fit_basic_data(x: ndarray, bd: BasicData, func, measuring_unit_y) -> Tuple[BasicData, FittingParams]:
@@ -28,6 +29,16 @@ def _create_fit_basic_data(x: ndarray, bd: BasicData, func, measuring_unit_y) ->
                        file_path=bd.filepath, name=bd.name + " fit", axis=bd.axis)
     fp = FittingParams(ch=bd.ch, measuring_unit=bd.measuring_unit, popt=popt)
     return new_bd, fp
+
+
+def _filter_basic_data(bd: BasicData, filter_args: FilterArguments):
+    copied = copy_basic_data(bd)
+    copied.y = filter_handler.filter_signal(filter_args, bd.y)
+    return copied
+
+
+def filter_preview(filter_args: FilterArguments):
+    return filter_handler.calc_filter(filter_args)
 
 
 class Logics:
@@ -53,20 +64,11 @@ class Logics:
         if not self.metadata.is_empty():
             return exporter.export(path_to_file=path_to_file, metadata=self.metadata)
 
-    def filter_preview(self, filter_args: FilterArguments):
-        return filter_handler.calc_filter(filter_args)
-
     def filter_selected_data_group(self, filter_args: FilterArguments):
-        updated_data = [BasicData(ch=d.ch,
-                                  y=filter_handler.filter_signal(filter_args, d.y),
-                                  sweep_number=d.sweep_number,
-                                  measuring_unit=d.measuring_unit,
-                                  file_path=d.filepath,
-                                  name=d.name,
-                                  axis=d.axis,
-                                  ) for d in self.metadata.selected_data_group.basic_data]
+        updated_data = OrderedSet([_filter_basic_data(d, filter_args)
+                                   for d in self.metadata.selected_data_group.basic_data])
         sdg = self.metadata.selected_data_group
-        dg = data_group.make_copy(sdg, self.metadata.get_and_increment_id())
+        dg = data_group.empty_dg_from(sdg, self.metadata.get_and_increment_id())
         dg.basic_data = updated_data
         sdg.data_groups.add(dg)
         dg.name = str(dg.id) + " " + dg.name.split(" ")[1][:4] + " " + filter_args.filter_type[:4] + \

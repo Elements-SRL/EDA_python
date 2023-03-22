@@ -6,7 +6,7 @@ from matplotlib.axes import Axes
 from matplotlib.lines import Line2D
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.widgets import RangeSlider
-from src.logics.logics import Logics
+from src.logics.logics import Logics, filter_preview
 from src.analysis.fitting.FittingParams import FittingParams
 from src.plot_simplifier.line import Line
 from src.plot_simplifier.simplifier_brain import SimplifierBrain
@@ -20,6 +20,7 @@ from src.gui.advanced_roi import AdvancedRoiWidget
 from src.gui.dwell_analysis_widget import DwellAnalysisWidget
 from src.gui.event_extraction_widget import EventExtractionWidget
 from src.constants import constants
+from src.analysis.filters.filter_arguments import FilterArguments
 
 
 class UiMainWindow(object):
@@ -466,17 +467,15 @@ class UiMainWindow(object):
 
     def _filter_preview(self):
         filter_arguments = self.filter_widget.get_filter_args()
-        if (filter_arguments.b_type == "bandpass" and
-                filter_arguments.cutoff_frequency > filter_arguments.other_cutoff_frequency):
-            dialogs.show_warning("Incorrect frequencies",
-                                 "Bandpass filters require two cutoff frequencies",
-                                 "Incorrect filter: the second cutoff frequency is lower than the first one")
+        if not _is_filter_coherent(filter_arguments):
             return
-        b, a = self.logics.filter_preview(filter_arguments)
+        b, a = filter_preview(filter_arguments)
         self.filter_widget.draw_preview(b, a)
 
     def _apply_filter(self):
         filter_arguments = self.filter_widget.get_filter_args()
+        if not _is_filter_coherent(filter_arguments):
+            return
         self.logics.filter_selected_data_group(filter_arguments)
         self.filter_widget.close()
         self._update_plot()
@@ -615,3 +614,13 @@ def _recursive_bundle(data_groups: Iterable[DataGroup]) -> List[QStandardItem]:
                 item.appendRow(i)
             items.append(item)
     return items
+
+
+def _is_filter_coherent(filter_arguments: FilterArguments) -> bool:
+    if (filter_arguments.b_type == "bandpass" and
+            filter_arguments.cutoff_frequency >= filter_arguments.other_cutoff_frequency):
+        dialogs.show_warning("Incorrect frequencies",
+                             "Bandpass filters require two cutoff frequencies",
+                             "Incorrect filter: the second cutoff frequency is lower than the first one")
+        return False
+    return True

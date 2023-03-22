@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import ndarray
+import copy
 
 
 class BasicData:
@@ -27,3 +28,7 @@ class BasicData:
 
     def __str__(self):
         return str(self.y) + " " + self.filepath
+
+
+def copy_basic_data(bd: BasicData) -> BasicData:
+    return copy.deepcopy(bd)
