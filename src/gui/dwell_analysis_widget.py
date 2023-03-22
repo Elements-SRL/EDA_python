@@ -12,7 +12,7 @@ MAX_TH_VALUE = 1000
 
 
 class DwellAnalysisWidget(QWidget):
-    def __init__(self):
+    def __init__(self, current_measuring_unit: str):
         super(DwellAnalysisWidget, self).__init__()
         views_layout = QVBoxLayout()
         self.setWindowTitle("Dwell Analysis")
@@ -36,8 +36,8 @@ class DwellAnalysisWidget(QWidget):
         views_layout.addWidget(self.max_event_length_spin_box)
 
         views_layout.addWidget(QLabel("Set threshold:"))
-        self.absolute_value_radio_button = QRadioButton("Absolute")
-        self.relative_value_radio_button = QRadioButton("Relative")
+        self.absolute_value_radio_button = QRadioButton("Absolute " + current_measuring_unit)
+        self.relative_value_radio_button = QRadioButton("Relative " + current_measuring_unit)
         self.std_dev_radio_button = QRadioButton("Standard dev based")
         self.absolute_value_radio_button.setChecked(True)
         views_layout.addWidget(self.absolute_value_radio_button)

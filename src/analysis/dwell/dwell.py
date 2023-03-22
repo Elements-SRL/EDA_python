@@ -24,7 +24,7 @@ MOV_AVG_LENGTH_MONO_SCALE_FACTOR = 15
 def detect_events(data_group: DataGroup, min_event_length, max_event_length, threshold: float,
                   threshold_modality: ThresholdModality) -> Tuple[List[ndarray], List[Tuple[int, int]]]:
     tuples = [_detect_events_from_basic_data(bd, data_group.sampling_rate, min_event_length, max_event_length,
-                                             threshold, threshold_modality) for bd in data_group.basic_data]
+                                             threshold, threshold_modality) for bd in data_group.basic_data if bd.axis==0]
     tuples = list(itertools.chain(*[t for t in tuples if len(t) != 0]))
     return [t[0] for t in tuples], [t[1] for t in tuples]
 

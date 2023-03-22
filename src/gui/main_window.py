@@ -546,7 +546,7 @@ class UiMainWindow(object):
     def _dwell_analysis(self):
         if self._manage_empty_metadata():
             return
-        self.dwell_analysis_widget = DwellAnalysisWidget()
+        self.dwell_analysis_widget = DwellAnalysisWidget(self.logics.metadata.selected_data_group.sweep_label_y)
         self.dwell_analysis_widget.get_push_button().pressed.connect(lambda: self._make_dwell_analysis())
 
     def _make_dwell_analysis(self):
