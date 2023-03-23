@@ -1,5 +1,5 @@
 # Introduction
-![Elements srl. logo](./EDA_python_images/logo.ico)
+![Elements srl. logo](./EDA_python_images/logo.png)
 
 EDA_python is the new batch analysis software from Elements. It is entirely written in Python and open source.
 Currently EDA_python supports the following operations: 
@@ -53,20 +53,20 @@ We’ll now take a look at them one by one.
 ## Filters
 To apply a filter to the current plot click on “Analyze” → “Filters”, a new widget will appear with a sample filter. From here you’ll be able to create your own filter by changing the options in this menu. 
 
-![Elements srl. logo](./EDA_python_images/logo.ico) CHANGEMEEEEEEEEEE 
+![Filter preview](./EDA_python_images/filter_preview.png)
 
 To see a **preview** of the filter that will be applied click on the preview button and the line of the filter will be updated with the filter created from the new parameters.
 To **apply** the filter to the current plot simply click on the Apply filter button.
-![Elements srl. logo](./EDA_python_images/logo.ico) CHANGEMEEEEEEEEEE 
+![Filtered signal](./EDA_python_images/filtered_signal.png)
 
 ## Spectral Analysis
 To have the power spectral density of the current plot simply click on “Analyze” → “Spectral analysis”.
-![Elements srl. logo](./EDA_python_images/logo.ico) CHANGEMEEEEEEEEEE 
+![Power spectral density](./EDA_python_images/psd.png)
 
 ## Histogram
 To get the histogram of the current plot simply click on “Analyze” → “Histogram”. This operation will create two different plots: one for the **current** and one for the **voltage** (if your plot has a current plot and voltage plot).
-![Elements srl. logo](./EDA_python_images/logo.ico) CHANGEMEEEEEEEEEE 
-![Elements srl. logo](./EDA_python_images/logo.ico) CHANGEMEEEEEEEEEE 
+![Current histogram](./EDA_python_images/hist1.png)
+![Voltage histogram](./EDA_python_images/hist2.png)
 
 ## Dwell Analysis
 From this situation you can select “Analyze” → “Dwell Analysis”
@@ -76,14 +76,14 @@ Set the desired value (**input_value**) and a strategy to build the threshold th
 1.  **Absolute**: Extract events using the given **input_value** as the threshold
 2.  **Relative**: A baseline (**baseline**) is calculated and the threshold is **baseline + input_value**
 3.  **Standard dev based**: A baseline (**baseline**) and the standard deviation are calculated (**std_dev**) and the threshold is **baseline + std_dev * input_value **
-![Elements srl. logo](./EDA_python_images/logo.ico) CHANGEMEEEEEEEEEE 
+![Dwell analysis widget](./EDA_python_images/dwell_analysis_widget.png)
 
 ### Extracted events
 The dwell analysis can yield two different results:
 * A warning: The analysis with the current parameters could not find any event. An example can be found in the following image.
-![Elements srl. logo](./EDA_python_images/logo.ico) CHANGEMEEEEEEEEEE 
+![No res widget](./EDA_python_images/nores.png) 
 * A widget: The widget would have a structure similar to the following, in particular it will summarize the found events. For each event an amplitude, a duration and the point of start and end will be displayed. From this widget it is also possible to extract the parameters in csv.
-![Elements srl. logo](./EDA_python_images/logo.ico) CHANGEMEEEEEEEEEE 
+![Extracted events](./EDA_python_images/extracted_events.png)
 
 # Fitting
 With EDA_python you can find the curve that better approximates the given plot.
@@ -100,8 +100,8 @@ To make fitting analysis click on “Analyze” → “Fit” and choose the equ
 **WARNING**: The approximation will be applied to the whole plot, if you only need to apply it on a portion of the plot consider the creation of a “Region of interest”
 
 Once applied, the analysis will yield a new plot with the new lines and a widget will appear with the result of the analysis, in particular the widget will show the found parameters and the equation. You can then export these parameters to csv for further investigation.
-![Elements srl. logo](./EDA_python_images/logo.ico) CHANGEMEEEEEEEEEE 
-![Elements srl. logo](./EDA_python_images/logo.ico) CHANGEMEEEEEEEEEE 
+![Fitting plot](./EDA_python_images/fitting_plot.png) 
+![Fitting widget](./EDA_python_images/fitting_widget.png) 
 
 # Region of Interest
 EDA_python currently supports the following methods to create a region of interest:
@@ -114,7 +114,7 @@ To create a region of interest click on “Region of interest” → “Create R
 To have more control over the Region of interest that you want to create simply click on “Region of interest” → “Advanced ROI”.
 A new widget will appear like the one in the following image.
 
-![Elements srl. logo](./EDA_python_images/logo.ico) CHANGEMEEEEEEEEEE 
+![Advanced roi](./EDA_python_images/advanced_roi.png)
 
 Select the channel/sweeps that you want to keep and the portion of the x values then click on the “Create ROI” button to get the new plot.
 
