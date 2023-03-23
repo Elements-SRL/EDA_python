@@ -1,5 +1,5 @@
 # Introduction
-![Elements srl. logo](EDA_python_images/logo.png)
+![Elements srl. logo](./EDA_python_images/logo.ico)
 
 EDA_python is the new batch analysis software from Elements. It is entirely written in Python and open source.
 Currently EDA_python supports the following operations: 
