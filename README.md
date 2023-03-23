@@ -1,6 +1,8 @@
 # EDA_python
 Implementation in python of the already existing software EDA.
 
+Check out the [Quick Guide]( https://elements-srl.github.io/EDA_python/ "Quick Guide")!
+
 ## Installation
 ### Install from release (Recommended)
 Download the latest release compatible with your system, give it permission to execute and launch it by simply double clicking on it.
