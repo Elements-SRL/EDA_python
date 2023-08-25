@@ -1,3 +1,6 @@
+import os
+from typing import List
+
 from ordered_set import OrderedSet
 from pyabf import ABF
 from src.metadata.data_classes.basic_data import BasicData
@@ -32,3 +35,30 @@ def extract_data_group(path_to_file: str, basic_data: OrderedSet[BasicData]) -> 
                    sweep_label_y=abf.sweepLabelY, sweep_label_c=abf.sweepLabelC, basic_data=basic_data,
                    name=abf.abfID, type="raw", )
     return dg
+
+
+def extract_meta_data_from_multiple_abf(path_to_files: List[str], metadata: MetaData):
+    basic_data = open_multiple_abf(path_to_files)
+    # here we are making the assumption that the abf have one channel each
+    n_channels = len(path_to_files)
+    dg = extract_data_group(path_to_file=path_to_files.pop(), basic_data=basic_data)
+    dg.channel_count = n_channels
+    dg.name = ''.join([path.split(os.sep).pop() for path in path_to_files])
+    metadata.add_data_group(dg)
+
+
+def open_multiple_abf(path_to_files: List[str]) -> OrderedSet[BasicData]:
+    basic_data = OrderedSet()
+    for f in path_to_files:
+        data = extract_basic_data(path_to_file=f)
+        for d in data:
+            basic_data.add(d)
+    _fix_basic_data_channels(basic_data)
+    return basic_data
+
+
+def _fix_basic_data_channels(basic_data: OrderedSet[BasicData]):
+    i = 0
+    for b in basic_data:
+        b.set_ch(i)
+        i += 1

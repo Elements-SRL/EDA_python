@@ -12,7 +12,7 @@ class MetaData:
         self.selected_data_group: DataGroup | None = None
         self.data_groups: OrderedSet[DataGroup] = OrderedSet()
         # TODO remove this
-        self.paths: Set[str] = set()
+        self.paths: Set[Tuple[str]] = set()
         self.current_id: int = 0
 
     def clear(self):
@@ -35,11 +35,11 @@ class MetaData:
             if d.name == name:
                 d.visible = visibility
 
-    def add_path(self, path_to_file):
-        self.paths.add(path_to_file)
+    def add_paths(self, path_to_files: List[str]):
+         self.paths.add(tuple(path_to_files))
 
-    def already_opened(self, file_path: str):
-        return file_path in self.paths
+    def already_opened(self, file_paths: List[str]):
+        return tuple(file_paths) in self.paths
 
     # TODO check if it is already inserted
     def add_data_group(self, dg: DataGroup):
