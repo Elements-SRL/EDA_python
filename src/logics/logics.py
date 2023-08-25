@@ -45,12 +45,13 @@ class Logics:
     def __init__(self):
         self.metadata: MetaData = MetaData()
 
-    def open(self, path_to_file):
+    def open(self, path_to_files):
         # if path to file is not empty extract it
-        if not path_to_file or not exists(path_to_file):
-            # TODO tell something to the user?
-            return
-        file_handler.extract_data(path_to_file, self.metadata)
+        for p in path_to_files:
+            if not p or not exists(p):
+                # TODO tell something to the user?
+                return
+        file_handler.extract_data(path_to_files, self.metadata)
         # else do nothing
 
     def is_all_data_hidden(self):

@@ -289,11 +289,11 @@ class UiMainWindow(object):
     # retranslateUi
 
     def open(self):
-        f_name, _ = QFileDialog.getOpenFileName(
+        f_names, _ = QFileDialog.getOpenFileNames(
             None, "Open file", filter="Edh files(*.edh);;Abf files (*.abf)"
         )
-        if f_name:
-            self.logics.open(f_name)
+        if len(f_names) > 0:
+            self.logics.open(f_names)
             self._update_tree_view()
             self._update_plot()
 
