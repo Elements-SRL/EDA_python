@@ -1,5 +1,7 @@
 import unittest
 
+import numpy as np
+
 import src.analysis.filters.filter_handler
 from src.analysis.filters.filter_arguments import FilterArguments
 from src.logics.logics import Logics
@@ -111,7 +113,11 @@ class LogicsTest(unittest.TestCase):
 
     def test_operations(self):
         logics_test = Logics()
-        print(logics_test.perform_operations([], None, ""))
+        logics_test.open(self.path_to_basic_edh)
+        dg = logics_test.metadata.selected_data_group
+        logics_test.perform_operations(list(dg.basic_data), dg.basic_data[0], "a-a")
+        dg2 = logics_test.metadata.selected_data_group
+        self.assertTrue(dg2.basic_data[0] == np.zeros(len(dg2.basic_data[0])))
 
 
 if __name__ == '__main__':

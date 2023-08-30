@@ -286,9 +286,9 @@ class Logics:
                 elif op_str == "-":
                     acc -= other
                 elif op_str == "/":
-                    acc /= other
+                    acc = np.divide(acc, other)
                 elif op_str == "*":
-                    acc *= other
+                    acc = np.multiply(acc, other)
         basic_data = [BasicData(
             bd.ch,
             a,
