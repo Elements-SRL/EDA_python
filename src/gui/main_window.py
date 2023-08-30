@@ -606,7 +606,6 @@ class UiMainWindow(object):
             value=factor,
             min=min_value
         )
-        print(str(factor))
         if ok:
             self.logics.downsample(factor)
             self._update_plot()
