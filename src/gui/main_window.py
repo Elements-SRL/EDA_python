@@ -21,7 +21,7 @@ from src.gui.dwell_analysis_widget import DwellAnalysisWidget
 from src.gui.event_extraction_widget import EventExtractionWidget
 from src.constants import constants
 from src.analysis.filters.filter_arguments import FilterArguments
-
+from src.gui.perform_operations_widget import OperationsWidget
 
 class UiMainWindow(object):
     def __init__(self):
@@ -33,6 +33,7 @@ class UiMainWindow(object):
         self.action_quadratic_fit: QAction | None = None
         self.action_linear_fit: QAction | None = None
         self.action_downsample: QAction | None = None
+        self.perform_operations_widget: OperationsWidget | None = None
         self.menu_fit = None
         self.action_create_range = None
         self.menu_roi = None
@@ -167,6 +168,14 @@ class UiMainWindow(object):
         self.menu_analyze.addAction(self.action_downsample)
         self.action_downsample.setText(QCoreApplication.translate("MainWindow", "Downsample", None))
         self.action_downsample.triggered.connect(self._downsample_data)
+        # Add perform operations action to analyze menu
+        self.action_perform_operations = QAction(main_window)
+        self.action_perform_operations.setObjectName("action_perform_operations")
+        self.menu_analyze.addAction(self.action_perform_operations)
+        self.action_perform_operations.setText(
+            QCoreApplication.translate("MainWindow", "Perform Operations", None)
+        )
+        self.action_perform_operations.triggered.connect(self._launch_operations_widget)
         # Menu ROI
         self.menu_roi = QMenu(self.menubar)
         self.menu_roi.setObjectName("menu_roi")
@@ -610,6 +619,14 @@ class UiMainWindow(object):
             self.logics.downsample(factor)
             self._update_plot()
             self._update_tree_view()
+
+    # Inside the UiMainWindow class
+    def _launch_operations_widget(self):
+        # if self._manage_empty_metadata():
+        #     return
+        items_to_display = ["item1", "item2", "item3"]  # You can replace this with your actual list
+        self.perform_operations_widget = OperationsWidget(items_to_display)
+        self.perform_operations_widget.show()
 
 
 def _set_padding(x_range: Tuple[float, float], padding: float = 0.2):
