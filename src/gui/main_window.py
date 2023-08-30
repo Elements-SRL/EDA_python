@@ -624,10 +624,17 @@ class UiMainWindow(object):
 
     # Inside the UiMainWindow class
     def _launch_operations_widget(self):
-        # if self._manage_empty_metadata():
-        #     return
-        items_to_display = ["item1", "item2", "item3"]  # You can replace this with your actual list
-        self.perform_operations_widget = OperationsWidget(items_to_display)
+        if self._manage_empty_metadata():
+            return
+        def update_plot_and_tree():
+            self._update_plot()
+            self._update_tree_view()
+        self.perform_operations_widget = OperationsWidget(list(self.logics.metadata.selected_data_group.basic_data),
+                                                          self.logics.perform_operations)
+
+        self.perform_operations_widget.get_apply_button().clicked.connect(
+            lambda: update_plot_and_tree() if self.perform_operations_widget.apply_clicked() else None
+        )
         self.perform_operations_widget.show()
 
 
