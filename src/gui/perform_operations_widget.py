@@ -88,12 +88,3 @@ class OperationsWidget(QWidget):
     def cancel_clicked(self):
         self.close()
 
-
-if __name__ == '__main__':
-    items_to_display = ["Item 1", "Item 2", "Item 3", "Item 4","Item 1", "Item 2", "Item 3", "Item 4","Item 1", "Item 2", "Item 3", "Item 4","Item 1", "Item 2", "Item 3", "Item 4","Item 1", "Item 2", "Item 3", "Item 4","Item 1", "Item 2", "Item 3", "Item 4"]
-
-    app = QApplication(sys.argv)
-    widget = MyWidget(items_to_display)
-    widget.setWindowTitle('Custom Widget')
-    widget.show()
-    sys.exit(app.exec_())
