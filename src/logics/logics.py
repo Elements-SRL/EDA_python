@@ -262,11 +262,14 @@ class Logics:
         first_bd = bd[0].y
         newDg.x = np.linspace(0, dg.x[-1], len(first_bd))
 
-    def perform_operations(self, a_matrix: List[BasicData], b: BasicData, operations: str) -> List[BasicData]:
+    def perform_operations(self,
+                           a_matrix_basic_data: List[BasicData],
+                           b_basic_data: BasicData,
+                           operations: str,
+                           ):
         # the labels will be a problem
-        a_matrix = [np.array([1, 2, 3]), np.array([3, 4, 5]), np.array([6, 7, 8])]
-        b = np.array([1, 1, 1])
-        operations = "a+b+b-a"
+        a_matrix = [bd.y for bd in a_matrix_basic_data]
+        b = b_basic_data.y
         operations_iter = iter(operations)
         acc_str = next(operations_iter)
         acc = a_matrix if acc_str == "a" else b
@@ -286,7 +289,21 @@ class Logics:
                     acc /= other
                 elif op_str == "*":
                     acc *= other
-        return acc
+        basic_data = [BasicData(
+            bd.ch,
+            a,
+            bd.measuring_unit,
+            bd.filepath,
+            bd.name,
+            bd.axis,
+            bd.sweep_number,
+            ) for (bd, a) in zip(a_matrix_basic_data, acc)]
+        dg = self.metadata.selected_data_group
+        newDg = data_group.empty_dg_from(dg, self.metadata.get_and_increment_id())
+        newDg.basic_data = basic_data
+        dg.data_groups.add(newDg)
+        newDg.name = str(dg.id) + " " + dg.name.split(" ")[1][:4] + " op res of " + operations
+        self.metadata.selected_data_group = newDg
 
     @staticmethod
     def export_fitting_params_to_csv(path_to_file: str, equation: str, fitting_params: Iterable[FittingParams]):
