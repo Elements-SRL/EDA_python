@@ -262,6 +262,32 @@ class Logics:
         first_bd = bd[0].y
         newDg.x = np.linspace(0, dg.x[-1], len(first_bd))
 
+    def perform_operations(self, a_matrix: List[BasicData], b: BasicData, operations: str) -> List[BasicData]:
+        # the labels will be a problem
+        a_matrix = [np.array([1, 2, 3]), np.array([3, 4, 5]), np.array([6, 7, 8])]
+        b = np.array([1, 1, 1])
+        operations = "a+b+b-a"
+        operations_iter = iter(operations)
+        acc_str = next(operations_iter)
+        acc = a_matrix if acc_str == "a" else b
+        still_going = True
+        while still_going:
+            op_str = next(operations_iter, None)
+            if op_str is None:
+                still_going = False
+            else:
+                other_str = next(operations_iter)
+                other = a_matrix if other_str == "a" else b
+                if op_str == "+":
+                    acc += other
+                elif op_str == "-":
+                    acc -= other
+                elif op_str == "/":
+                    acc /= other
+                elif op_str == "*":
+                    acc *= other
+        return acc
+
     @staticmethod
     def export_fitting_params_to_csv(path_to_file: str, equation: str, fitting_params: Iterable[FittingParams]):
         if path_to_file is None or path_to_file == "":

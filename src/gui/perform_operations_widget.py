@@ -1,7 +1,6 @@
-import sys
 import re
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QListWidget, QComboBox, QLineEdit, \
-    QPushButton, QCheckBox, QMessageBox, QListWidgetItem, QScrollArea, QFrame
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QListWidget, QComboBox, QLineEdit, \
+    QPushButton, QCheckBox, QMessageBox, QListWidgetItem, QFrame
 
 
 class OperationsWidget(QWidget):

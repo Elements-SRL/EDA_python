@@ -109,6 +109,10 @@ class LogicsTest(unittest.TestCase):
         print(filtered_dg)
         self.assertTrue(len(filtered_dg.data_groups) == 0)
 
+    def test_operations(self):
+        logics_test = Logics()
+        print(logics_test.perform_operations([], None, ""))
+
 
 if __name__ == '__main__':
     unittest.main()

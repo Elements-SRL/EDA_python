@@ -1,4 +1,6 @@
 from typing import List, Iterable, Tuple
+
+import numpy as np
 from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication, QModelIndex
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import *
