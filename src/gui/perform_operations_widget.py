@@ -63,11 +63,9 @@ class OperationsWidget(QWidget):
         # Text Field
         help_text_field = QLabel("Enter a string using 'a', 'b', and operators (+, -, *, /). Example: 'a+b-a'.")
         help_text_field2 = QLabel(" - The operations will be computed in order from left to right (not following the standard operator precedence)")
-        help_text_field3 = QLabel(" - It's illegal to multiply a by a (a*a will crash the program)")
         help_text_field4 = QLabel(" - Parentheses are not allowed")
         layout.addWidget(help_text_field)
         layout.addWidget(help_text_field2)
-        layout.addWidget(help_text_field3)
         layout.addWidget(help_text_field4)
         self.text_field = QLineEdit()
         layout.addWidget(self.text_field)
@@ -97,7 +95,7 @@ class OperationsWidget(QWidget):
         else:
             QMessageBox.warning(self, "Validation", "Input is not valid. Please follow the specified pattern.")
             return False
-        
+
     def get_selected_checkbox_basic_data(self) -> List[BasicData]:
         selected_indexes = [
             idx
