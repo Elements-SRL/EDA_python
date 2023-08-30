@@ -29,6 +29,9 @@ class BasicData:
     def __str__(self):
         return str(self.y) + " " + self.filepath
 
+    def copy(self):
+        return copy.deepcopy(self)
+
 
 def copy_basic_data(bd: BasicData) -> BasicData:
     return copy.deepcopy(bd)
