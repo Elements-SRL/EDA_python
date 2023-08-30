@@ -32,6 +32,7 @@ class UiMainWindow(object):
         self.action_exponential_fitting: QAction | None = None
         self.action_quadratic_fit: QAction | None = None
         self.action_linear_fit: QAction | None = None
+        self.action_downsample: QAction | None = None
         self.menu_fit = None
         self.action_create_range = None
         self.menu_roi = None
@@ -160,6 +161,12 @@ class UiMainWindow(object):
         self.menu_fit.addAction(self.action_power_law_fitting)
         self.menu_fit.addAction(self.action_gaussian_fitting)
         self.menu_fit.addAction(self.action_boltzmann_fitting)
+        # Add downsample action to analyze menu
+        self.action_downsample = QAction(main_window)
+        self.action_downsample.setObjectName("action_downsample")
+        self.menu_analyze.addAction(self.action_downsample)
+        self.action_downsample.setText(QCoreApplication.translate("MainWindow", "Downsample", None))
+        self.action_downsample.triggered.connect(self._downsample_data)
         # Menu ROI
         self.menu_roi = QMenu(self.menubar)
         self.menu_roi.setObjectName("menu_roi")
@@ -588,6 +595,22 @@ class UiMainWindow(object):
         self.logics.export_events_to_csv(path_to_file, self.event_extraction_widget.get_events())
         # TODO prompt a dialog?
         self.event_extraction_widget.close()
+
+    def _downsample_data(self):
+        if self._manage_empty_metadata():
+            return
+        factor = 2
+        min_value = 2
+        factor, ok = QInputDialog.getInt(
+            None, "Downsample", "Enter downsampling factor:",
+            value=factor,
+            min=min_value
+        )
+        print(str(factor))
+        if ok:
+            self.logics.downsample(factor)
+            self._update_plot()
+            self._update_tree_view()
 
 
 def _set_padding(x_range: Tuple[float, float], padding: float = 0.2):

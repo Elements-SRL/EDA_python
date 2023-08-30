@@ -4,7 +4,7 @@ from typing import Iterable, Tuple, List
 import numpy as np
 from numpy import ndarray
 from ordered_set import OrderedSet
-
+from scipy import signal
 from src.analysis.dwell.dwell import ThresholdModality
 from src.analysis.fitting import fitting
 from src.analysis.fitting.FittingParams import FittingParams
@@ -237,6 +237,30 @@ class Logics:
         #     self.metadata.selected_data_group = dg
         #     return True
         # return False
+
+    def downsample(self, factor: int):
+        dg = self.metadata.selected_data_group
+        sr = self.metadata.selected_data_group.sampling_rate
+        dsr = (sr/factor)/4
+        # b, a = signal.butter(6, dsr, btype='low', analog=False)
+        sos = signal.butter(8, dsr, 'lp', fs=sr, output='sos')
+        filtered_data = [signal.sosfilt(sos, bd.y) for bd in dg.basic_data]
+        bd = [BasicData(
+            bd.ch,
+            np.array(fd),
+            bd.measuring_unit,
+            bd.filepath,
+            bd.name,
+            bd.axis,
+            bd.sweep_number,
+            ) for (fd, bd) in zip(filtered_data, dg.basic_data)]
+        newDg = data_group.empty_dg_from(dg, self.metadata.get_and_increment_id())
+        newDg.basic_data = bd
+        dg.data_groups.add(newDg)
+        newDg.name = str(dg.id) + " " + dg.name.split(" ")[1][:4] + " downs " + str(factor)
+        self.metadata.selected_data_group = newDg
+        first_bd = bd[0].y
+        newDg.x = np.linspace(0, dg.x[-1], len(first_bd))
 
     @staticmethod
     def export_fitting_params_to_csv(path_to_file: str, equation: str, fitting_params: Iterable[FittingParams]):
