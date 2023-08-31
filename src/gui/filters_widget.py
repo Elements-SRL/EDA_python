@@ -6,6 +6,7 @@ from numpy import ndarray
 from scipy import signal
 from scipy.signal import sosfreqz
 from src.analysis.filters.filter_arguments import FilterArguments
+import warnings
 
 
 class MplCanvas(FigureCanvasQTAgg):
@@ -93,10 +94,26 @@ class FiltersWidget(QWidget):
         self.mpl_canvas.axes.set_title('Filter frequency response')
         self.mpl_canvas.axes.set_xlabel('Frequency [Hz]')
         self.mpl_canvas.axes.set_ylabel('Amplitude [db]')
-        self.mpl_canvas.axes.semilogx(w, 20 * np.log10(np.abs(h)))
-        self.mpl_canvas.axes.yaxis.grid()
-        self.mpl_canvas.axes.xaxis.grid()
-        self.mpl_canvas.draw()
+        with warnings.catch_warnings():
+            warnings.filterwarnings("error", category=RuntimeWarning)
+            try:
+                res = 20 * np.log10(np.abs(h))
+                self.mpl_canvas.axes.semilogx(w, res)
+                self.mpl_canvas.axes.yaxis.grid()
+                self.mpl_canvas.axes.xaxis.grid()
+                self.mpl_canvas.draw()
+            except Exception as e:
+                # Create a QMessageBox
+                self.message_box = QMessageBox()
+                self.message_box.setIcon(QMessageBox.Warning)
+                self.message_box.setWindowTitle("Warning")
+                self.message_box.setText("This filter is not drawable, applying it to "
+                                         "the current data could crash the system.")
+                self.message_box.setStandardButtons(QMessageBox.Ok)
+                self.message_box.show()
+                self.mpl_canvas.axes.cla()
+                print("divide by zero")
+
 
     def _activate_band_pass(self):
         self.cutoff_freq_spin_box.setEnabled(True)
