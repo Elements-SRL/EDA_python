@@ -21,6 +21,7 @@ class FiltersWidget(QWidget):
 
     def __init__(self, fs: float):
         super(FiltersWidget, self).__init__()
+        self.message_box = None
         self.fs = fs
         views_layout = QVBoxLayout()
         self.setWindowTitle("Filters")
@@ -113,7 +114,6 @@ class FiltersWidget(QWidget):
                 self.message_box.show()
                 self.mpl_canvas.axes.cla()
                 print("divide by zero")
-
 
     def _activate_band_pass(self):
         self.cutoff_freq_spin_box.setEnabled(True)
