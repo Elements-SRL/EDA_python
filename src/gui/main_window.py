@@ -487,8 +487,8 @@ class UiMainWindow(object):
         filter_arguments = self.filter_widget.get_filter_args()
         if not _is_filter_coherent(filter_arguments):
             return
-        b, a = filter_preview(filter_arguments)
-        self.filter_widget.draw_preview(b, a)
+        sos = filter_preview(filter_arguments)
+        self.filter_widget.draw_preview(sos)
 
     def _apply_filter(self):
         filter_arguments = self.filter_widget.get_filter_args()

@@ -4,7 +4,7 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from numpy import ndarray
 from scipy import signal
-
+from scipy.signal import sosfreqz
 from src.analysis.filters.filter_arguments import FilterArguments
 
 
@@ -87,9 +87,9 @@ class FiltersWidget(QWidget):
         self._deactivate_band_pass()
         self.show()
 
-    def draw_preview(self, b: ndarray, a: ndarray):
+    def draw_preview(self, sos: ndarray):
         self.mpl_canvas.axes.cla()
-        w, h = signal.freqz(b, a, fs=self.fs)
+        w, h = signal.sosfreqz(sos, fs=self.fs)
         self.mpl_canvas.axes.set_title('Filter frequency response')
         self.mpl_canvas.axes.set_xlabel('Frequency [Hz]')
         self.mpl_canvas.axes.set_ylabel('Amplitude [db]')
