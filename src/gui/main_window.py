@@ -308,7 +308,7 @@ class UiMainWindow(object):
 
     def open(self):
         f_names, _ = QFileDialog.getOpenFileNames(
-            None, "Open file", filter="Edh files(*.edh);;Abf files (*.abf)"
+            None, "Open file", filter="Abf files (*.abf);;Edh files(*.edh)"
         )
         if len(f_names) > 0:
             self.logics.open(f_names)
