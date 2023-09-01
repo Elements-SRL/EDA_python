@@ -289,21 +289,28 @@ class Logics:
                     acc = np.divide(acc, other)
                 elif op_str == "*":
                     acc = np.multiply(acc, other)
+        uom = b_basic_data.measuring_unit
+        times = operations.count("*")
+        div_by = operations.count("/")
+        exp = times-div_by
+        uom += "^"+str(2*exp) if exp != 0 else ""
+
         basic_data = [BasicData(
             bd.ch,
             a,
-            bd.measuring_unit,
+            uom,
             bd.filepath,
             bd.name,
             bd.axis,
             bd.sweep_number,
             ) for (bd, a) in zip(a_matrix_basic_data, acc)]
         dg = self.metadata.selected_data_group
-        newDg = data_group.empty_dg_from(dg, self.metadata.get_and_increment_id())
-        newDg.basic_data = basic_data
-        dg.data_groups.add(newDg)
-        newDg.name = str(dg.id) + " " + dg.name.split(" ")[1][:4] + " op res of " + operations
-        self.metadata.selected_data_group = newDg
+        new_dg = data_group.empty_dg_from(dg, self.metadata.get_and_increment_id())
+        new_dg.sweep_label_y = uom
+        new_dg.basic_data = basic_data
+        dg.data_groups.add(new_dg)
+        new_dg.name = str(dg.id) + " " + dg.name.split(" ")[1][:4] + " op res of " + operations
+        self.metadata.selected_data_group = new_dg
 
     @staticmethod
     def export_fitting_params_to_csv(path_to_file: str, equation: str, fitting_params: Iterable[FittingParams]):
