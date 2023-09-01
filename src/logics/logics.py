@@ -268,7 +268,7 @@ class Logics:
                            operations: str,
                            ):
         # the labels will be a problem
-        a_matrix = [bd.y for bd in a_matrix_basic_data]
+        a_matrix = np.array([bd.y for bd in a_matrix_basic_data])
         b = b_basic_data.y
         operations_iter = iter(operations)
         acc_str = next(operations_iter)
