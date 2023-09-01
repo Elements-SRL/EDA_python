@@ -117,7 +117,7 @@ class LogicsTest(unittest.TestCase):
         dg = logics_test.metadata.selected_data_group
         logics_test.perform_operations(list(dg.basic_data), dg.basic_data[0], "a-a")
         dg2 = logics_test.metadata.selected_data_group
-        self.assertTrue(dg2.basic_data[0] == np.zeros(len(dg2.basic_data[0])))
+        self.assertTrue(np.all(dg2.basic_data[0].y == np.zeros(len(dg2.basic_data[0].y))))
 
 
 if __name__ == '__main__':
