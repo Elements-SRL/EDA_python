@@ -47,6 +47,9 @@ class Logics:
 
     def open(self, path_to_files):
         # if path to file is not empty extract it
+        if isinstance(path_to_files, str):
+            # there only is one file, transform it into a list
+            path_to_files = [path_to_files]
         for p in path_to_files:
             if not p or not exists(p):
                 # TODO tell something to the user?
