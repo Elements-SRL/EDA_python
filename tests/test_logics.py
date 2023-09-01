@@ -25,20 +25,20 @@ class LogicsTest(unittest.TestCase):
 
     def test_open_first_abf(self):
         logics_test = Logics()
-        logics_test.open(self.path_to_abf1)
+        logics_test.open([self.path_to_abf1])
         self.assertTrue(logics_test.metadata.selected_data_group.channel_count == 2)
         print(len(logics_test.metadata.selected_data_group.basic_data))
         self.assertTrue(len(logics_test.metadata.selected_data_group.basic_data) == 2)
 
     def test_common_data_from_abf(self):
         logics_test = Logics()
-        logics_test.open(self.path_to_abf1)
+        logics_test.open([self.path_to_abf1])
         x = logics_test.metadata.get_x()
         self.assertTrue(len(x) > 1)
 
     def test_open_basic_edh(self):
         logics_test = Logics()
-        logics_test.open(self.path_to_basic_edh)
+        logics_test.open([self.path_to_basic_edh])
         self.assertTrue(len(logics_test.metadata.selected_data_group.basic_data) == 5)
         # of all the data only one has the measuring unit mV
         data_in_mV = list(
@@ -55,27 +55,27 @@ class LogicsTest(unittest.TestCase):
 
     def test_open_edh_with_contiguous_data(self):
         logics_test = Logics()
-        logics_test.open(self.path_to_contiguous_edh)
+        logics_test.open([self.path_to_contiguous_edh])
         self.assertTrue(len(logics_test.metadata.selected_data_group.basic_data) == 5)
         self.assertTrue(logics_test.metadata.selected_data_group.channel_count == 4)
 
     def test_file_path_in_episodic_data(self):
         logics_test = Logics()
-        logics_test.open(self.path_to_episodic_abf)
+        logics_test.open([self.path_to_episodic_abf])
         file_path = logics_test.metadata.selected_data_group.basic_data[0].filepath
         for d in logics_test.metadata.selected_data_group.basic_data:
             self.assertTrue(d.filepath == file_path)
 
     def test_file_path_in_basic_edh(self):
         logics_test = Logics()
-        logics_test.open(self.path_to_basic_edh)
+        logics_test.open([self.path_to_basic_edh])
         file_path_of_data_from_the_same_axis = {d.filepath for d in
                                                 logics_test.metadata.selected_data_group.basic_data if d.axis == 0}
         self.assertTrue(len(file_path_of_data_from_the_same_axis) == 4)
 
     def test_filter(self):
         logics_test = Logics()
-        logics_test.open(self.path_to_basic_edh)
+        logics_test.open([self.path_to_basic_edh])
         filter_args = FilterArguments(filter_type="butter",
                                       order=4,
                                       b_type="highpass",
@@ -88,7 +88,7 @@ class LogicsTest(unittest.TestCase):
 
     def test_filters(self):
         logics_test = Logics()
-        logics_test.open(self.path_to_basic_edh)
+        logics_test.open([self.path_to_basic_edh])
         print(logics_test.metadata.selected_data_group.id)
         filter_args = FilterArguments(filter_type="butter",
                                       order=4,
@@ -113,7 +113,7 @@ class LogicsTest(unittest.TestCase):
 
     def test_operations(self):
         logics_test = Logics()
-        logics_test.open(self.path_to_basic_edh)
+        logics_test.open([self.path_to_basic_edh])
         dg = logics_test.metadata.selected_data_group
         logics_test.perform_operations(list(dg.basic_data), dg.basic_data[0], "a-a")
         dg2 = logics_test.metadata.selected_data_group
